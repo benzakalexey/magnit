@@ -5,13 +5,14 @@ from sqlalchemy import select
 from classic.components import component
 
 from magnit.adapters.database.repositories import BaseRepo
-from magnit.application import interfaces
+from magnit.application import interfaces, entities
+
 
 # yapf: disable
 
 
 @component
-class DefaultRepo(BaseRepo, interfaces.DefaultRepo):
-    ...
+class UserRepo(BaseRepo, interfaces.UserRepo):
+    dto = entities.User
 
 # yapf: enable

@@ -1,6 +1,6 @@
 from magnit.adapters.database import metadata
 
-SCHEMA_HEADER = '9160. ККЦ№2. Трекинг сталековшей. Цифровой паспорт КС 350.'
+SCHEMA_HEADER = 'MAGNIT'
 TITLE = 'Схема БД'
 
 # Standards
