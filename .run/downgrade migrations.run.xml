@@ -24,7 +24,7 @@
         <ENTRY IS_ENABLED="false" PARSER="env" PATH="config_alembic.env" />
       </ENTRIES>
     </EXTENSION>
-    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/components/magnit_backend/magnit/composites/alembic_runner.py" />
+    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/magnit_app/components/backend/magnit/composites/alembic_runner.py" />
     <option name="PARAMETERS" value="downgrade -1" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />

@@ -6,17 +6,18 @@ from falcon import media
 
 from classic.http_api import App
 
-from magnit.adapters.http_api import serializer
+from magnit.adapters.http_api import serializer, controllers
+from magnit.application import services
 
 
 def create_app(
     is_dev_mode: bool,
     allow_origins: Union[str, Tuple[str, ...]],
-    # add services
+    user: services.User,
 ) -> App:
     app = App(prefix='/api')
 
-    # app.register() регистрация контроллеров
+    app.register(controllers.users.Users(service=user))
 
     def handler_serialize(obj):
         return json.dumps(serializer.serialize(obj), ensure_ascii=False)
