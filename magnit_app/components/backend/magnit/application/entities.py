@@ -13,8 +13,8 @@ class UserGroup:
 @dataclass
 class Contragent:
     name: str
-    inn: int
-    kpp: int
+    inn: str
+    kpp: Optional[str]
     contragent_type: constants.ContragentType
     address: Optional[str] = None
     phone_number: Optional[str] = None
@@ -55,8 +55,14 @@ class User:
 
 
 @dataclass
+class VehicleModel:
+    model: str
+    id: Optional[int] = None
+
+
+@dataclass
 class Vehicle:
-    name: str
+    model: VehicleModel
     reg_number: str
     pts_number: str
     vehicle_type: constants.VehicleType

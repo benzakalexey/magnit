@@ -16,3 +16,6 @@ class UserRepo(BaseRepo, interfaces.UserRepo):
     dto = entities.User
 
 # yapf: enable
+@component
+class UserGroupRepo(BaseRepo, interfaces.UserGroupRepo):
+    dto = entities.UserGroup
