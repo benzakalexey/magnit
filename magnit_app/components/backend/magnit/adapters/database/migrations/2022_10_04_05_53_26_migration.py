@@ -1,8 +1,8 @@
 """migration
 
-Revision ID: 7eae0b0014b2
+Revision ID: d5fce235c246
 Revises: 
-Create Date: 2022-09-27 06:04:48.533322+00:00
+Create Date: 2022-10-04 05:53:26.305466+00:00
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '7eae0b0014b2'
+revision = 'd5fce235c246'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,8 +21,8 @@ def upgrade():
     op.create_table('contragents',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=50), nullable=False),
-    sa.Column('inn', sa.Integer(), nullable=False),
-    sa.Column('kpp', sa.Integer(), nullable=False),
+    sa.Column('inn', sa.String(length=12), nullable=False),
+    sa.Column('kpp', sa.String(length=9), nullable=True),
     sa.Column('address', sa.String(length=250), nullable=True),
     sa.Column('phone_number', sa.String(length=15), nullable=True),
     sa.Column('contragent_type', sa.Enum('PRIMARY_ROUTE_TRANSPORTER', 'SECONDARY_ROUTE_TRANSPORTER', 'POLYGON_OWNER', 'PRINCIPAL', name='contragenttype'), nullable=False),
