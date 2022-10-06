@@ -50,9 +50,16 @@ mapper.map_imperatively(
     }
 )
 
+mapper.map_imperatively(entities.VehicleModel, tables.vehicle_models)
+
 mapper.map_imperatively(
     entities.Vehicle,
-    tables.vehicles
+    tables.vehicles,
+    properties={
+        'model': relationship(
+            entities.VehicleModel, uselist=False, lazy='joined',
+        )
+    }
 )
 
 mapper.map_imperatively(

@@ -85,6 +85,13 @@ users = Table(
     Column('e_mail', String(length=50), nullable=True),
 )
 
+vehicle_models = Table(
+    'vehicle_models',
+    metadata,
+    Column('id', Integer, primary_key=True),
+    Column('model', String(length=20), nullable=False),
+)
+
 vehicles = Table(
     'vehicles',
     metadata,
