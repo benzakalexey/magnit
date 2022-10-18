@@ -19,6 +19,11 @@ class Users:
         user = self.service.get_all(**request.params)
         response.media = user
 
+    @join_point
+    def on_post_add(self, request, response):
+        self.service.add_user(**request.media)
+        response.media = constants.SUCCESS_TRUE
+
 
 @component
 class UserGroups:
@@ -26,8 +31,8 @@ class UserGroups:
 
     @join_point
     def on_get_get_by_id(self, request, response):
-        user_groups = self.service.get_by_id(**request.params)
-        response.media = user_groups
+        user_group = self.service.get_by_id(**request.params)
+        response.media = user_group
 
     @join_point
     def on_get_get_all(self, request, response):
