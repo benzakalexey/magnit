@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Optional
 from datetime import datetime
 from magnit.adapters.database import constants
@@ -26,7 +26,7 @@ class Polygon:
     name: str
     full_name: str
     owner: Contragent
-    phone_number: str
+    phone_number: Optional[str] = None
     address: Optional[str] = None
     id: Optional[int] = None
 
@@ -80,9 +80,9 @@ class Permit:
     operator: User
     vehicle: Vehicle
     contragent: Contragent
-    started_at: datetime = datetime.utcnow()
-    valid_from: datetime = datetime.utcnow()
-    valid_to: datetime = datetime.utcnow()
+    valid_from: datetime
+    valid_to: datetime
+    created_at: datetime = field(default_factory=datetime.utcnow)
     id: Optional[int] = None
 
 
@@ -91,8 +91,8 @@ class PermitLog:
     permit: Permit
     user: User
     operation_type: constants.PermitOperationType
-    valid_to: datetime = datetime.utcnow()
-    operated_at: datetime = datetime.utcnow()
+    valid_to: datetime
+    operated_at: datetime = field(default_factory=datetime.utcnow)
     id: Optional[int] = None
 
 
@@ -103,13 +103,13 @@ class Visit:
     invoice_num: str
     operator_in: User
     weighted_in: int
-    operator_out: User  # nullable
-    weighted_out: int
-    driver: User
-    checked_in: datetime = datetime.utcnow()
-    checked_out: datetime = datetime.utcnow()
+    driver: Optional[User] = None
+    operator_out: Optional[User] = None
+    weighted_out: Optional[int] = None
+    checked_in: Optional[datetime] = None
+    checked_out: Optional[datetime] = None
     destination: Optional[Polygon] = None
-    is_deleted: Optional[bool] = None
+    is_deleted: Optional[bool] = False
     delete_reason: Optional[str] = None
     id: Optional[int] = None
 
@@ -120,14 +120,19 @@ class DocsLog:
     user: User
     doc_type: constants.DocType
     doc_name: str
-    created_at: datetime = datetime.utcnow()
+    created_at: datetime = field(default_factory=datetime.utcnow)
     id: Optional[int] = None
 
 
 @dataclass
-class Tonar:
+class CopyVisit:
     visit: Visit
+    permit: Permit
+    polygon: Polygon
+    weighted_in: int
     weighted_out: int
     driver: User
     destination: Polygon
+    is_deleted: Optional[bool] = False
+    delete_reason: Optional[str] = None
     id: Optional[int] = None

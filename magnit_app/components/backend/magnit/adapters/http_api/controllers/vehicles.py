@@ -6,42 +6,40 @@ from magnit.application import services
 
 
 @component
-class Polygons:
-    service: services.Polygon
+class VehicleModels:
+    service: services.VehicleModel
 
     @join_point
     def on_get_get_by_id(self, request, response):
-        polygons = self.service.get_by_id(**request.params)
-
-        response.media = polygons
+        vehicle_models = self.service.get_by_id(**request.params)
+        response.media = vehicle_models
 
     @join_point
     def on_get_get_all(self, request, response):
-        polygons = self.service.get_all(**request.params)
-        response.media = polygons
+        vehicle_models = self.service.get_all(**request.params)
+        response.media = vehicle_models
 
     @join_point
     def on_post_add(self, request, response):
-        self.service.add_polygon(**request.media)
+        self.service.add_model(**request.media)
         response.media = constants.SUCCESS_TRUE
 
 
 @component
-class SecondaryRoutes:
-    service: services.SecondaryRoute
+class Vehicles:
+    service: services.Vehicle
 
     @join_point
     def on_get_get_by_id(self, request, response):
-        secondary_routes = self.service.get_by_id(**request.params)
-
-        response.media = secondary_routes
+        vehicles = self.service.get_by_id(**request.params)
+        response.media = vehicles
 
     @join_point
     def on_get_get_all(self, request, response):
-        secondary_routes = self.service.get_all(**request.params)
-        response.media = secondary_routes
+        vehicles = self.service.get_all(**request.params)
+        response.media = vehicles
 
     @join_point
     def on_post_add(self, request, response):
-        self.service.add_secondary_route(**request.media)
+        self.service.add_vehicle(**request.media)
         response.media = constants.SUCCESS_TRUE

@@ -111,7 +111,7 @@ permits = Table(
     'permits',
     metadata,
     Column('id', Integer, primary_key=True),
-    Column('started_at', DateTime, nullable=False),
+    Column('created_at', DateTime, nullable=False),
     Column('number', String(length=10), nullable=False),
     Column('operator_id', ForeignKey(users.c.id, ondelete='NO ACTION'), nullable=False),
     Column('vehicle_id', ForeignKey(vehicles.c.id, ondelete='CASCADE'), nullable=False),
@@ -161,12 +161,17 @@ docs_log = Table(
     Column('doc_name', String(250), nullable=False),
 )
 
-tonar_visits = Table(
-    'tonar_visits',
+copy_visits = Table(
+    'copy_visits',
     metadata,
     Column('id', Integer, primary_key=True),
     Column('visit_id', ForeignKey(visits.c.id, ondelete='CASCADE'), nullable=False),
+    Column('permit_id', ForeignKey(permits.c.id, ondelete='NO ACTION')),
+    Column('polygon_id', ForeignKey(polygon.c.id, ondelete='NO ACTION'), nullable=False),
+    Column('weighted_in', Integer, nullable=False),
     Column('weighted_out', Integer, nullable=False),
     Column('driver_id', ForeignKey(users.c.id, ondelete='NO ACTION'), nullable=False),
-    Column('destination_id', ForeignKey(polygon.c.id, ondelete='NO ACTION'), nullable=False),
+    Column('destination_id', ForeignKey(polygon.c.id, ondelete='NO ACTION'), nullable=True),
+    Column('is_deleted', Boolean, nullable=True, default=False),
+    Column('delete_reason', String(250), nullable=True),
 )
