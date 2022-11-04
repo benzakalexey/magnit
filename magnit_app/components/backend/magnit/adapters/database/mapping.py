@@ -5,8 +5,6 @@ from magnit.application import entities
 
 mapper = registry()
 
-mapper.map_imperatively(entities.UserGroup, tables.user_groups)
-
 mapper.map_imperatively(entities.Contragent, tables.contragents)
 
 mapper.map_imperatively(
@@ -38,9 +36,6 @@ mapper.map_imperatively(
     entities.User,
     tables.users,
     properties={
-        'user_group': relationship(
-            entities.UserGroup, uselist=False, lazy='joined',
-        ),
         'contragent': relationship(
             entities.Contragent, uselist=False, lazy='joined',
         ),

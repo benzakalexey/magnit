@@ -100,6 +100,10 @@ class VehicleModelRepo(ABC):
 
     @abstractmethod
     def get_by_id(self, id_: int) -> Optional[entities.VehicleModel]:
+        """
+
+        :rtype: object
+        """
         ...
 
     @abstractmethod
@@ -165,6 +169,63 @@ class PermitLogRepo(ABC):
 
     @abstractmethod
     def add(self, instance: entities.PermitLog):
+        ...
+
+    @abstractmethod
+    def save(self):
+        ...
+
+
+class VisitRepo(ABC):
+
+    @abstractmethod
+    def get_by_id(self, id_: int) -> Optional[entities.Visit]:
+        ...
+
+    @abstractmethod
+    def get_all(self) -> List[entities.Visit]:
+        ...
+
+    @abstractmethod
+    def add(self, instance: entities.Visit):
+        ...
+
+    @abstractmethod
+    def save(self):
+        ...
+
+
+class DocLogRepo(ABC):
+
+    @abstractmethod
+    def get_by_id(self, id_: int) -> Optional[entities.DocsLog]:
+        ...
+
+    @abstractmethod
+    def get_all(self) -> List[entities.DocsLog]:
+        ...
+
+    @abstractmethod
+    def add(self, instance: entities.DocsLog):
+        ...
+
+    @abstractmethod
+    def save(self):
+        ...
+
+
+class CopyVisitRepo(ABC):
+
+    @abstractmethod
+    def get_by_id(self, id_: int) -> Optional[entities.CopyVisit]:
+        ...
+
+    @abstractmethod
+    def get_all(self) -> List[entities.CopyVisit]:
+        ...
+
+    @abstractmethod
+    def add(self, instance: entities.CopyVisit):
         ...
 
     @abstractmethod

@@ -19,6 +19,9 @@ class Contragent:
     @validate_arguments
     def get_by_id(self, contragent_id: conint(gt=0)) -> entities.Contragent:
         contragent = self.contragents_repo.get_by_id(contragent_id)
+        if contragent is None:
+            raise errors.ContragentIDNotExistError(contragent_id=contragent_id)
+
         return contragent
 
     @join_point
@@ -28,9 +31,6 @@ class Contragent:
     @join_point
     @validate_with_dto
     def add_contragent(self, contragents_info: ContragentInfo):
-        if contragents_info.name is None:
-            raise errors.ContragentNameIsNoneError()
-
         contragent = entities.Contragent(
             name=contragents_info.name,
             inn=contragents_info.inn,

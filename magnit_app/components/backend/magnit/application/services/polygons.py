@@ -20,9 +20,10 @@ class Polygon:
     def get_by_id(self, polygon_id: conint(gt=0)) -> entities.Polygon:
         polygon = self.polygons_repo.get_by_id(polygon_id)
         if polygon is None:
-            ...
+            raise errors.PolygonIDNotExistError(polygon_id=polygon_id)
 
         return polygon
+
 
     @join_point
     def get_all(self):
@@ -33,7 +34,7 @@ class Polygon:
     def add_polygon(self, polygon_info: PolygonInfo):
         owner = self.contragents_repo.get_by_id(polygon_info.owner_id)
         if owner is None:
-            ...
+            raise errors.ContragentIDNotExistError(contragent_id=polygon_info.owner_id)
 
         polygon = entities.Polygon(
             name=polygon_info.name,
@@ -57,7 +58,11 @@ class SecondaryRoute:
     @join_point
     @validate_arguments
     def get_by_id(self, secondary_route_id: conint(gt=0)) -> entities.SecondaryRoute:
-        return self.secondary_routes_repo.get_by_id(secondary_route_id)
+        secondary_route = self.secondary_routes_repo.get_by_id(secondary_route_id)
+        if secondary_route is None:
+            raise errors.SecondaryRouteIDNotExistError(secondary_route_id=secondary_route_id)
+
+        return secondary_route
 
     @join_point
     def get_all(self):
@@ -68,8 +73,16 @@ class SecondaryRoute:
     def add_secondary_route(self, secondary_route_info: SecondaryRouteInfo):
         source_polygon = self.polygons_repo.get_by_id(
             secondary_route_info.source_polygon_id)
+        if source_polygon is None:
+            raise errors.PolygonIDNotExistError(
+                polygon_id=secondary_route_info.source_polygon_id)
+
         receiver_polygon = self.polygons_repo.get_by_id(
             secondary_route_info.receiver_polygon_id)
+        if receiver_polygon is None:
+            raise errors.PolygonIDNotExistError(
+                polygon_id=secondary_route_info.receiver_polygon_id)
+
         secondary_route = entities.SecondaryRoute(
             source_polygon=source_polygon,
             receiver_polygon=receiver_polygon,

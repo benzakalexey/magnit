@@ -5,10 +5,9 @@ from magnit.application import interfaces, entities
 
 
 @component
-class PermitRepo(BaseRepo, interfaces.PermitRepo):
-    dto = entities.Permit
-
+class VisitRepo(BaseRepo, interfaces.VisitRepo):
+    dto = entities.Visit
 
 @component
-class PermitLogRepo(BaseRepo, interfaces.PermitLogRepo):
-    dto = entities.PermitLog
+class CopyVisitRepo(BaseRepo, interfaces.CopyVisitRepo):
+    dto = entities.CopyVisit

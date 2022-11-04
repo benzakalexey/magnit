@@ -4,9 +4,6 @@ from magnit.adapters.database.repositories import BaseRepo
 from magnit.application import interfaces, entities
 
 
-# yapf: disable
-
-
 @component
 class ContragentRepo(BaseRepo, interfaces.ContragentRepo):
     dto = entities.Contragent

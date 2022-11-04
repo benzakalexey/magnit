@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Optional
 from datetime import datetime
-from magnit.adapters.database import constants
+from magnit.application import constants
 
 
 @dataclass
@@ -44,7 +44,7 @@ class User:
     password: str
     first_name: str
     last_name: str
-    user_group: UserGroup
+    user_role: constants.UserRole
     contragent: Contragent
     user_position: str
     second_name: Optional[str] = None
@@ -76,7 +76,6 @@ class Vehicle:
 
 @dataclass
 class Permit:
-    number: str
     operator: User
     vehicle: Vehicle
     contragent: Contragent
@@ -84,6 +83,10 @@ class Permit:
     valid_to: datetime
     created_at: datetime = field(default_factory=datetime.utcnow)
     id: Optional[int] = None
+
+    @property
+    def is_tonar(self) -> bool:
+        return self.vehicle.vehicle_type == constants.VehicleType.TONAR
 
 
 @dataclass
@@ -100,18 +103,32 @@ class PermitLog:
 class Visit:
     permit: Permit
     polygon: Polygon
-    invoice_num: str
     operator_in: User
-    weighted_in: int
+    weight_in: int
     driver: Optional[User] = None
     operator_out: Optional[User] = None
-    weighted_out: Optional[int] = None
-    checked_in: Optional[datetime] = None
+    weight_out: Optional[int] = None
+    checked_in: datetime = field(default_factory=datetime.utcnow)
     checked_out: Optional[datetime] = None
     destination: Optional[Polygon] = None
     is_deleted: Optional[bool] = False
     delete_reason: Optional[str] = None
     id: Optional[int] = None
+
+    @property
+    def status(self) -> constants.VisitStatus:
+        if self.operator_out is None:
+            return constants.VisitStatus.IN
+
+        return constants.VisitStatus.OUT
+
+    @property
+    def invoice_num(self):
+        p = self.polygon.name[3:].upper()
+        m = constants.Monts.months.get(self.checked_in.month)
+        y = self.checked_in.year
+        num = self.id
+        return f'{p}-{m}.{y}-{num}'  # ЛЕН-МАЙ.2022-23
 
 
 @dataclass
@@ -129,10 +146,20 @@ class CopyVisit:
     visit: Visit
     permit: Permit
     polygon: Polygon
-    weighted_in: int
-    weighted_out: int
+    weight_in: int
+    weight_out: int
     driver: User
     destination: Polygon
-    is_deleted: Optional[bool] = False
-    delete_reason: Optional[str] = None
     id: Optional[int] = None
+
+    @property
+    def is_deleted(self):
+        return self.visit.is_deleted
+
+    def reset(self):
+        self.permit = self.visit.permit
+        self.polygon = self.visit.polygon
+        self.weight_in = self.visit.weight_in
+        self.weight_out = self.visit.weight_out
+        self.driver = self.visit.driver
+        self.destination = self.visit.destination

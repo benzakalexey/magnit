@@ -3,8 +3,6 @@ from typing import Any, List, Optional
 from classic.sql_storage import BaseRepository
 from sqlalchemy import select
 
-# yapf: disable
-
 
 class BaseRepo(BaseRepository):
     def get_by_id(self, id_: int) -> Optional[Any]:
@@ -24,6 +22,3 @@ class BaseRepo(BaseRepository):
 
     def save(self):
         self.session.flush()
-
-
-# yapf: enable

@@ -1,10 +1,7 @@
-from kombu import Connection
 from sqlalchemy import create_engine
 
-from classic.messaging_kombu import KombuPublisher
 from classic.sql_storage import TransactionContext
 
-import magnit.adapters.database.repositories.users
 from magnit.adapters import database, logger, http_api
 from magnit.adapters.database import repositories
 from magnit.application import services
@@ -12,8 +9,7 @@ from magnit.application import services
 
 class Settings:
     db = database.Settings()
-    http_api = http_api.Settings() # TODO переделать
-    # message_bus = message_bus.Settings()
+    http_api = http_api.Settings()
 
 
 class Logger:
@@ -27,7 +23,6 @@ class DB:
     engine = create_engine(Settings.db.DATABASE_URL)
     context = TransactionContext(bind=engine, expire_on_commit=False)
     users_repo = repositories.UserRepo(context=context)
-    user_groups_repo = repositories.UserGroupRepo(context=context)
     contragents_repo = repositories.ContragentRepo(context=context)
     polygons_repo = repositories.PolygonRepo(context=context)
     secondary_routes_repo = repositories.SecondaryRouteRepo(context=context)
@@ -35,17 +30,16 @@ class DB:
     vehicles_repo = repositories.VehicleRepo(context=context)
     permits_repo = repositories.PermitRepo(context=context)
     permits_log_repo = repositories.PermitLogRepo(context=context)
+    visits_repo = repositories.VisitRepo(context=context)
+    docs_log_repo = repositories.DocLogRepo(context=context)
+    copy_visits_repo = repositories.CopyVisitRepo(context=context)
 
 
 class Application:
     user = services.User(
         users_repo=DB.users_repo,
-        user_groups_repo=DB.user_groups_repo,
         contragents_repo=DB.contragents_repo,
         polygons_repo=DB.polygons_repo,
-    )
-    user_group = services.UserGroup(
-        user_groups_repo=DB.user_groups_repo,
     )
     contragent = services.Contragent(
         contragents_repo=DB.contragents_repo,
@@ -76,6 +70,22 @@ class Application:
         users_repo=DB.users_repo,
         permits_repo=DB.permits_repo,
     )
+    visit = services.Visit(
+        visits_repo=DB.visits_repo,
+        permits_repo=DB.permits_repo,
+        users_repo=DB.users_repo,
+        polygons_repo=DB.polygons_repo,
+        vehicle_repo=DB.vehicles_repo,
+        copy_visits_repo=DB.copy_visits_repo
+    )
+    doc_log = services.DocLog(
+        docs_log_repo=DB.docs_log_repo,
+        visits_repo=DB.visits_repo,
+        users_repo=DB.users_repo,
+    )
+    copy_visit = services.CopyVisit(
+        copy_visits_repo=DB.copy_visits_repo
+    )
 
 
 class Aspects:
@@ -85,7 +95,6 @@ class Aspects:
 
 app = http_api.create_app(
     user=Application.user,
-    user_group=Application.user_group,
     contragent=Application.contragent,
     polygon=Application.polygon,
     secondary_route=Application.secondary_route,
@@ -93,4 +102,7 @@ app = http_api.create_app(
     vehicle=Application.vehicle,
     permit=Application.permit,
     permit_log=Application.permit_log,
+    visit=Application.visit,
+    doc_log=Application.doc_log,
+    copy_visit=Application.copy_visit,
 )

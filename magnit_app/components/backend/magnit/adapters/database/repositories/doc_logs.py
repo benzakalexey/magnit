@@ -5,5 +5,5 @@ from magnit.application import interfaces, entities
 
 
 @component
-class UserRepo(BaseRepo, interfaces.UserRepo):
-    dto = entities.User
+class DocLogRepo(BaseRepo, interfaces.DocLogRepo):
+    dto = entities.DocsLog

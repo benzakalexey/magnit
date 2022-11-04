@@ -6,19 +6,20 @@ from magnit.application import services
 
 
 @component
-class Users:
-    service: services.User
+class DocLogs:
+    service: services.DocLog
 
     @join_point
     def on_get_get_by_id(self, request, response):
-        user = self.service.get_by_id(**request.params)
-        response.media = user
+        doc_log = self.service.get_by_id(**request.params)
+        response.media = doc_log
 
+    @join_point
     def on_get_get_all(self, request, response):
-        user = self.service.get_all(**request.params)
-        response.media = user
+        docs_log = self.service.get_all(**request.params)
+        response.media = docs_log
 
     @join_point
     def on_post_add(self, request, response):
-        self.service.add_user(**request.media)
+        self.service.add_doc_log(**request.media)
         response.media = constants.SUCCESS_TRUE

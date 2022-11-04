@@ -1,16 +1,6 @@
 from classic.app.errors import AppError
 
 
-class UserGroupNameIsNoneError(AppError):
-    msg_template = 'Имя Группы пользователей не может быть пустым.'
-    code = 'magnit.users.user_group_name_is_none_error'
-
-
-class UserGroupIDNotExistError(AppError):
-    msg_template = 'Группа пользователей с id = {user_group_id} не найдена'
-    code = 'magnit.users.user_group_id_not_exist_error'
-
-
 class UserFirstNameIsNoneError(AppError):
     msg_template = 'Имя Пользователя не может быть пустым.'
     code = 'magnit.users.user_first_name_is_none_error'
@@ -46,7 +36,7 @@ class PolygonIDNotExistError(AppError):
     code = 'magnit.polygons.polygon_id_not_exist_error'
 
 
-class SecondatyRouteIDNotExistError(AppError):
+class SecondaryRouteIDNotExistError(AppError):
     msg_template = 'Запись с id = {secondary_route_id} не найдена'
     code = 'magnit.polygons.secondary_route_id_not_exist_error'
 
@@ -57,7 +47,7 @@ class VehicleModelNameIsNoneError(AppError):
 
 
 class VehicleModelIDNotExistError(AppError):
-    msg_template = 'Модель автомобиля с id = {vehicle_model_id} не найден'
+    msg_template = 'Модель автомобиля с id = {vehicle_model_id} не найдена'
     code = 'magnit.vehicles.vehicle_model_id_not_exist_error'
 
 
@@ -69,3 +59,23 @@ class VehicleNameIsNoneError(AppError):
 class VehicleIDNotExistError(AppError):
     msg_template = 'Автомобиль с id = {vehicle_id} не найден'
     code = 'magnit.vehicles.vehicle_id_not_exist_error'
+
+
+class PermitIDNotExistError(AppError):
+    msg_template = 'Пропуск с id = {permit_id} не найден'
+    code = 'magnit.permits.permit_id_not_exist_error'
+
+
+class PermitLogIDNotExistError(AppError):
+    msg_template = 'Запись в журнале пропусков с id = {permit_log_id} не найдена'
+    code = 'magnit.permits.permit_log_id_not_exist_error'
+
+
+class VisitIDNotExistError(AppError):
+    msg_template = 'Визит с id = {visit_id} не найден'
+    code = 'magnit.visits.visit_id_not_exist_error'
+
+
+class DocLogIDNotExistError(AppError):
+    msg_template = 'Запись с id = {doc_log_id} не найдена'
+    code = 'magnit.doclogs.doc_log_id_not_exist_error'
