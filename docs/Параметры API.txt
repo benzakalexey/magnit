@@ -1,0 +1,15 @@
+/api/users/add
+method: POST
+
+body:
+    {
+        "login": str,
+        "password": str,
+        "first_name": str,
+        "second_name": Optional[str],
+        "last_name": str,
+        "user_group_id": int,
+        "contragent_id": int,
+        "polygon_id": int,
+        "user_position": str
+    }
