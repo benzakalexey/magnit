@@ -30,3 +30,4 @@ waitress==2.1.2
 zipp==3.8.1
 
 setuptools~=60.2.0
+openpyxl~=3.0.10

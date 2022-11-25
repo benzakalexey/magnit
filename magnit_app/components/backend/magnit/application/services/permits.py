@@ -17,7 +17,7 @@ class Permit:
     contragents_repo: interfaces.ContragentRepo
 
     @join_point
-    @validate_arguments()
+    @validate_arguments
     def get_by_id(self, permit_id: conint(gt=0)) -> entities.Permit:
         permit = self.permits_repo.get_by_id(permit_id)
         if permit is None:
@@ -69,7 +69,7 @@ class PermitLog:
     users_repo: interfaces.UserRepo
 
     @join_point
-    @validate_arguments()
+    @validate_arguments
     def get_by_id(self, permit_log_id: conint(gt=0)) -> entities.PermitLog:
         permit_log = self.permits_log_repo.get_by_id(permit_log_id)
         if permit_log is None:

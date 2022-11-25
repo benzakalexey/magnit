@@ -22,7 +22,7 @@ mapper.map_imperatively(
     tables.secondary_routes,
     properties={
         'source_polygon': relationship(
-            entities.Polygon, uselist=False, lazy='joined',
+            entities.Polygon, lazy='joined',
             foreign_keys=[tables.secondary_routes.c.source_polygon_id]
         ),
         'receiver_polygon': relationship(

@@ -186,6 +186,4 @@ copy_visits = Table(
            nullable=True),
     Column('destination_id', ForeignKey(polygon.c.id, ondelete='NO ACTION'),
            nullable=True),
-    Column('is_deleted', Boolean, nullable=True, default=False),
-    Column('delete_reason', String(250), nullable=True),
 )

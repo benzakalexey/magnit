@@ -1,6 +1,5 @@
 /api/users/add
 method: POST
-
 body:
     {
         "login": str,
@@ -8,8 +7,107 @@ body:
         "first_name": str,
         "second_name": Optional[str],
         "last_name": str,
-        "user_group_id": int,
         "contragent_id": int,
         "polygon_id": int,
         "user_position": str
+    }
+
+/api/contragents/add
+method: POST
+body:
+    {
+        "name": " str,
+        "inn": str,
+        "kpp": Optional[str]
+        "contragent_type": Enum,
+        "address": Optional[str]
+        "phone_number": Optional[str]
+     }
+
+/api/polygons/add
+method: POST
+body:
+    {
+        "name": str,
+        "full_name": str,
+        "owner_id": int
+    }
+
+/api/secondary_routes/add
+method: POST
+body:
+    {
+        "source_polygon_id": int,
+        "receiver_polygon_id": int
+    }
+
+/api/vehicle_models/add
+method: POST
+body:
+    {
+        "model": str
+    }
+
+/api/vehicles/add
+method: POST
+body:
+    {
+        "reg_number": str,
+        "vehicle_type": Enum,
+        "model_id": int,
+        "pts_number": str,
+        "tara": str,
+        "max_weight": str
+    }
+
+/api/permits/add
+method: POST
+body:
+    {
+        "operator_id": imt,
+        "vehicle_id": int,
+        "contragent_id": int,
+        "valid_from": datetime,
+        "valid_to": datetime
+    }
+
+/api/permits_log/add
+method: POST
+body:
+    {
+        "permit_id": int,
+        "user_id": int,
+        "operation_type": Enum,
+        "valid_to": datetime
+    }
+
+/api/api/visits/add
+method: POST
+body:
+    {
+            "permit_id": int,
+        "polygon_id": int,
+        "user_id": int,
+        "weight": int
+    }
+
+/api/visits/finish
+method: POST
+body:
+    {
+        "visit_id": int,
+        "user_id": int,
+        "driver_id": Optional[int],
+        "destination_id": Optional[int],
+        "weight": int
+    }
+
+/api/doc_logs/add
+method: POST
+body:
+    {
+        "visit_id": int,
+        "user_id": int,
+        "doc_type": Enum,
+        "doc_name": str
     }

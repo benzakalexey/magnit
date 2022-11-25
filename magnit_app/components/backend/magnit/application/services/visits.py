@@ -1,7 +1,9 @@
 from datetime import datetime
+import os
 
 from classic.app import validate_with_dto
 from classic.components import component
+from openpyxl import load_workbook
 from pydantic import validate_arguments, conint
 
 from magnit.application import interfaces, entities, errors, dtos_layer
@@ -20,6 +22,7 @@ class Visit:
     permits_repo: interfaces.PermitRepo
     copy_visits_repo: interfaces.CopyVisitRepo
     vehicle_repo: interfaces.VehicleRepo
+    secondary_routes_repo: interfaces.SecondaryRouteRepo
 
     @join_point
     @validate_arguments
@@ -113,14 +116,18 @@ class Visit:
         self.copy_visits_repo.save()
 
     @join_point
-    @validate_arguments()
-    def delete(self, visit_id: int, reason: str):
+    @validate_arguments
+    def delete_visit(self, visit_id: int, reason: str):
         visit = self.visits_repo.get_by_id(visit_id)
         if visit is None:
             raise errors.VisitIDNotExistError(visit_id=visit_id)
 
+        if not reason:
+            raise errors.VisitDeleteReasonIsNoneError()
+
         visit.is_deleted = True
         visit.delete_reason = reason
+        self.visits_repo.save()
 
 
 @component

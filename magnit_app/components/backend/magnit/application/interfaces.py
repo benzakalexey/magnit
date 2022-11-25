@@ -22,23 +22,6 @@ class UserRepo(ABC):
     def save(self):
         ...
 
-class UserGroupRepo(ABC):
-
-    @abstractmethod
-    def get_by_id(self, id_: int) -> Optional[entities.UserGroup]:
-        ...
-
-    @abstractmethod
-    def get_all(self) -> List[entities.UserGroup]:
-        ...
-
-    @abstractmethod
-    def add(self, instance: entities.UserGroup):
-        ...
-
-    @abstractmethod
-    def save(self):
-        ...
 
 class ContragentRepo(ABC):
 
@@ -58,10 +41,18 @@ class ContragentRepo(ABC):
     def save(self):
         ...
 
+
 class PolygonRepo(ABC):
 
     @abstractmethod
     def get_by_id(self, id_: int) -> Optional[entities.Polygon]:
+        ...
+
+    @abstractmethod
+    def get_receivers_by_source_id(
+        self,
+        source_id: int,
+    ) -> List[entities.Polygon]:
         ...
 
     @abstractmethod

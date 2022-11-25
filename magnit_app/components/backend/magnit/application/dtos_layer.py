@@ -94,15 +94,3 @@ class DocLogInfo(DTO):
     user_id: conint(gt=0)
     doc_type: constants.DocType
     doc_name: str
-
-
-class CopyVisitInfo(DTO):
-    visit_id: conint(gt=0)
-    permit_id: conint(gt=0)
-    polygon_id: conint(gt=0)
-    weight_in: conint(gt=0)
-    weight_out: Optional[conint(gt=0)]
-    driver_id: Optional[conint(gt=0)]
-    destination_id: Optional[conint(gt=0)]
-    is_deleted: Optional[bool] = False
-    delete_reason: Optional[str] = None

@@ -5,12 +5,6 @@ from magnit.application import constants
 
 
 @dataclass
-class UserGroup:
-    name: str
-    id: Optional[int] = None
-
-
-@dataclass
 class Contragent:
     name: str
     inn: str
@@ -53,6 +47,20 @@ class User:
     phone_number: Optional[str] = None
     id: Optional[int] = None
 
+    @property
+    def full_name(self) -> str:
+        return '%s %s %s' % (
+            self.last_name,
+            self.first_name,
+            self.second_name,
+        )
+
+    @property
+    def phone_print(self) -> str:
+        ph_num = ''
+        if self.phone_number:
+            ph_num = self.phone_number
+        return ph_num
 
 @dataclass
 class VehicleModel:
@@ -124,11 +132,22 @@ class Visit:
 
     @property
     def invoice_num(self):
-        p = self.polygon.name[3:].upper()
+        p = self.polygon.name[:3].upper()
         m = constants.Monts.months.get(self.checked_in.month)
         y = self.checked_in.year
         num = self.id
         return f'{p}-{m}.{y}-{num}'  # ЛЕН-МАЙ.2022-23
+
+    @property
+    def invoice_date(self) -> str:
+        return self.checked_in.strftime("%d/%m/%Y %H:%M")
+
+    @property
+    def netto(self) -> int:
+        """
+        :return: Вес груза
+        """
+        return abs(self.weight_in - self.weight_out)
 
 
 @dataclass
@@ -155,6 +174,10 @@ class CopyVisit:
     @property
     def is_deleted(self):
         return self.visit.is_deleted
+
+    @property
+    def delete_reason(self):
+        return self.visit.delete_reason
 
     def reset(self):
         self.permit = self.visit.permit

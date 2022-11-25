@@ -11,6 +11,8 @@ class Settings(BaseSettings):
 
     LOGGING_LEVEL: str = 'INFO'
 
+    TEMPLATE_DIR: str = 'template'
+
     @property
     def LOGGING_CONFIG(self):
         return {

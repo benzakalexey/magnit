@@ -76,15 +76,20 @@ class Application:
         users_repo=DB.users_repo,
         polygons_repo=DB.polygons_repo,
         vehicle_repo=DB.vehicles_repo,
+        copy_visits_repo=DB.copy_visits_repo,
+        secondary_routes_repo=DB.secondary_routes_repo,
+    )
+    copy_visit = services.CopyVisit(
         copy_visits_repo=DB.copy_visits_repo
+    )
+    doc = services.Doc(
+        visits_repo=DB.visits_repo,
+        template_dir=Settings.http_api.TEMPLATE_DIR
     )
     doc_log = services.DocLog(
         docs_log_repo=DB.docs_log_repo,
         visits_repo=DB.visits_repo,
         users_repo=DB.users_repo,
-    )
-    copy_visit = services.CopyVisit(
-        copy_visits_repo=DB.copy_visits_repo
     )
 
 
@@ -103,6 +108,7 @@ app = http_api.create_app(
     permit=Application.permit,
     permit_log=Application.permit_log,
     visit=Application.visit,
-    doc_log=Application.doc_log,
     copy_visit=Application.copy_visit,
+    doc_log=Application.doc_log,
+    doc=Application.doc,
 )
