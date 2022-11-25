@@ -29,6 +29,11 @@ class Visits:
         self.service.finish_visit(**request.media)
         response.media = constants.SUCCESS_TRUE
 
+    @join_point
+    def on_post_delete(self, request, response):
+        self.service.delete_visit(**request.media)
+        response.media = constants.SUCCESS_TRUE
+
 
 @component
 class CopyVisits:

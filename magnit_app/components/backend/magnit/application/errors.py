@@ -16,6 +16,16 @@ class UserIDNotExistError(AppError):
     code = 'magnit.users.user_id_not_exist_error'
 
 
+class UserPolygonIsNoneError(AppError):
+    msg_template = 'Для рабочего места Контролер полигон должен быть назначен.'
+    code = 'magnit.users.user_polygon_is_none_error'
+
+
+class UserRoleIsNoneError(AppError):
+    msg_template = 'Для пользователя должна быть выбрана рабочая роль.'
+    code = 'magnit.users.user_role_is_none_error'
+
+
 class ContragentNameIsNoneError(AppError):
     msg_template = 'Название контрагента не может быть пустым.'
     code = 'magnit.contragents.contragent_name_is_none_error'
@@ -24,6 +34,11 @@ class ContragentNameIsNoneError(AppError):
 class ContragentIDNotExistError(AppError):
     msg_template = 'Контрагент с id = {contragent_id} не найден'
     code = 'magnit.contragents.contragent_id_not_exist_error'
+
+
+class OwnerIDNotExistError(AppError):
+    msg_template = 'Владелец полигона с id = {contragent_id} не найден'
+    code = 'magnit.contragents.owner_id_not_exist_error'
 
 
 class PolygonNameIsNoneError(AppError):
@@ -74,6 +89,11 @@ class PermitLogIDNotExistError(AppError):
 class VisitIDNotExistError(AppError):
     msg_template = 'Визит с id = {visit_id} не найден'
     code = 'magnit.visits.visit_id_not_exist_error'
+
+
+class VisitDeleteReasonIsNoneError(AppError):
+    msg_template = 'Причина удаления не может быть пустой.'
+    code = 'magnit.visits.visit_delete_reason_is_none_error'
 
 
 class DocLogIDNotExistError(AppError):

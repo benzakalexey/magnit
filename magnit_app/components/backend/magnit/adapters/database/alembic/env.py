@@ -75,10 +75,8 @@ def run_migrations_online():
 
         with context.begin_transaction():
             connection.execute(
-                f"if schema_id('{target_metadata.schema}') is null "
-                f"execute('create schema {target_metadata.schema}')"
+                f"CREATE SCHEMA IF NOT EXISTS {target_metadata.schema}"
             )
-
             context.run_migrations()
 
 

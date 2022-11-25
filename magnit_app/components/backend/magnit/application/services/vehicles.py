@@ -15,7 +15,8 @@ class VehicleModel:
 
     @join_point
     @validate_arguments
-    def get_by_id(self, vehicle_model_id: conint(gt=0)) -> entities.VehicleModel:
+    def get_by_id(self,
+                  vehicle_model_id: conint(gt=0)) -> entities.VehicleModel:
         vehicle_model = self.vehicle_models_repo.get_by_id(vehicle_model_id)
         if vehicle_model is None:
             raise errors.VehicleModelIDNotExistError(

@@ -2,7 +2,7 @@ from classic.app import validate_with_dto
 from classic.components import component
 from pydantic import conint, validate_arguments
 
-from magnit.application import interfaces, entities, errors
+from magnit.application import interfaces, entities, errors, constants
 
 from magnit.application.dtos_layer import UserInfo
 from magnit.application.services.join_point import join_point
@@ -37,9 +37,11 @@ class User:
             )
 
         polygon = self.polygons_repo.get_by_id(user_info.polygon_id)
-        # if polygon is None:
-        #     raise errors.PolygonIDNotExistError(polygon_id=user_info.polygon_id)
-        # TODO Сделать проверку по роли, говорящую ошибку
+        if user_info.user_role is None:
+            raise errors.UserRoleIsNoneError()
+        elif user_info.user_role == constants.UserRole.CONTROLLER:
+            if polygon is None:
+                raise errors.UserPolygonIsNoneError()
 
         user = entities.User(
             login=user_info.login,

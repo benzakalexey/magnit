@@ -1,3 +1,5 @@
+from typing import List
+
 from classic.app import validate_with_dto
 from classic.components import component
 from pydantic import validate_arguments, conint
@@ -24,17 +26,26 @@ class Polygon:
 
         return polygon
 
-
     @join_point
     def get_all(self):
         return self.polygons_repo.get_all()
+
+    @join_point
+    def get_receivers_by_source_id(
+        self,
+        source_id: int,
+    ) -> List[entities.Polygon]:
+        return self.polygons_repo.get_receivers_by_source_id(
+            source_id
+        )
 
     @join_point
     @validate_with_dto
     def add_polygon(self, polygon_info: PolygonInfo):
         owner = self.contragents_repo.get_by_id(polygon_info.owner_id)
         if owner is None:
-            raise errors.ContragentIDNotExistError(contragent_id=polygon_info.owner_id)
+            raise errors.OwnerIDNotExistError(
+                contragent_id=polygon_info.owner_id)
 
         polygon = entities.Polygon(
             name=polygon_info.name,
@@ -57,10 +68,13 @@ class SecondaryRoute:
 
     @join_point
     @validate_arguments
-    def get_by_id(self, secondary_route_id: conint(gt=0)) -> entities.SecondaryRoute:
-        secondary_route = self.secondary_routes_repo.get_by_id(secondary_route_id)
+    def get_by_id(self,
+                  secondary_route_id: conint(gt=0)) -> entities.SecondaryRoute:
+        secondary_route = self.secondary_routes_repo.get_by_id(
+            secondary_route_id)
         if secondary_route is None:
-            raise errors.SecondaryRouteIDNotExistError(secondary_route_id=secondary_route_id)
+            raise errors.SecondaryRouteIDNotExistError(
+                secondary_route_id=secondary_route_id)
 
         return secondary_route
 
