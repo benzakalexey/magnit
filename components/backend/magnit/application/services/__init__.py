@@ -8,3 +8,4 @@ from .doc_logs import DocLog
 from .visits import CopyVisit
 from .docs import Doc
 from .join_point import join_point
+from .auth import AAA
