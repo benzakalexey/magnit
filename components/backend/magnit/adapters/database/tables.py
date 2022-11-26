@@ -1,3 +1,5 @@
+import datetime
+
 from sqlalchemy import (
     Boolean,
     Column,
@@ -7,7 +9,7 @@ from sqlalchemy import (
     Integer,
     MetaData,
     String,
-    Table,
+    Table, func,
 )
 from magnit.application.constants import (
     ContragentType,
@@ -186,4 +188,11 @@ copy_visits = Table(
            nullable=True),
     Column('destination_id', ForeignKey(polygon.c.id, ondelete='NO ACTION'),
            nullable=True),
+)
+
+tokens_blacklist = Table(
+    'tokens_blacklist',
+    metadata,
+    Column('token', String, primary_key=True),
+    Column('added_at', DateTime, server_default=func.utcnow()),
 )

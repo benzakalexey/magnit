@@ -13,18 +13,6 @@
                     </div>
                 </li>
             </ul>
-
-            <ul class="navbar-nav flex-row ms-auto">
-                <button type="button" class="btn btn-primary me-4" @click="isOpen = !isOpen">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="feather feather-plus me-2" data-v-02c2cbc4="">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                    Новый заезд
-                </button>
-            </ul>
         </teleport>
 
         <div class="row layout-top-spacing">
@@ -54,7 +42,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Заезд {{ visit_data.id }} </h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Заезд {{ visit_data.id }}</h5>
                     <button type="button" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close"
                         class="btn-close"></button>
                 </div>
@@ -113,26 +101,14 @@
                     <button type="button" class="btn" data-dismiss="modal" data-bs-dismiss="modal"><i
                             class="flaticon-cancel-12"></i>
                         Discard</button>
-                    <button type="button" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-primary">Сохранить</button>
                 </div>
             </div>
         </div>
     </div>
 
 
-    <div>
-
-        <div class="left-side-modal" :class="{ active: isOpen }">
-
-            <perfect-scrollbar class="sidbarchat p-3" tag="div">
-                <a class="btn-close" href="javascript:;" @click="isOpen = !isOpen"> </a>
-
-
-
-
-            </perfect-scrollbar>
-        </div>
-    </div>
+    <rightSideModal></rightSideModal>
 
 
 </template>
@@ -141,6 +117,7 @@
 import { onMounted, ref } from 'vue';
 import axios from 'axios'
 import { useMeta } from '@/composables/use-meta';
+import rightSideModal from '@/components/magnit/right-side-modal'
 
 useMeta({ title: 'Контролер' });
 
@@ -202,8 +179,6 @@ const visit_data = ref(
         'salary': '',
     }
 );
-
-const isOpen = ref(null);
 
 onMounted(
     async () => {

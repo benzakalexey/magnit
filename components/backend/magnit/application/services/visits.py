@@ -27,6 +27,8 @@ class Visit:
     @join_point
     @validate_arguments
     def get_by_id(self, visit_id: conint(gt=0)) -> entities.Visit:
+
+        print('here')
         visit = self.visits_repo.get_by_id(visit_id)
         if visit is None:
             raise errors.VisitIDNotExistError(visit_id=visit_id)
@@ -35,6 +37,7 @@ class Visit:
 
     @join_point
     def get_all(self):
+        print('here')
         return self.visits_repo.get_all()
 
     @join_point

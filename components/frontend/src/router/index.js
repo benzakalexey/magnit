@@ -176,9 +176,9 @@ const routes = [
 
     //auth
     {
-        path: '/auth/login-boxed',
-        name: 'login-boxed',
-        component: () => import(/* webpackChunkName: "auth-login-boxed" */ '../views/auth/login_boxed.vue'),
+        path: '/auth/login',
+        name: 'login',
+        component: () => import(/* webpackChunkName: "auth-login-boxed" */ '../views/magnit/auth/login.vue'),
         meta: { layout: 'auth' },
     },
     {
@@ -199,12 +199,12 @@ const routes = [
         component: () => import(/* webpackChunkName: "auth-pass-recovery-boxed" */ '../views/auth/pass_recovery_boxed.vue'),
         meta: { layout: 'auth' },
     },
-    {
-        path: '/auth/login',
-        name: 'login',
-        component: () => import(/* webpackChunkName: "auth-login" */ '../views/auth/login.vue'),
-        meta: { layout: 'auth' },
-    },
+    // {
+    //     path: '/auth/login',
+    //     name: 'login',
+    //     component: () => import(/* webpackChunkName: "auth-login" */ '../views/auth/login.vue'),
+    //     meta: { layout: 'auth' },
+    // },
     {
         path: '/auth/register',
         name: 'register',
@@ -566,6 +566,9 @@ router.beforeEach((to, from, next) => {
     if (to.meta && to.meta.layout && to.meta.layout == 'auth') {
         store.commit('setLayout', 'auth');
     } else {
+        if (store.state.is_auth === false) {
+            return next({ name: 'login' });
+        }
         store.commit('setLayout', 'app');
     }
     next(true);

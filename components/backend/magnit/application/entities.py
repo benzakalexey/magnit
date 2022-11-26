@@ -186,3 +186,18 @@ class CopyVisit:
         self.weight_out = self.visit.weight_out
         self.driver = self.visit.driver
         self.destination = self.visit.destination
+
+
+@dataclass(frozen=True)
+class AuthToken:
+    """Токен авторизации
+
+    exp -> expired_at
+
+    iat -> inied_at
+
+    sub -> user_id
+    """
+    exp: datetime
+    iat: datetime
+    sub: int

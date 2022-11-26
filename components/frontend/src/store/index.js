@@ -1,8 +1,32 @@
 import { createStore } from 'vuex';
 import i18n from '../i18n';
 
+class User {
+    constructor (
+        first_name,
+        second_name, 
+        last_name, 
+        user_role,
+        e_mail,
+        phone_number,
+
+    ) {
+
+    }
+}
+
 export default new createStore({
     state: {
+        user: {
+            first_name: false,
+            second_name: false,
+            last_name: false,
+            user_role: false,
+            e_mail: false,
+            phone_number: false,
+            token: '',
+        },
+        is_auth: false,
         layout: 'app',
         is_show_sidebar: true,
         is_show_search: false,
@@ -40,7 +64,7 @@ export default new createStore({
             state.is_show_search = value;
         },
         toggleLocale(state, value) {
-            value = value || 'en';
+            value = value || 'ru';
             i18n.global.locale = value;
             localStorage.setItem('i18n_locale', value);
             state.locale = value;
@@ -93,6 +117,9 @@ export default new createStore({
         layout(state) {
             return state.layout;
         },
+        is_auth(state) {
+            return state.is_auth
+        }
     },
     actions: {},
     modules: {},
