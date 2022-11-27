@@ -1,4 +1,11 @@
 {
+    "contragents": "Contragents",
+    "vehicles": "Vehicles",
+    "polygons": "Polygons",
+    "polygon": "Polygon",
+    "controler": "Controler",
+    "catalog": "Catalog",
+    "name": "Name",
     "dashboard": "Dashboard",
     "sales": "Sales",
     "analytics": "Analytics",

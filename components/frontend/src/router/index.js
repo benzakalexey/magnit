@@ -9,11 +9,31 @@ import store from '../store';
 // app.use(createRouter);
 
 const routes = [
-    //dashboard
+    //magnit
     { 
         path: '/polygon', 
         name: 'polygon', 
         component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/polygon.vue'),
+    },
+    { 
+        path: '/vehicles', 
+        name: 'vehicles', 
+        component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/catalogs/vehicles.vue'),
+    },
+    { 
+        path: '/users', 
+        name: 'users', 
+        component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/catalogs/users.vue'),
+    },
+    { 
+        path: '/polygons', 
+        name: 'polygons', 
+        component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/catalogs/polygons.vue'),
+    },
+    { 
+        path: '/contragents', 
+        name: 'contragents', 
+        component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/catalogs/contragents.vue'),
     },
 
 
@@ -562,13 +582,17 @@ const router = new createRouter({
     },
 });
 
+/**
+ * Проверяем что есть токен
+ * @type {boolean}
+ */
+const isAuthorized = localStorage.hasOwnProperty('token')
+
 router.beforeEach((to, from, next) => {
     if (to.meta && to.meta.layout && to.meta.layout == 'auth') {
         store.commit('setLayout', 'auth');
     } else {
-        if (store.state.is_auth === false) {
-            return next({ name: 'login' });
-        }
+        if (!isAuthorized) next({ name: 'login' });
         store.commit('setLayout', 'app');
     }
     next(true);

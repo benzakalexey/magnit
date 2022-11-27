@@ -1,4 +1,4 @@
-# cork-vue3
+# magnit
 
 ## Project setup
 ```

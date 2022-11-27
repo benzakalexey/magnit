@@ -1,19 +1,6 @@
 import { createStore } from 'vuex';
+import { AuthModule } from './modules/AuthModule';
 import i18n from '../i18n';
-
-class User {
-    constructor (
-        first_name,
-        second_name, 
-        last_name, 
-        user_role,
-        e_mail,
-        phone_number,
-
-    ) {
-
-    }
-}
 
 export default new createStore({
     state: {
@@ -36,21 +23,8 @@ export default new createStore({
         menu_style: 'vertical',
         layout_style: 'full',
         countryList: [
-            { code: 'zh', name: 'Chinese' },
-            { code: 'da', name: 'Danish' },
             { code: 'en', name: 'English' },
-            { code: 'fr', name: 'French' },
-            { code: 'de', name: 'German' },
-            { code: 'el', name: 'Greek' },
-            { code: 'hu', name: 'Hungarian' },
-            { code: 'it', name: 'Italian' },
-            { code: 'ja', name: 'Japanese' },
-            { code: 'pl', name: 'Polish' },
-            { code: 'pt', name: 'Portuguese' },
             { code: 'ru', name: 'Russian' },
-            { code: 'es', name: 'Spanish' },
-            { code: 'sv', name: 'Swedish' },
-            { code: 'tr', name: 'Turkish' },
         ],
     },
     mutations: {
@@ -122,5 +96,7 @@ export default new createStore({
         }
     },
     actions: {},
-    modules: {},
+    modules: {
+        AuthModule,
+    },
 });
