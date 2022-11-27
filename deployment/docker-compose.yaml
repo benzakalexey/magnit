@@ -1,0 +1,19 @@
+version: '3.7'
+
+services:
+  frontend:
+    restart: always
+    container_name: frontend_magnit
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - '8080:80'
+  app:
+    restart: always
+    container_name: backend_magnit
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - '8000:80'
