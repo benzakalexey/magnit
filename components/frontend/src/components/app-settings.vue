@@ -2,7 +2,7 @@
     <div>
         <div class="overlay-setting" :class="{ show: isOpen }" @click="isOpen = !isOpen"></div>
 
-        <div class="left-side-modal" :class="{ active: isOpen }">
+        <div class="right-side-modal" :class="{ active: isOpen }">
             <a href="javascript:;" id="settingbutton" class="setting" @click="isOpen = !isOpen">
                 <h5 class="mb-0">
                     <svg

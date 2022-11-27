@@ -1081,7 +1081,6 @@
     const store = useStore();
 
     const selectedLang = ref(null);
-    const countryList = ref(store.state.countryList);
 
     const i18n = useI18n();
 

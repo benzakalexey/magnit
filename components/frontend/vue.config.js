@@ -1,9 +1,13 @@
 const path = require('path');
+
+const dotenv = require('dotenv')
+dotenv.config()
+
 module.exports = {
     pluginOptions: {
         i18n: {
-            locale: 'en',
-            fallbackLocale: 'en',
+            locale: 'ru',
+            fallbackLocale: 'ru',
             localeDir: 'locales',
             enableInSFC: false
         }

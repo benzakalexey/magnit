@@ -81,7 +81,7 @@
         "checked_out": "01.01.2022 7:57:01",
         "weight_out": "18240",
         "loading_weight": 10920,
-        "status": 0
+        "status": 2
     },
     {
         "id": 7,
@@ -165,7 +165,7 @@
         "checked_out": "01.01.2022 7:37:41",
         "weight_out": "14020",
         "loading_weight": 7420,
-        "status": 0
+        "status": 2
     },
     {
         "id": 13,
@@ -179,7 +179,7 @@
         "checked_out": "01.01.2022 7:44:59",
         "weight_out": "13340",
         "loading_weight": 5960,
-        "status": 0
+        "status": 2
     },
     {
         "id": 14,
@@ -193,7 +193,7 @@
         "checked_out": "01.01.2022 7:55:06",
         "weight_out": "8360",
         "loading_weight": 620,
-        "status": 0
+        "status": 2
     },
     {
         "id": 15,
@@ -277,6 +277,6 @@
         "checked_out": "01.01.2022 8:25:34",
         "weight_out": "8380",
         "loading_weight": 660,
-        "status": 0
+        "status": 2
     }
 ]

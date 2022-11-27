@@ -5,61 +5,29 @@
             <div class="shadow-bottom"></div>
 
             <perfect-scrollbar class="list-unstyled menu-categories" tag="ul" :options="{ wheelSpeed: 0.5, swipeEasing: !0, minScrollbarLength: 40, maxScrollbarLength: 300, suppressScrollX: true }">
-                
                 <li class="menu">
-                    <a class="dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#polygon" aria-controls="polygon" aria-expanded="false">
+                    <router-link to="/polygon" class="dropdown-toggle" @click="toggleMobileMenu">
                         <div class="">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                class="feather feather-home"
+                            <svg 
+                                xmlns="http://www.w3.org/2000/svg" 
+                                width="24" 
+                                height="24" 
+                                viewBox="0 0 24 24" 
+                                fill="none" 
+                                stroke="currentColor" 
+                                stroke-width="2" 
+                                stroke-linecap="round" 
+                                stroke-linejoin="round" 
+                                class="feather feather-triangle" 
                             >
-                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                            </svg>
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path></svg>
                             <span>{{ $t('polygon') }}</span>
                         </div>
-                        <div>
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                class="feather feather-chevron-right"
-                            >
-                                <polyline points="9 18 15 12 9 6"></polyline>
-                            </svg>
-                        </div>
-                    </a>
-
-                    <ul id="polygon" class="collapse submenu list-unstyled" data-bs-parent="#sidebar">
-                        <li>
-                            <router-link to="/polygon" @click="toggleMobileMenu">
-                                {{ $t('controler') }}
-                            </router-link>
-                        </li>
-                        <!-- <li>
-                            <router-link to="/index2" @click="toggleMobileMenu">
-                                {{ $t('analytics') }}
-                            </router-link>
-                        </li> -->
-                    </ul>
+                    </router-link>
                 </li>
                 
                 <li class="menu">
-                    <a class="dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#catalog" aria-controls="catalog" aria-expanded="false">
+                    <a class="dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#catalogs" aria-controls="catalog" aria-expanded="false">
                         <div class="">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -71,10 +39,11 @@
                                 stroke-width="2"
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
-                                class="feather feather-home"
+                                class="feather feather-layers"
                             >
-                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                                <polyline points="2 17 12 22 22 17"></polyline>
+                                <polyline points="2 12 12 17 22 12"></polyline>
                             </svg>
                             <span>{{ $t('catalog') }}</span>
                         </div>
@@ -96,19 +65,35 @@
                         </div>
                     </a>
 
-                    <ul id="polygon" class="collapse submenu list-unstyled" data-bs-parent="#sidebar">
+                    <ul id="catalogs" class="collapse submenu list-unstyled" data-bs-parent="#sidebar">
                         <li>
-                            <router-link to="/catalog" @click="toggleMobileMenu">
-                                {{ $t('catalog') }}
+                            <router-link to="/vehicles" @click="toggleMobileMenu">
+                                {{ $t('vehicles') }}
                             </router-link>
                         </li>
-                        <!-- <li>
-                            <router-link to="/index2" @click="toggleMobileMenu">
-                                {{ $t('analytics') }}
+                        <li>
+                            <router-link to="/users" @click="toggleMobileMenu">
+                                {{ $t('users') }}
                             </router-link>
-                        </li> -->
+                        </li>
+                        <li>
+                            <router-link to="/contragents" @click="toggleMobileMenu">
+                                {{ $t('contragents') }}
+                            </router-link>
+                        </li>  
+                        <li>
+                            <router-link to="/polygons" @click="toggleMobileMenu">
+                                {{ $t('polygons') }}
+                            </router-link>
+                        </li>                        
                     </ul>
                 </li>
+
+                <hr/>
+                <hr/>
+                <hr/>
+                <hr/>
+                <hr/>
                 
                 
                 <li class="menu">

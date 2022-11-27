@@ -1,9 +1,12 @@
 {
+    "contragents": "Контрагенты",
+    "vehicles": "Автомобили",
+    "polygons": "Полигоны",
     "polygon": "Полигон",
     "controler": "Контролер",
     "catalog": "Справочники",
     "name": "Номер пропуска",
-    "dashboard": "Щиток приборов",
+    "dashboard": "Дашборд",
     "sales": "Продажи",
     "analytics": "Аналитика",
     "apps": "Программы",

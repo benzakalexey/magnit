@@ -7,6 +7,10 @@ const app = createApp(App);
 // axios 
 import VueAxios from "vue-axios";
 import axios from "axios";
+
+// const baseURL = process.env.API_URL;
+
+// axios.defaults.baseURL = baseURL;
 app.config.globalProperties.axios=axios;
 
 // bootstrap
@@ -56,5 +60,6 @@ import 'vue3-form-wizard/dist/style.css';
 import appSetting from './app-setting';
 window.$appSetting = appSetting;
 window.$appSetting.init();
+
 
 app.use(VueAxios, axios).use(store).use(router).use(i18n).use(PerfectScrollbar).use(VueNouislider).use(Maska).use(ClientTable).use(vue3JsonExcel).use(VueFormWizard).use(head).mount('#app');

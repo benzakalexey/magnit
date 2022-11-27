@@ -51,7 +51,7 @@ export default {
         }
 
         if (!lang) {
-            lang = store.state.countryList.find((d) => d.code === 'en');
+            lang = store.state.countryList.find((d) => d.code === 'ru');
         }
 
         store.commit('toggleLocale', lang.code);
