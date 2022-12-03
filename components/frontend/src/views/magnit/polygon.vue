@@ -2,10 +2,11 @@
 import { onMounted, ref } from 'vue';
 import { useMeta } from '@/composables/use-meta';
 import { VisitsAPI } from '@/api/visitsAPI';
-
+import { useStore } from 'vuex';
 import addVisit from '@/components/magnit/forms/addVisit';
 import visitDetails from '@/components/magnit/forms/visitDetails';
 
+const store = useStore();
 useMeta({ title: 'Полигон' });
 
 const columns = ref([
@@ -70,7 +71,7 @@ const table_option = ref({
 });
 const statuses = {
     0: `<span class="badge inv-status badge-warning">На полигоне</span>`,
-    1: `<span class="badge inv-status badge-success">Завершен</span>`,
+    1: `<span class="badge inv-status badge-success">Выехал</span>`,
     2: `<span class="badge inv-status badge-dark">Удален</span>`,
 };
 
@@ -80,10 +81,21 @@ const openDetails = (i) => {
 };
 const closeDetails = () => {
     isOpen.value = !isOpen.value;
-    console.log(isOpen.value)
+};
+const deleteItem = (id, reason) => {
+    store.dispatch('VisitsModule/delete', {
+        id: id,
+        reason: reason,
+    }).then((res) => {
+        if (res.data.success) {
+            new window.Swal('Удалено!', 'Данные помечены как удаленные.', 'success')
+        }
+    }).catch((error) => new window.Swal('Ошибка!', error.message, 'error'))
 };
 
-onMounted(VisitsAPI.get_all().then((res) => (items.value = res.data)));
+onMounted(
+    store.dispatch('VisitsModule/update'),
+);
 
 </script>
 
@@ -109,7 +121,8 @@ onMounted(VisitsAPI.get_all().then((res) => (items.value = res.data)));
             <div class="col-xl-12 col-lg-12 col-sm-12 layout-spacing">
                 <div class="panel br-6 p-0">
                     <div class="custom-table">
-                        <v-client-table :data="items" :columns="columns" :options="table_option">
+                        <v-client-table :data="store.state.VisitsModule.visits" :columns="columns"
+                            :options="table_option">
                             <template #status="props">
                                 <div v-html="statuses[props.row.status]"></div>
                             </template>
@@ -128,6 +141,6 @@ onMounted(VisitsAPI.get_all().then((res) => (items.value = res.data)));
     </div>
 
     <addVisit></addVisit>
-    <visitDetails :item="item" :isOpen="isOpen" @closed="closeDetails">
+    <visitDetails :item="item" :isOpen="isOpen" @closed="closeDetails" @deleted="deleteItem">
     </visitDetails>
 </template>

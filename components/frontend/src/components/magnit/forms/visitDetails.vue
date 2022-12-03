@@ -1,6 +1,6 @@
 <script setup>
 import '@/assets/sass/visits/visits.scss';
-import { ref, computed, toRefs } from 'vue';
+import { ref, computed, toRefs, watch, watchEffect } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
 import { minLength, required, numeric } from '@vuelidate/validators';
 import largeCenterModal from '@/components/magnit/modals/largeCenterModal';
@@ -21,7 +21,12 @@ const props = defineProps({
     isOpen: false,
     item: false,
 });
-const { item } = toRefs(props)
+const { item } = toRefs(props);
+
+const isOpen = ref(false);
+watchEffect(() => (isOpen.value = props.isOpen))
+
+
 const requiredNameLength = ref(3);
 const rules = computed(() => ({
     permit_num: {
@@ -37,12 +42,23 @@ const rules = computed(() => ({
 }));
 
 const v$ = useVuelidate(rules, { permit_num, weight });
-const emit = defineEmits(['closed']);
+const emit = defineEmits(['closed', 'deleted']);
 const close = () => {
     emit('closed');
 };
-const deleteVisit = () => {
-    new window.Swal({
+const deleteVisit = async () => {
+    close();
+    const deleteReasonQ = window.Swal.mixin({
+        confirmButtonText: 'Далее →',
+        showCancelButton: true,
+        input: 'text',
+        inputAttributes: {
+            required: true,
+        },
+        validationMessage: 'Обязательно для заполнения!',
+        padding: '2em',
+    });
+    const deleteConfirmQ = window.Swal.mixin({
         icon: 'warning',
         title: 'Уверены что хотите удалить?',
         text: "Информацию о визите невозможно восстановить!",
@@ -50,18 +66,42 @@ const deleteVisit = () => {
         cancelButtonText: 'Отменить',
         confirmButtonText: 'Удалить',
         padding: '2em',
-    }).then((result) => {
-        if (result.value) {
-            new window.Swal('Удалено!', 'Данные помечены как удаленные.', 'success');
-            item.value.status = 2
-        }
     });
+
+    let delete_reason;
+    for (let step = 0; step < 2; step++) {
+        if (step === 0) {
+            const result = await deleteReasonQ.fire({
+                title: 'Удаление визита',
+                text: 'Укажите причину удаления',
+                showCancelButton: true,
+                cancelButtonText: 'Отменить',
+                currentProgressStep: step,
+            });
+            
+            if (result.dismiss === window.Swal.DismissReason.cancel) {
+                break;
+            };
+            
+            if (result.dismiss === window.Swal.DismissReason.backdrop) {
+                break;
+            };
+
+            delete_reason = result.value;
+            continue;
+        };
+
+        const result = await deleteConfirmQ.fire();
+        if (result.value) {
+            emit('deleted', item.value.id, delete_reason)
+        };
+    }
 }
 
 </script>
 
 <template>
-    <largeCenterModal :modalTitle="modalTitle" :status="item.status" :isOpen="props.isOpen" @closed="close">
+    <largeCenterModal :modalTitle="modalTitle" :status="item.status" @closed="close" :isOpen="isOpen">
 
         <template #form>
             <form>
@@ -125,7 +165,7 @@ const deleteVisit = () => {
         </template>
 
         <template #submitButton>
-            <button type="button" class="btn btn-primary">Сохранить</button>
+            <button type="button" class="btn btn-primary" @click="test">Сохранить</button>
         </template>
 
     </largeCenterModal>

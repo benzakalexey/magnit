@@ -25,7 +25,7 @@
       </ENTRIES>
     </EXTENSION>
     <option name="SCRIPT_NAME" value="gunicorn" />
-    <option name="PARAMETERS" value="composites.api:app --workers 1 --timeout 2000" />
+    <option name="PARAMETERS" value="composites.api:app --workers 1 --timeout 2000 --bind 0.0.0.0:8082" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="true" />

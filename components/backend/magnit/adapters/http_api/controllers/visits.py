@@ -13,7 +13,7 @@ from magnit.application import services
 
 
 @component
-@authenticator_needed
+# @authenticator_needed
 class Visits:
     service: services.Visit
 
@@ -22,15 +22,15 @@ class Visits:
         self.logger.debug('Inited')
 
     @join_point
-    @authenticate
-    @authorize(Group('admin'))
+    # @authenticate
+    # @authorize(Group('admin'))
     def on_get_get_by_id(self, request, response):
         visit = self.service.get_by_id(**request.params)
         response.media = visit
 
     @join_point
-    @authenticate
-    @authorize(Group('admin'))
+    # @authenticate
+    # @authorize(Group('admin'))
     def on_get_get_all(self, request, response):
         print('controller - get_all')
         visits = self.service.get_all()
