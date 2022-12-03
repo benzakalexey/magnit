@@ -7,6 +7,8 @@ services:
     build:
       context: ..
       dockerfile: deployment/frontend/Dockerfile
+    environment:
+      - VUE_APP_API_URL=/api
     ports:
       - '8081:80'
   app:
