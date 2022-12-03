@@ -1,5 +1,6 @@
 import { createStore } from 'vuex';
 import { AuthModule } from './modules/AuthModule';
+import { VisitsModule } from './modules/VisitsModule';
 import i18n from '../i18n';
 
 export default new createStore({
@@ -38,7 +39,7 @@ export default new createStore({
             state.is_show_search = value;
         },
         toggleLocale(state, value) {
-            value = value || 'ru';
+            value = 'ru';
             i18n.global.locale = value;
             localStorage.setItem('i18n_locale', value);
             state.locale = value;
@@ -98,5 +99,6 @@ export default new createStore({
     actions: {},
     modules: {
         AuthModule,
+        VisitsModule,
     },
 });

@@ -45,10 +45,10 @@ class Settings(BaseSettings):
                    '{db_host}:{db_port}/{db_name}'
         # port_url = 'mssql+pymssql://{db_user}:{db_pass}@' \
         #            '{db_host}:{db_port}/{db_name}'
-        instance_url = 'mssql+pymssql://{db_user}:{db_pass}@{db_host}/{db_name}'
-        url = port_url if self.PORT else instance_url
+        # instance_url = 'mssql+pymssql://{db_user}:{db_pass}@{db_host}/{db_name}'
+        # url = port_url if self.PORT else instance_url
 
-        return url.format(
+        return port_url.format(
             db_user=self.USER,
             db_pass=self.PASS,
             db_host=self.HOST,

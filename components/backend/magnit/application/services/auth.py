@@ -8,7 +8,7 @@ class AAA:
     """Autenification, Authorization, Audit
     """
 
-    tokens_blacklist: interfaces.TokensBlacklistRepo
+    # tokens_blacklist: interfaces.TokensBlacklistRepo
     users: interfaces.UserRepo
 
 

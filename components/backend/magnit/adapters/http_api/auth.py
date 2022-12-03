@@ -21,8 +21,8 @@ auth_dummy_strategy = auth_strategies.Dummy(
 
 authenticator = Authenticator(app_groups=groups)
 
-is_dev = True
-if is_dev:
-    authenticator.set_strategies(auth_dummy_strategy)
-else:
-    authenticator.set_strategies(auth_strategy)
+# is_dev = True
+# if is_dev:
+#     authenticator.set_strategies(auth_dummy_strategy)
+# else:
+#     authenticator.set_strategies(auth_strategy)

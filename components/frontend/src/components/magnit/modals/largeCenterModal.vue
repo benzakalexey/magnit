@@ -22,7 +22,9 @@ const close = () => {
     modal.hide();
     emit('closed');
 }
-watch(() => props.isOpen, (n, _) => { if (n) modal.show() })
+watch(() => props.isOpen, (n, _) => {
+    if (n) { modal.show() } else { modal.hide() }
+})
 
 </script>
 
@@ -34,7 +36,7 @@ watch(() => props.isOpen, (n, _) => { if (n) modal.show() })
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">{{ props.modalTitle }}</h5>
                     <span v-if="props.status == 0" class="badge inv-status badge-warning ms-auto">На полигоне</span>
-                    <span v-if="props.status == 1" class="badge inv-status badge-success ms-auto">Завершен</span>
+                    <span v-if="props.status == 1" class="badge inv-status badge-success ms-auto">Выехал</span>
                     <span v-if="props.status == 2" class="badge inv-status badge-dark ms-auto">Удален</span>
                     <button type="button" aria-label="Close" class="btn-close ms-4" @click="close"></button>
                 </div>

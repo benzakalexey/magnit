@@ -5,15 +5,24 @@ services:
     restart: always
     container_name: frontend_magnit
     build:
-      context: .
-      dockerfile: frontend/Dockerfile
+      context: ..
+      dockerfile: deployment/frontend/Dockerfile
     ports:
-      - '8080:80'
+      - '8081:80'
   app:
     restart: always
     container_name: backend_magnit
     build:
-      context: .
-      dockerfile: backend/Dockerfile
+      context: ..
+      dockerfile: deployment/backend/Dockerfile
+    env_file:
+      - ../config.env
     ports:
-      - '8000:80'
+      - '8082:8082'
+#    volumes:
+#      - ../components/backend/magnit:/app
+#      - type: bind
+#      - /absolute/path/to/.env/:/app/
+    command:
+      bash -c ". /usr/local/bin/entrypoint_migrations.sh \
+      && . /usr/local/bin/entrypoint_api.sh"

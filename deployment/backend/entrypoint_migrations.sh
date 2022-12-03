@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 set -e
-magnit alembic upgrade head
+python -m magnit.composites.alembic_runner upgrade head
