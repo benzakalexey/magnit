@@ -10,14 +10,14 @@ const LoginConfig = {
 export const LoginAPIInstance = axios.create(LoginConfig);
 
 const defaultConfig = {
-    // baseURL: process.env.API_URL, 
+    // baseURL: process.env.VUE_APP_API_URL,
     headers: {
         'Content-Type': 'application/json',
     }
 }
 
-const token = localStorage.getItem('token');
-if (token) defaultConfig.headers['authorization'] = `Bearer ${token}`
+// const token = localStorage.getItem('token');
+// if (token) defaultConfig.headers['authorization'] = `Bearer ${token}`
 
 export const DefaultAPIInstance = axios.create(defaultConfig);
 

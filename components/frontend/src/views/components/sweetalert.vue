@@ -733,7 +733,7 @@ toast.fire({
                 },
                 validationMessage: 'This field is required',
                 padding: '2em',
-            });
+            }); 
 
             const values = [];
             let currentStep;

@@ -1,6 +1,5 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import axios from 'axios'
 import { useMeta } from '@/composables/use-meta';
 import addVisit from '@/components/magnit/forms/addVisit'
 import { VisitsAPI } from "@/api/visitsAPI";
