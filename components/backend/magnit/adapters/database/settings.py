@@ -43,10 +43,6 @@ class Settings(BaseSettings):
     def DATABASE_URL(self):    # noqa
         port_url = 'postgresql://{db_user}:{db_pass}@' \
                    '{db_host}:{db_port}/{db_name}'
-        # port_url = 'mssql+pymssql://{db_user}:{db_pass}@' \
-        #            '{db_host}:{db_port}/{db_name}'
-        # instance_url = 'mssql+pymssql://{db_user}:{db_pass}@{db_host}/{db_name}'
-        # url = port_url if self.PORT else instance_url
 
         return port_url.format(
             db_user=self.USER,

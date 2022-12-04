@@ -5,10 +5,10 @@
     <option name="PARENT_ENVS" value="true" />
     <envs>
       <env name="PYTHONUNBUFFERED" value="1" />
-      <env name="DEV_CONFIG" value="config.env" />
+      <env name="DEV_CONFIG" value="./config.env" />
     </envs>
     <option name="SDK_HOME" value="" />
-    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/components/backend" />
     <option name="IS_MODULE_SDK" value="true" />
     <option name="ADD_CONTENT_ROOTS" value="true" />
     <option name="ADD_SOURCE_ROOTS" value="true" />
@@ -24,7 +24,7 @@
         <ENTRY IS_ENABLED="false" PARSER="env" PATH="config_alembic.env" />
       </ENTRIES>
     </EXTENSION>
-    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/magnit_app/components/backend/magnit/composites/alembic_runner.py" />
+    <option name="SCRIPT_NAME" value="magnit/composites/alembic_runner.py" />
     <option name="PARAMETERS" value="downgrade -1" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />

@@ -10,5 +10,5 @@ class PermitRepo(BaseRepo, interfaces.PermitRepo):
 
 
 @component
-class PermitLogRepo(BaseRepo, interfaces.PermitLogRepo):
-    dto = entities.PermitLog
+class PermitLogRepo(BaseRepo, interfaces.PermissionRepo):
+    dto = entities.Permission

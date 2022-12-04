@@ -21,10 +21,6 @@ services:
       - ../config.env
     ports:
       - '8082:8082'
-#    volumes:
-#      - ../components/backend/magnit:/app
-#      - type: bind
-#      - /absolute/path/to/.env/:/app/
     command:
       bash -c ". /usr/local/bin/entrypoint_migrations.sh \
       && . /usr/local/bin/entrypoint_api.sh"

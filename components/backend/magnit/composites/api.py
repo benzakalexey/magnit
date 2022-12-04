@@ -1,6 +1,7 @@
-from sqlalchemy import create_engine
+import secrets
 
 from classic.sql_storage import TransactionContext
+from sqlalchemy import create_engine
 
 from magnit.adapters import database, logger, http_api
 from magnit.adapters.database import repositories
@@ -22,6 +23,8 @@ class Logger:
 class DB:
     engine = create_engine(Settings.db.DATABASE_URL)
     context = TransactionContext(bind=engine, expire_on_commit=False)
+
+    # repos
     users_repo = repositories.UserRepo(context=context)
     contragents_repo = repositories.ContragentRepo(context=context)
     polygons_repo = repositories.PolygonRepo(context=context)
@@ -32,10 +35,10 @@ class DB:
     permits_log_repo = repositories.PermitLogRepo(context=context)
     visits_repo = repositories.VisitRepo(context=context)
     docs_log_repo = repositories.DocLogRepo(context=context)
-    copy_visits_repo = repositories.CopyVisitRepo(context=context)
 
 
 class Application:
+    auth_service = services.Auth(users_repo=DB.users_repo)
     user = services.User(
         users_repo=DB.users_repo,
         contragents_repo=DB.contragents_repo,
@@ -76,11 +79,7 @@ class Application:
         users_repo=DB.users_repo,
         polygons_repo=DB.polygons_repo,
         vehicle_repo=DB.vehicles_repo,
-        copy_visits_repo=DB.copy_visits_repo,
         secondary_routes_repo=DB.secondary_routes_repo,
-    )
-    copy_visit = services.CopyVisit(
-        copy_visits_repo=DB.copy_visits_repo
     )
     doc = services.Doc(
         visits_repo=DB.visits_repo,
@@ -98,17 +97,25 @@ class Aspects:
     http_api.join_points.join(DB.context)
 
 
+if Settings.http_api.IS_DEV_MODE:
+    key = ''
+    allow_all_origins = True
+else:
+    key = secrets.token_urlsafe(16)
+    allow_all_origins = False
+
 app = http_api.create_app(
-    user=Application.user,
+    allow_all_origins=allow_all_origins,
+    auth_service=Application.auth_service,
     contragent=Application.contragent,
-    polygon=Application.polygon,
-    secondary_route=Application.secondary_route,
-    vehicle_model=Application.vehicle_model,
-    vehicle=Application.vehicle,
+    doc=Application.doc,
+    doc_log=Application.doc_log,
     permit=Application.permit,
     permit_log=Application.permit_log,
+    polygon=Application.polygon,
+    secondary_route=Application.secondary_route,
+    user=Application.user,
+    vehicle=Application.vehicle,
+    vehicle_model=Application.vehicle_model,
     visit=Application.visit,
-    copy_visit=Application.copy_visit,
-    doc_log=Application.doc_log,
-    doc=Application.doc,
 )

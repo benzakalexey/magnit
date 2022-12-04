@@ -16,8 +16,7 @@ const defaultConfig = {
     }
 }
 
-// const token = localStorage.getItem('token');
-// if (token) defaultConfig.headers['authorization'] = `Bearer ${token}`
+const token = localStorage.getItem('token');
+if (token) defaultConfig.headers['authorization'] = `Bearer ${token}`
 
 export const DefaultAPIInstance = axios.create(defaultConfig);
-

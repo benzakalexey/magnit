@@ -1,6 +1,7 @@
 import { createStore } from 'vuex';
 import { AuthModule } from './modules/AuthModule';
 import { VisitsModule } from './modules/VisitsModule';
+import { PermitsModule } from './modules/PermitsModule';
 import i18n from '../i18n';
 
 export default new createStore({
@@ -100,5 +101,6 @@ export default new createStore({
     modules: {
         AuthModule,
         VisitsModule,
+        PermitsModule,
     },
 });

@@ -7,18 +7,12 @@ from pydantic import conint, Field
 from magnit.application import constants
 
 
-class UserInfo(DTO):
-    login: str
+class UserAddInfo(DTO):
+    phone_number: str
     password: str
-    last_name: str = Field(description='Фамилия')
-    first_name: str = Field(description='Имя')
-    second_name: Optional[str] = Field(description='Отчество')
     user_role: constants.UserRole
-    contragent_id: conint(gt=0)
-    polygon_id: Optional[conint(gt=0)]
-    user_position: str = Field(description='Должность')
-    phone_number: Optional[str]
-    e_mail: Optional[str]
+    first_name: str
+    last_name: str
 
 
 class ContragentInfo(DTO):
@@ -70,7 +64,7 @@ class PermitInfo(DTO):
 class PermitLogInfo(DTO):
     permit_id: conint(gt=0)
     user_id: conint(gt=0)
-    operation_type: constants.PermitOperationType
+    # operation_type: constants.PermitOperationType
     valid_to: datetime
 
 

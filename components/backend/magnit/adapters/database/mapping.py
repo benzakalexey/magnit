@@ -1,22 +1,42 @@
-from sqlalchemy.orm import registry, relationship
+from sqlalchemy.orm import registry, relationship, backref
 
 from magnit.adapters.database import tables
 from magnit.application import entities
 
 mapper = registry()
 
-mapper.map_imperatively(entities.Contragent, tables.contragents)
-
+mapper.map_imperatively(entities.User, tables.users)
+mapper.map_imperatively(entities.VehicleModel, tables.vehicle_models)
+mapper.map_imperatively(
+    entities.Contragent,
+    tables.contragents,
+    properties={
+        'polygons': relationship(
+            entities.Polygon,
+            lazy='select',
+            cascade='all, delete, delete-orphan',
+            backref=backref('owner')
+        ),
+        'employees': relationship(
+            entities.User,
+            lazy='select',
+            cascade='all, delete, delete-orphan',
+            backref=backref('contragent')
+        )
+    },
+)
 mapper.map_imperatively(
     entities.Polygon,
-    tables.polygon,
+    tables.polygons,
     properties={
-        'owner': relationship(
-            entities.Contragent, uselist=False, lazy='joined',
+        'employees': relationship(
+            entities.User,
+            lazy='select',
+            cascade='all, delete, delete-orphan',
+            backref=backref('polygon')
         )
-    }
+    },
 )
-
 mapper.map_imperatively(
     entities.SecondaryRoute,
     tables.secondary_routes,
@@ -31,67 +51,43 @@ mapper.map_imperatively(
         )
     }
 )
-
-mapper.map_imperatively(
-    entities.User,
-    tables.users,
-    properties={
-        'contragent': relationship(
-            entities.Contragent, uselist=False, lazy='joined',
-        ),
-        'polygon': relationship(
-            entities.Polygon, uselist=False, lazy='joined',
-        )
-    }
-)
-
-mapper.map_imperatively(entities.VehicleModel, tables.vehicle_models)
-
 mapper.map_imperatively(
     entities.Vehicle,
     tables.vehicles,
     properties={
         'model': relationship(
-            entities.VehicleModel, uselist=False, lazy='joined',
+            entities.VehicleModel, uselist=False, lazy='select',
         )
     }
 )
-
 mapper.map_imperatively(
-    entities.Permit,
-    tables.permits,
+    entities.Permission,
+    tables.permissions,
     properties={
-        'operator': relationship(
-            entities.User, uselist=False, lazy='joined',
-        ),
-        'vehicle': relationship(
-            entities.Vehicle, uselist=False, lazy='joined',
-        ),
-        'contragent': relationship(
-            entities.Contragent, uselist=False, lazy='joined',
-        )
-    }
-)
-
-mapper.map_imperatively(
-    entities.PermitLog,
-    tables.permit_log,
-    properties={
-        'permit': relationship(
-            entities.Permit, uselist=False, lazy='joined',
-        ),
         'user': relationship(
             entities.User, uselist=False, lazy='joined',
         )
     }
+)
+mapper.map_imperatively(
+    entities.Permit,
+    tables.permits,
+    properties={
+        'permissions': relationship(
+            entities.Permission,
+            lazy='select',
+            backref=backref('permit'),
+            order_by='desc(entities.Permission.added_at)'
+        ),
+    },
 )
 
 mapper.map_imperatively(
     entities.Visit,
     tables.visits,
     properties={
-        'permit': relationship(
-            entities.Permit, uselist=False, lazy='joined',
+        'permission': relationship(
+            entities.Permission, uselist=False, lazy='joined',
         ),
         'polygon': relationship(
             entities.Polygon, uselist=False, lazy='joined',
@@ -126,35 +122,8 @@ mapper.map_imperatively(
     entities.DocsLog,
     tables.docs_log,
     properties={
-        'visit': relationship(
-            entities.Visit, uselist=False, lazy='joined',
-        ),
         'user': relationship(
             entities.User, uselist=False, lazy='joined',
-        )
-    }
-)
-
-mapper.map_imperatively(
-    entities.CopyVisit,
-    tables.copy_visits,
-    properties={
-        'visit': relationship(
-            entities.Visit, uselist=False, lazy='joined',
-        ),
-        'permit': relationship(
-            entities.Permit, uselist=False, lazy='joined',
-        ),
-        'polygon': relationship(
-            entities.Polygon, uselist=False, lazy='joined',
-            foreign_keys=[tables.copy_visits.c.polygon_id],
-        ),
-        'driver': relationship(
-            entities.User, uselist=False, lazy='joined',
-        ),
-        'destination': relationship(
-            entities.Polygon, uselist=False, lazy='joined',
-            foreign_keys=[tables.copy_visits.c.destination_id],
         )
     }
 )
