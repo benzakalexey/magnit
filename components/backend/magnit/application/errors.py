@@ -1,6 +1,26 @@
 from classic.app.errors import AppError
 
 
+class AuthenticationError(AppError):
+    msg_template = 'Authentication error'
+    code = 'magnit.auth.authentication_error'
+
+
+class AuthorizationError(AppError):
+    msg_template = 'Authorization error'
+    code = 'magnit.auth.authorization_error'
+
+
+class TokenDecodeError(AppError):
+    msg_template = 'Token decode error'
+    code = 'magnit.auth.token_decode_error'
+
+
+class TokenExpiredError(AppError):
+    msg_template = 'Token expired.'
+    code = 'magnit.auth.token_expired_error'
+
+
 class UserFirstNameIsNoneError(AppError):
     msg_template = 'Имя Пользователя не может быть пустым.'
     code = 'magnit.users.user_first_name_is_none_error'

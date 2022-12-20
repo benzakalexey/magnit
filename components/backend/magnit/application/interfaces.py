@@ -11,6 +11,13 @@ class UserRepo(ABC):
         ...
 
     @abstractmethod
+    def get_by_phone_number(
+        self,
+        phone_number: int,
+    ) -> Optional[entities.User]:
+        ...
+
+    @abstractmethod
     def get_all(self) -> List[entities.User]:
         ...
 
@@ -148,18 +155,18 @@ class PermitRepo(ABC):
         ...
 
 
-class PermitLogRepo(ABC):
+class PermissionRepo(ABC):
 
     @abstractmethod
-    def get_by_id(self, id_: int) -> Optional[entities.PermitLog]:
+    def get_by_id(self, id_: int) -> Optional[entities.Permission]:
         ...
 
     @abstractmethod
-    def get_all(self) -> List[entities.PermitLog]:
+    def get_all(self) -> List[entities.Permission]:
         ...
 
     @abstractmethod
-    def add(self, instance: entities.PermitLog):
+    def add(self, instance: entities.Permission):
         ...
 
     @abstractmethod
@@ -198,25 +205,6 @@ class DocLogRepo(ABC):
 
     @abstractmethod
     def add(self, instance: entities.DocsLog):
-        ...
-
-    @abstractmethod
-    def save(self):
-        ...
-
-
-class CopyVisitRepo(ABC):
-
-    @abstractmethod
-    def get_by_id(self, id_: int) -> Optional[entities.CopyVisit]:
-        ...
-
-    @abstractmethod
-    def get_all(self) -> List[entities.CopyVisit]:
-        ...
-
-    @abstractmethod
-    def add(self, instance: entities.CopyVisit):
         ...
 
     @abstractmethod

@@ -7,8 +7,8 @@ export const AuthAPI = {
      * @param {string} password 
      * @returns {Promise<AxiosResponse<any>>}
      */
-    login(login, password) {
-        const url = 'login';
+    login(login, password ) {
+        const url = 'auth/login';
         const data = { login, password };
         return LoginAPIInstance.post(url, data);
     },
@@ -18,7 +18,7 @@ export const AuthAPI = {
      * @returns {Promise<AxiosResponse<any>>}
      */
     logout() {
-        const url = 'login';
+        const url = 'auth/logout';
         return DefaultAPIInstance.post(url);
     },
 }

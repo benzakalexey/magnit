@@ -23,12 +23,19 @@ const set_pwd_type = () => {
 
 const login = ref('')
 const password = ref('')
+const err_show = ref(false)
 
 const onSubmit = () => {
+    const redirectTo = route.redirectedFrom || '/'
     store.dispatch('AuthModule/onLogin', {
         login: login.value,
         password: password.value,
-    }).then(() => { router.push(route.redirectedFrom) })
+    })
+        .then(() => { router.push(redirectTo) })
+        .catch((error) => {
+            err_show.value = true;
+            console.log(error)
+        })
 }
 </script>
 
@@ -42,10 +49,10 @@ const onSubmit = () => {
                             <h1 class="">Вход</h1>
                             <p class="">Введите логин и пароль чтобы продолжить.</p>
 
-                            <form class="text-start" @submit.prevent="onSubmit">
+                            <form class="text-start" novalidate @submit.prevent="onSubmit">
                                 <div class="form">
                                     <div id="username-field" class="field-wrapper input">
-                                        <label for="username">ЛОГИН</label>
+                                        <label for="username">ТЕЛЕФОН</label>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
@@ -53,7 +60,8 @@ const onSubmit = () => {
                                             <circle cx="12" cy="7" r="4"></circle>
                                         </svg>
                                         <input v-model="login" type="text" class="form-control"
-                                            placeholder="Введите пароль" />
+                                            v-maska="'#(###) ###-####'" placeholder="(___) ___-____"
+                                            :class="[err_show ? 'is-invalid' : '']" />
                                     </div>
 
                                     <div id="password-field" class="field-wrapper input mb-2">
@@ -69,7 +77,8 @@ const onSubmit = () => {
                                             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                                         </svg>
                                         <input :type="pwd_type" v-model="password" class="form-control"
-                                            placeholder="Пароль" />
+                                            placeholder="Пароль" :class="[err_show ? 'is-invalid' : '']" />
+                                        <div class="invalid-feedback">Неверный номер телефона или пароль!</div>
                                         <svg @click="set_pwd_type" xmlns="http://www.w3.org/2000/svg" width="24"
                                             height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"

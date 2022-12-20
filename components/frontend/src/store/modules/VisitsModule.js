@@ -1,4 +1,3 @@
-import { DefaultAPIInstance } from "@/api";
 import { VisitsAPI } from "@/api/visitsAPI";
 
 export const VisitsModule = {
@@ -25,13 +24,13 @@ export const VisitsModule = {
     },
 
     actions: {
-        update({ commit }) {
-            VisitsAPI.get_all()
-                .then((res) => {
-                    commit('setVisits', res.data)
-                }).catch((err) => {
-                    console.error(err.message)
-                })
+        async update({ commit }) {
+            try {
+                const res = await VisitsAPI.get_all();
+                commit('setVisits', res.data);
+            } catch (err) {
+                throw err;
+            }
         },
         
         async delete({commit}, { id, reason }) { 

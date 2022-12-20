@@ -45,8 +45,8 @@
 
                     <ul id="catalogs" class="collapse submenu list-unstyled" data-bs-parent="#sidebar">
                         <li>
-                            <router-link to="/vehicles" @click="toggleMobileMenu">
-                                {{ $t('vehicles') }}
+                            <router-link to="/permits" @click="toggleMobileMenu">
+                                {{ $t('permits') }}
                             </router-link>
                         </li>
                         <li>

@@ -6,7 +6,7 @@ export const VisitsAPI = {
      * @returns {Promise<AxiosResponse<any>>}
      */
     get_all() {
-        const url = 'visits.json';
+        const url = 'visits/get_all';
         return DefaultAPIInstance.get(url);
     },
     /**Пометить визит как удаленный

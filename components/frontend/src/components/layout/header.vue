@@ -433,7 +433,7 @@
                                 </router-link>
                             </li>
                             <li role="presentation">
-                                <router-link to="/auth/login" class="dropdown-item">
+                                <router-link to="/auth/logout" class="dropdown-item">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         width="24"
