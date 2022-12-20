@@ -20,7 +20,7 @@ class Visit:
     users_repo: interfaces.UserRepo
     polygons_repo: interfaces.PolygonRepo
     permits_repo: interfaces.PermitRepo
-    copy_visits_repo: interfaces.CopyVisitRepo
+    # copy_visits_repo: interfaces.CopyVisitRepo
     vehicle_repo: interfaces.VehicleRepo
     secondary_routes_repo: interfaces.SecondaryRouteRepo
 
@@ -37,7 +37,6 @@ class Visit:
 
     @join_point
     def get_all(self):
-        print('here')
         return self.visits_repo.get_all()
 
     @join_point
@@ -131,25 +130,3 @@ class Visit:
         visit.is_deleted = True
         visit.delete_reason = reason
         self.visits_repo.save()
-
-
-@component
-class CopyVisit:
-    """
-    Класс Визиты на полигон (копия)
-    """
-
-    copy_visits_repo: interfaces.CopyVisitRepo
-
-    @join_point
-    @validate_arguments
-    def get_by_id(self, copy_visit_id: conint(gt=0)) -> entities.CopyVisit:
-        copy_visit = self.copy_visits_repo.get_by_id(copy_visit_id)
-        if copy_visit is None:
-            raise errors.VisitIDNotExistError(visit_id=copy_visit_id)
-
-        return copy_visit
-
-    @join_point
-    def get_all(self):
-        return self.copy_visits_repo.get_all()

@@ -5,7 +5,6 @@ from .settings import Settings
 
 
 def configure(*configs: Dict):
-    ...
     result_config = Settings().LOGGING_CONFIG
 
     for config in configs:

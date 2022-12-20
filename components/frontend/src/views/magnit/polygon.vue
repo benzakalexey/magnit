@@ -1,7 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { useMeta } from '@/composables/use-meta';
-import { VisitsAPI } from '@/api/visitsAPI';
 import { useStore } from 'vuex';
 import addVisit from '@/components/magnit/forms/addVisit';
 import visitDetails from '@/components/magnit/forms/visitDetails';

@@ -8,6 +8,11 @@ export const AuthModule = {
             credentials: {
                 token: localStorage.getItem('token') || null,
                 user_role: localStorage.getItem('user_role') || null,
+            },
+            user: {
+                first_name: localStorage.getItem('first_name') || null,
+                last_name: localStorage.getItem('last_name') || null,
+                phone_number: localStorage.getItem('phone_number') || null,
             }
         }
     },
@@ -27,6 +32,15 @@ export const AuthModule = {
             localStorage.setItem('user_role', user_role);
         },
 
+        setUserData(state, first_name, last_name, phone_number) {
+            state.user.first_name = first_name;
+            state.user.last_name = last_name;
+            state.user.phone = phone_number;
+            localStorage.setItem('first_name', first_name);
+            localStorage.setItem('last_name', last_name);
+            localStorage.setItem('phone_number', phone_number);
+        },
+
         deleteToken(state) {
             state.credentials.token = null;
             localStorage.removeItem('token')
@@ -36,27 +50,42 @@ export const AuthModule = {
             state.credentials.user_role = null;
             localStorage.removeItem('user_role')
         },
+
+        deleteUserData(state) {
+            state.user.first_name = null;
+            state.user.last_name = null;
+            state.user.phone = null;
+            localStorage.removeItem('first_name');
+            localStorage.removeItem('last_name');
+            localStorage.removeItem('phone');
+        },
     },
 
     actions: {
         onLogin({ commit }, { login, password }) {
-            AuthAPI.login({ login, password }).then((res) => {
-                commit('setToken', res.token);
-                commit('setUserRole', res.user_role);
-                DefaultAPIInstance.defaults.headers['authorization'] = `Bearer ${res.token}`;
-            }).catch(
-                () => {
-                    commit('setToken', 'defaultSecurityToken');
-                    commit('setUserRole', 'defaultSecurityUserRole');
-                    DefaultAPIInstance.defaults.headers['authorization'] = 'Bearer defaultSecurityToken';
-                }
-            )
+            return AuthAPI.login(login, password)
+                .then((res) => {
+                    commit('setToken', res.data.token);
+                    commit('setUserRole', res.data.user_role);
+                    commit('setUserData', res.data.first_name, res.data.last_name, res.data.phone_number);
+                    DefaultAPIInstance.defaults.headers['Authorization'] = `Bearer ${res.data.token}`;
+                })
+                .catch(
+                    () => {
+                        commit('deleteToken');
+                        commit('deleteUserRole');
+                        commit('deleteUserData');
+                        delete DefaultAPIInstance.defaults.headers['Authorization'];
+                        throw 'Authentication error' // TODO implement specify error 
+                    }
+                )
         },
 
         onLogout({ commit }) {
             commit('deleteToken');
             commit('deleteUserRole');
-            delete DefaultAPIInstance.defaults.headers['authorization'];
+            commit('deleteUserData');
+            delete DefaultAPIInstance.defaults.headers['Authorization'];
         }
     }
 }

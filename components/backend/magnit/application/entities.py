@@ -1,50 +1,58 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field
-from typing import Optional
 from datetime import datetime
+from typing import Optional, List
+
 from magnit.application import constants
 
 
 @dataclass
 class Contragent:
-    name: str
+    """Контрагент (организация)"""
+    contragent_type: constants.ContragentType
     inn: str
     kpp: Optional[str]
-    contragent_type: constants.ContragentType
+    name: str
     address: Optional[str] = None
     phone_number: Optional[str] = None
+    polygons: List[Polygon] = field(default_factory=list)
+    employees: List[User] = field(default_factory=list)
     id: Optional[int] = None
 
 
 @dataclass
 class Polygon:
+    """Полигон"""
     name: str
     full_name: str
     owner: Contragent
     phone_number: Optional[str] = None
     address: Optional[str] = None
+    employees: List[User] = field(default_factory=list)
     id: Optional[int] = None
 
 
 @dataclass
 class SecondaryRoute:
+    """Связь полигонов первого и второго плеча"""
     source_polygon: Polygon
     receiver_polygon: Polygon
-    id: Optional[int] = None
 
 
 @dataclass
 class User:
-    login: str
+    """Пользователь"""
+    phone_number: int
     password: str
+    user_role: constants.UserRole
     first_name: str
     last_name: str
-    user_role: constants.UserRole
-    contragent: Contragent
-    user_position: str
     second_name: Optional[str] = None
-    polygon: Optional[Polygon] = None  #
+    user_position: Optional[str] = None
+    contragent: Optional[Contragent] = None
+    polygon: Optional[Polygon] = None
     e_mail: Optional[str] = None
-    phone_number: Optional[str] = None
     id: Optional[int] = None
 
     @property
@@ -55,69 +63,66 @@ class User:
             self.second_name,
         )
 
-    @property
-    def phone_print(self) -> str:
-        ph_num = ''
-        if self.phone_number:
-            ph_num = self.phone_number
-        return ph_num
 
 @dataclass
 class VehicleModel:
-    model: str
+    """Модель транспортного средства"""
+    name: str
     id: Optional[int] = None
 
 
 @dataclass
 class Vehicle:
+    """Транспортное средство"""
     model: VehicleModel
     reg_number: str
-    pts_number: str
+    sts_number: str
     vehicle_type: constants.VehicleType
     tara: int
     max_weight: int
-    production_year: Optional[int] = None
+    production_year: int
     body_volume: Optional[int] = None
     compress_ratio: Optional[int] = None
     id: Optional[int] = None
 
 
 @dataclass
-class Permit:
-    operator: User
-    vehicle: Vehicle
+class Permission:
+    """Разрешение на допуск на полигон"""
     contragent: Contragent
-    valid_from: datetime
-    valid_to: datetime
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    expired_at: datetime
+    operator: User
+    permit: Permit
+    is_tonar: bool = False
+    added_at: datetime = field(default_factory=datetime.utcnow)
     id: Optional[int] = None
 
     @property
-    def is_tonar(self) -> bool:
-        return self.vehicle.vehicle_type == constants.VehicleType.TONAR
+    def is_valid(self) -> bool:
+        return self.expired_at >= datetime.utcnow()
 
 
 @dataclass
-class PermitLog:
-    permit: Permit
-    user: User
-    operation_type: constants.PermitOperationType
-    valid_to: datetime
-    operated_at: datetime = field(default_factory=datetime.utcnow)
+class Permit:
+    """Пропуск"""
+    number: int
+    vehicle: Vehicle
+    permissions: List[Permission] = field(default_factory=list)
     id: Optional[int] = None
 
 
 @dataclass
 class Visit:
-    permit: Permit
-    polygon: Polygon
+    """Визит на полигон"""
     operator_in: User
+    permission: Permission
+    polygon: Polygon
     weight_in: int
-    driver: Optional[User] = None
-    operator_out: Optional[User] = None
-    weight_out: Optional[int] = None
     checked_in: datetime = field(default_factory=datetime.utcnow)
     checked_out: Optional[datetime] = None
+    operator_out: Optional[User] = None
+    weight_out: Optional[int] = None
+    driver: Optional[User] = None
     destination: Optional[Polygon] = None
     is_deleted: Optional[bool] = False
     delete_reason: Optional[str] = None
@@ -125,6 +130,7 @@ class Visit:
 
     @property
     def status(self) -> constants.VisitStatus:
+        """Статус визита"""
         if self.operator_out is None:
             return constants.VisitStatus.IN
 
@@ -132,72 +138,44 @@ class Visit:
 
     @property
     def invoice_num(self):
+        """Номер документа о визите"""
         p = self.polygon.name[:3].upper()
-        m = constants.Monts.months.get(self.checked_in.month)
+        m = constants.months_translator.get(self.checked_in.month)
         y = self.checked_in.year
         num = self.id
         return f'{p}-{m}.{y}-{num}'  # ЛЕН-МАЙ.2022-23
 
     @property
     def invoice_date(self) -> str:
+        """Дата документа о визите"""
         return self.checked_in.strftime("%d/%m/%Y %H:%M")
 
     @property
     def netto(self) -> int:
-        """
-        :return: Вес груза
-        """
+        """Масса груза"""
+        assert self.weight_out is not None, 'Visit is active. ' \
+                                            'Finish visit before call.'
         return abs(self.weight_in - self.weight_out)
+
+    @property
+    def tara(self) -> int:
+        """Масса пустого"""
+        assert self.weight_out is not None, 'Visit is active. ' \
+                                            'Finish visit before call.'
+        return min(self.weight_in, self.weight_out)
+
+    @property
+    def brutto(self) -> int:
+        """Масса с грузом"""
+        assert self.weight_out is not None, 'Visit is active. ' \
+                                            'Finish visit before call.'
+        return max(self.weight_in, self.weight_out)
 
 
 @dataclass
 class DocsLog:
-    visit: Visit
+    title: str
+    type: constants.DocType
     user: User
-    doc_type: constants.DocType
-    doc_name: str
     created_at: datetime = field(default_factory=datetime.utcnow)
     id: Optional[int] = None
-
-
-@dataclass
-class CopyVisit:
-    visit: Visit
-    permit: Permit
-    polygon: Polygon
-    weight_in: int
-    weight_out: int
-    driver: User
-    destination: Polygon
-    id: Optional[int] = None
-
-    @property
-    def is_deleted(self):
-        return self.visit.is_deleted
-
-    @property
-    def delete_reason(self):
-        return self.visit.delete_reason
-
-    def reset(self):
-        self.permit = self.visit.permit
-        self.polygon = self.visit.polygon
-        self.weight_in = self.visit.weight_in
-        self.weight_out = self.visit.weight_out
-        self.driver = self.visit.driver
-        self.destination = self.visit.destination
-
-
-@dataclass(frozen=True)
-class AuthToken:
-    """Токен авторизации
-
-    exp -> expired_at
-
-    iat -> inied_at
-
-    sub -> user_id
-    """
-    exp: datetime
-    iat: datetime
-    sub: int

@@ -1,11 +1,18 @@
 from enum import Enum
 
 
+class UserRole(Enum):
+    POLYGON_CHIEF = 'Начальник полигона'
+    CONTROLLER = 'Контролер'
+    SUPERVISOR = 'Супервайзер'
+    DRIVER = 'Водитель'
+
+
 class ContragentType(Enum):
     """Тип организации"""
 
-    PRIMARY_ROUTE_TRANSPORTER = 'Перевозчик 1 плечо'
-    SECONDARY_ROUTE_TRANSPORTER = 'Перевозчик 2 плечо'
+    PRIMARY_ROUTE = 'Перевозчик 1 плечо'
+    SECONDARY_ROUTE = 'Перевозчик 2 плечо'
     POLYGON_OWNER = 'Владелец полигона'
     PRINCIPAL = 'Заказчик'
 
@@ -13,18 +20,19 @@ class ContragentType(Enum):
 class VehicleType(Enum):
     """Тип автомобиля"""
 
-    GARBAGE = 'Мусоровоз'
-    TONAR = 'Тонар'
     BUNKER = 'Бункеровоз'
+    GARBAGE = 'Мусоровоз'
     SCRAP = 'Ломовоз'
+    TONAR = 'Тонар'
 
 
-class PermitOperationType(Enum):
-    """Тип операции с пропуском"""
+class VisitStatus(Enum):
+    """Статус визита"""
+    IN = 0
+    "На полигоне"
 
-    CREATION = 'Создание'
-    PROLONGATION = 'Продление'
-    CANCELLATION = 'Аннулирование'
+    OUT = 1
+    "Выехал"
 
 
 class DocType(Enum):
@@ -36,30 +44,17 @@ class DocType(Enum):
     REPORT = 'Отчет по возчикам'
 
 
-class VisitStatus(Enum):
-    IN = 'На полигоне'
-    OUT = 'Выехал'
-
-
-class UserRole(Enum):
-    POLYGON_CHIEF = 'Начальник полигона'
-    CONTROLLER = 'Контролер'
-    SUPERVISOR = 'Супервайзер'
-    DRIVER = 'Водитель'
-
-
-class Monts:
-    months = {
-        1: "ЯНВ",
-        2: "ФЕВ",
-        3: "МАР",
-        4: "АПР",
-        5: "МАЙ",
-        6: "ИЮН",
-        7: "ИЮЛ",
-        8: "АВГ",
-        9: "СЕН",
-        10: "ОКТ",
-        11: "НОЯ",
-        12: "ДЕК",
-    }
+months_translator = {
+    1: "ЯНВ",
+    2: "ФЕВ",
+    3: "МАР",
+    4: "АПР",
+    5: "МАЙ",
+    6: "ИЮН",
+    7: "ИЮЛ",
+    8: "АВГ",
+    9: "СЕН",
+    10: "ОКТ",
+    11: "НОЯ",
+    12: "ДЕК",
+}

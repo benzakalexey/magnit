@@ -1,28 +1,44 @@
-from classic.http_auth import Authenticator, Group, Permission
-from classic.http_auth import strategies as auth_strategies
+import functools
 
-full_control = Permission('full_control')
-read_only = Permission('read_only')
+from magnit.application import errors
+from magnit.application.services.auth import Token, Authenticator
 
-groups = (
-    Group('admins', permissions=[full_control]),
-    Group('managers', permissions=[read_only]),
-    Group('guests'),
-)
 
-auth_strategy = auth_strategies.JWT(secret_key='123')
+def authorize():
+    def decorator(func):
+        resource_name = func.__qualname__
 
-auth_dummy_strategy = auth_strategies.Dummy(
-    login='login',
-    name='name',
-    groups=groups,
-    email='email'
-)
+        @functools.wraps(func)
+        def wrapper(controller, request, response):
+            client = request.context.client
 
-authenticator = Authenticator(app_groups=groups)
+            # if not spec.is_satisfied_by(client):
+            #     raise errors.PermissionDenied(resource_name=resource_name)
 
-# is_dev = True
-# if is_dev:
-#     authenticator.set_strategies(auth_dummy_strategy)
-# else:
-#     authenticator.set_strategies(auth_strategy)
+            result = func(controller, request, response)
+            return result
+
+        return wrapper
+
+    return decorator
+
+
+def authenticate(func):
+    @functools.wraps(func)
+    def wrapper(controller, request, response):
+        if request.auth is None:
+            raise errors.AuthenticationError()
+
+        try:
+            _, auth_token = request.auth.strip().split()
+        except TypeError:
+            raise errors.AuthenticationError()
+
+        try:
+            Token.check(auth_token, Authenticator().secret)
+        except (errors.TokenDecodeError, errors.TokenExpiredError):
+            raise errors.AuthenticationError()
+
+        return func(controller, request, response)
+
+    return wrapper

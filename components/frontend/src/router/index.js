@@ -8,32 +8,115 @@ import store from '../store';
 // const app = createApp();
 // app.use(createRouter);
 
+
+// const isAuthorized = localStorage.hasOwnProperty('token')
+
+const authGuard = function (to, from, next) {
+    if (!localStorage.hasOwnProperty('token')) {
+        // store.commit('setLayout', 'auth');
+        next({ name: 'login' })
+    } else {
+        store.commit('setLayout', 'app');
+        next();
+    }
+}
+const setAuthLayout = function (to, from, next) {
+    store.commit('setLayout', 'auth');
+    next();
+}
+
 const routes = [
     //magnit
-    { 
-        path: '/polygon', 
-        name: 'polygon', 
+    {
+        path: '/polygon',
+        name: 'polygon',
         component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/polygon.vue'),
+        beforeEnter: authGuard
     },
-    { 
-        path: '/vehicles', 
-        name: 'vehicles', 
-        component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/catalogs/vehicles.vue'),
+    {
+        path: '/permits',
+        name: 'permits',
+        component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/catalogs/permits.vue'),
+        // beforeEnter: authGuard
     },
-    { 
-        path: '/users', 
-        name: 'users', 
+    {
+        path: '/users',
+        name: 'users',
         component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/catalogs/users.vue'),
+        beforeEnter: authGuard
     },
-    { 
-        path: '/polygons', 
-        name: 'polygons', 
+    {
+        path: '/polygons',
+        name: 'polygons',
         component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/catalogs/polygons.vue'),
+        beforeEnter: authGuard
     },
-    { 
-        path: '/contragents', 
-        name: 'contragents', 
+    {
+        path: '/contragents',
+        name: 'contragents',
         component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/catalogs/contragents.vue'),
+        beforeEnter: authGuard
+    },
+
+
+    //auth
+    {
+        path: '/auth/login',
+        name: 'login',
+        component: () => import(/* webpackChunkName: "auth-login-boxed" */ '../views/magnit/auth/login.vue'),
+        meta: { layout: 'auth' },
+        beforeEnter: setAuthLayout,
+    },
+    {
+        path: '/auth/logout',
+        name: 'logout',
+        beforeEnter(to, from, next) {
+            store.dispatch('AuthModule/onLogout')
+            next(from);
+            location.reload();
+        }
+    },
+    {
+        path: '/auth/register-boxed',
+        name: 'register-boxed',
+        component: () => import(/* webpackChunkName: "auth-register-boxed" */ '../views/auth/register_boxed.vue'),
+        meta: { layout: 'auth' },
+    },
+    {
+        path: '/auth/lockscreen-boxed',
+        name: 'lockscreen-boxed',
+        component: () => import(/* webpackChunkName: "auth-lockscreen-boxed" */ '../views/auth/lockscreen_boxed.vue'),
+        meta: { layout: 'auth' },
+    },
+    {
+        path: '/auth/pass-recovery-boxed',
+        name: 'pass-recovery-boxed',
+        component: () => import(/* webpackChunkName: "auth-pass-recovery-boxed" */ '../views/auth/pass_recovery_boxed.vue'),
+        meta: { layout: 'auth' },
+    },
+    // {
+    //     path: '/auth/login',
+    //     name: 'login',
+    //     component: () => import(/* webpackChunkName: "auth-login" */ '../views/auth/login.vue'),
+    //     meta: { layout: 'auth' },
+    // },
+    {
+        path: '/auth/register',
+        name: 'register',
+        component: () => import(/* webpackChunkName: "auth-register" */ '../views/auth/register.vue'),
+        meta: { layout: 'auth' },
+    },
+    {
+        path: '/auth/lockscreen',
+        name: 'lockscreen',
+        component: () => import(/* webpackChunkName: "auth-lockscreen" */ '../views/auth/lockscreen.vue'),
+        meta: { layout: 'auth' },
+    },
+    {
+        path: '/auth/pass-recovery',
+        name: 'pass-recovery',
+        component: () => import(/* webpackChunkName: "auth-pass-recovery" */ '../views/auth/pass_recovery.vue'),
+        meta: { layout: 'auth' },
     },
 
 
@@ -192,56 +275,6 @@ const routes = [
         path: '/pages/sample',
         name: 'sample',
         component: () => import(/* webpackChunkName: "pages-sample" */ '../views/pages/sample.vue'),
-    },
-
-    //auth
-    {
-        path: '/auth/login',
-        name: 'login',
-        component: () => import(/* webpackChunkName: "auth-login-boxed" */ '../views/magnit/auth/login.vue'),
-        meta: { layout: 'auth' },
-    },
-    {
-        path: '/auth/register-boxed',
-        name: 'register-boxed',
-        component: () => import(/* webpackChunkName: "auth-register-boxed" */ '../views/auth/register_boxed.vue'),
-        meta: { layout: 'auth' },
-    },
-    {
-        path: '/auth/lockscreen-boxed',
-        name: 'lockscreen-boxed',
-        component: () => import(/* webpackChunkName: "auth-lockscreen-boxed" */ '../views/auth/lockscreen_boxed.vue'),
-        meta: { layout: 'auth' },
-    },
-    {
-        path: '/auth/pass-recovery-boxed',
-        name: 'pass-recovery-boxed',
-        component: () => import(/* webpackChunkName: "auth-pass-recovery-boxed" */ '../views/auth/pass_recovery_boxed.vue'),
-        meta: { layout: 'auth' },
-    },
-    // {
-    //     path: '/auth/login',
-    //     name: 'login',
-    //     component: () => import(/* webpackChunkName: "auth-login" */ '../views/auth/login.vue'),
-    //     meta: { layout: 'auth' },
-    // },
-    {
-        path: '/auth/register',
-        name: 'register',
-        component: () => import(/* webpackChunkName: "auth-register" */ '../views/auth/register.vue'),
-        meta: { layout: 'auth' },
-    },
-    {
-        path: '/auth/lockscreen',
-        name: 'lockscreen',
-        component: () => import(/* webpackChunkName: "auth-lockscreen" */ '../views/auth/lockscreen.vue'),
-        meta: { layout: 'auth' },
-    },
-    {
-        path: '/auth/pass-recovery',
-        name: 'pass-recovery',
-        component: () => import(/* webpackChunkName: "auth-pass-recovery" */ '../views/auth/pass_recovery.vue'),
-        meta: { layout: 'auth' },
     },
 
     //elements
@@ -582,20 +615,12 @@ const router = new createRouter({
     },
 });
 
-/**
- * Проверяем что есть токен
- * @type {boolean}
- */
-const isAuthorized = localStorage.hasOwnProperty('token')
-
-router.beforeEach((to, from, next) => {
-    if (to.meta && to.meta.layout && to.meta.layout == 'auth') {
-        store.commit('setLayout', 'auth');
-    } else {
-        if (!isAuthorized) next({ name: 'login' });
-        store.commit('setLayout', 'app');
-    }
-    next(true);
-});
+// router.beforeEach((to, from, next) => {
+//     if (to.meta && to.meta.layout && to.meta.layout == 'auth') {
+//         store.commit('setLayout', 'auth');
+//     } else {
+//         store.commit('setLayout', 'app');
+//     }
+// });
 
 export default router;

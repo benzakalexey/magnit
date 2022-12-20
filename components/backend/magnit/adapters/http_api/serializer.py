@@ -30,4 +30,7 @@ def serialize(obj: Any):
     if is_dataclass(obj):
         return serialize(asdict(obj))
 
+    if isinstance(obj, bytes):
+        return obj.decode('utf-8')
+
     return obj

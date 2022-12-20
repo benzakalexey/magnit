@@ -5,10 +5,10 @@
     <option name="PARENT_ENVS" value="true" />
     <envs>
       <env name="PYTHONUNBUFFERED" value="1" />
-      <env name="DEV_CONFIG" value="config.env" />
+      <env name="DEV_CONFIG" value="./config.env" />
     </envs>
     <option name="SDK_HOME" value="" />
-    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/components/backend/magnit" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/components/backend" />
     <option name="IS_MODULE_SDK" value="true" />
     <option name="ADD_CONTENT_ROOTS" value="true" />
     <option name="ADD_SOURCE_ROOTS" value="true" />
@@ -25,7 +25,7 @@
       </ENTRIES>
     </EXTENSION>
     <option name="SCRIPT_NAME" value="gunicorn" />
-    <option name="PARAMETERS" value="composites.api:app --workers 1 --timeout 2000 --bind 0.0.0.0:8082" />
+    <option name="PARAMETERS" value="magnit.composites.api:app --workers 1 --timeout 2000 --bind 0.0.0.0:8000 --preload" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="true" />

@@ -1,9 +1,15 @@
-from pydantic import BaseSettings
+import os
+
+from pydantic import BaseSettings, BaseConfig
 
 
 class Settings(BaseSettings):
     LOGGING_LEVEL: str = 'INFO'
     LOGGING_JSON: bool = True
+
+    class Config(BaseConfig):
+        env_file_encoding = 'utf-8'
+        env_file = os.getenv('DEV_CONFIG', '.env')
 
     @property
     def LOGGING_CONFIG(self):

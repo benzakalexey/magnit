@@ -1,17 +1,20 @@
 import os
-from typing import List, Tuple, Union
+from typing import Tuple, Union
 
-from pydantic import BaseSettings, Field
+from pydantic import BaseSettings, Field, BaseConfig
 
 
 class Settings(BaseSettings):
+    ALLOW_ORIGINS: Union[str, Tuple[str, ...]] = Field(default_factory=tuple)
+    API_LOG_LEVEL: str = 'INFO'
+
     IS_DEV_MODE: bool = False
 
-    ALLOW_ORIGINS: Union[str, Tuple[str, ...]] = Field(default_factory=tuple)
+    TEMPLATE_DIR: str
 
-    LOGGING_LEVEL: str = 'INFO'
-
-    TEMPLATE_DIR: str = 'template'
+    class Config(BaseConfig):
+        env_file_encoding = 'utf-8'
+        env_file = os.getenv('DEV_CONFIG', '.env')
 
     @property
     def LOGGING_CONFIG(self):
@@ -19,13 +22,8 @@ class Settings(BaseSettings):
             'loggers': {
                 'gunicorn': {
                     'handlers': ['default'],
-                    'level': self.LOGGING_LEVEL,
+                    'level': self.API_LOG_LEVEL,
                     'propagate': False
                 },
-                'evraz.spectree': {
-                    'handlers': ['default'],
-                    'level': self.LOGGING_LEVEL,
-                    'propagate': False
-                }
             }
         }

@@ -64,13 +64,13 @@ class PermitLog:
     """
         Класс История пропусков
     """
-    permits_log_repo: interfaces.PermitLogRepo
+    permits_log_repo: interfaces.PermissionRepo
     permits_repo: interfaces.PermitRepo
     users_repo: interfaces.UserRepo
 
     @join_point
     @validate_arguments
-    def get_by_id(self, permit_log_id: conint(gt=0)) -> entities.PermitLog:
+    def get_by_id(self, permit_log_id: conint(gt=0)) -> entities.Permission:
         permit_log = self.permits_log_repo.get_by_id(permit_log_id)
         if permit_log is None:
             raise errors.PermitLogIDNotExistError(permit_log_id=permit_log_id)
