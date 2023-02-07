@@ -1,6 +1,7 @@
 from classic.components import component
 
 from magnit.adapters.http_api import constants
+from magnit.adapters.http_api.auth import authenticate
 from magnit.adapters.http_api.join_points import join_point
 from magnit.application import services
 
@@ -20,8 +21,15 @@ class VehicleModels:
         response.media = vehicle_models
 
     @join_point
+    @authenticate
     def on_post_add(self, request, response):
-        self.service.add_model(**request.media)
+
+        # данные о ТС, номер пропуска, контрагент, дата истечения пропуска
+
+        self.service.add_model(
+            user_id=request.uid,
+            **request.media,
+        )
         response.media = constants.SUCCESS_TRUE
 
 
@@ -41,5 +49,11 @@ class Vehicles:
 
     @join_point
     def on_post_add(self, request, response):
-        self.service.add_vehicle(**request.media)
+
+        # данные о ТС, номер пропуска, контрагент, дата истечения пропуска
+
+        self.service.add_vehicle(
+            user_id=request.uid,
+            **request.media,
+        )
         response.media = constants.SUCCESS_TRUE

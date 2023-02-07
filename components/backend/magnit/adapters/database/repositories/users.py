@@ -16,3 +16,10 @@ class UserRepo(BaseRepo, interfaces.UserRepo):
             .where(self.dto.phone_number == phone_number)
         )
         return self.session.execute(query).scalars().one_or_none()
+
+    def get_by_contragent(self, contragent_id: int):
+        query = (
+            select(self.dto)
+            .where(self.dto.contragent == contragent_id)
+        )
+        return self.session.execute(query).scalars().all()

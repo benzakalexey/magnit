@@ -13,7 +13,6 @@ def create_app(
     doc: services.Doc,
     doc_log: services.DocLog,
     permit: services.Permit,
-    permit_log: services.PermitLog,
     polygon: services.Polygon,
     secondary_route: services.SecondaryRoute,
     user: services.User,
@@ -54,7 +53,6 @@ def create_app(
     app.register(controllers.DocLogs(service=doc_log))
     app.register(controllers.Docs(service=doc))
     app.register(controllers.Permits(service=permit))
-    app.register(controllers.PermitsLog(service=permit_log))
     app.register(controllers.Polygons(service=polygon))
     app.register(controllers.SecondaryRoutes(service=secondary_route))
     app.register(controllers.Users(service=user))

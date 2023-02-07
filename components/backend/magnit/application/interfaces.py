@@ -18,6 +18,13 @@ class UserRepo(ABC):
         ...
 
     @abstractmethod
+    def get_by_contragent(
+        self,
+        contragent_id: int,
+    ) -> List[entities.User]:
+        ...
+
+    @abstractmethod
     def get_all(self) -> List[entities.User]:
         ...
 
@@ -81,6 +88,13 @@ class SecondaryRouteRepo(ABC):
     def get_by_id(self, id_: int) -> Optional[entities.SecondaryRoute]:
         ...
 
+    # @abstractmethod
+    # def get_by_source_polygon(
+    #     self,
+    #     source_polygon_id: int,
+    # ) -> List[entities.Polygon]:
+    #     ...
+
     @abstractmethod
     def get_all(self) -> List[entities.SecondaryRoute]:
         ...
@@ -143,6 +157,10 @@ class PermitRepo(ABC):
         ...
 
     @abstractmethod
+    def get_by_number(self, number: int) -> Optional[entities.Permit]:
+        ...
+
+    @abstractmethod
     def get_all(self) -> List[entities.Permit]:
         ...
 
@@ -156,6 +174,13 @@ class PermitRepo(ABC):
 
 
 class PermissionRepo(ABC):
+
+    @abstractmethod
+    def get_last_by_permit_number(
+        self,
+        number: int,
+    ) -> Optional[entities.Permission]:
+        """Возвращает последний Допуск по номеру пропуска"""
 
     @abstractmethod
     def get_by_id(self, id_: int) -> Optional[entities.Permission]:
@@ -190,6 +215,22 @@ class VisitRepo(ABC):
 
     @abstractmethod
     def save(self):
+        ...
+
+    @abstractmethod
+    def get_last_12_hours(
+        self,
+        polygon_id: int,
+    ) -> List[entities.Visit]:
+        """Возвращает визиты за последние 12 часов по ИД Полигона.
+
+        Args:
+            polygon_id: ИД Полигона
+
+        Returns:
+            список Визитов
+
+        """
         ...
 
 

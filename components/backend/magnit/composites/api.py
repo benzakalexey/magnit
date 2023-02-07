@@ -32,7 +32,7 @@ class DB:
     vehicle_models_repo = repositories.VehicleModelRepo(context=context)
     vehicles_repo = repositories.VehicleRepo(context=context)
     permits_repo = repositories.PermitRepo(context=context)
-    permits_log_repo = repositories.PermitLogRepo(context=context)
+    permission_repo = repositories.PermissionRepo(context=context)
     visits_repo = repositories.VisitRepo(context=context)
     docs_log_repo = repositories.DocLogRepo(context=context)
 
@@ -67,11 +67,7 @@ class Application:
         users_repo=DB.users_repo,
         contragents_repo=DB.contragents_repo,
         vehicles_repo=DB.vehicles_repo,
-    )
-    permit_log = services.PermitLog(
-        permits_log_repo=DB.permits_log_repo,
-        users_repo=DB.users_repo,
-        permits_repo=DB.permits_repo,
+        permission_repo=DB.permission_repo,
     )
     visit = services.Visit(
         visits_repo=DB.visits_repo,
@@ -111,7 +107,6 @@ app = http_api.create_app(
     doc=Application.doc,
     doc_log=Application.doc_log,
     permit=Application.permit,
-    permit_log=Application.permit_log,
     polygon=Application.polygon,
     secondary_route=Application.secondary_route,
     user=Application.user,

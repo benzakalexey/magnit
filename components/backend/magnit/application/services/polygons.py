@@ -33,10 +33,10 @@ class Polygon:
     @join_point
     def get_receivers_by_source_id(
         self,
-        source_id: int,
+        polygon_id: int,
     ) -> List[entities.Polygon]:
         return self.polygons_repo.get_receivers_by_source_id(
-            source_id
+            polygon_id
         )
 
     @join_point
@@ -49,7 +49,7 @@ class Polygon:
 
         polygon = entities.Polygon(
             name=polygon_info.name,
-            full_name=polygon_info.full_name,
+            location=polygon_info.location,
             owner=owner,
             address=polygon_info.address,
             phone_number=polygon_info.phone_number,

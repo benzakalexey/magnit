@@ -3,6 +3,7 @@ import re
 from classic.app import validate_with_dto
 from classic.components import component
 from pydantic import conint, validate_arguments
+from typing import List
 
 from magnit.application import interfaces, entities, errors, constants
 
@@ -25,6 +26,21 @@ class User:
             raise errors.UserIDNotExistError(user_id=user_id)
 
         return user
+
+    @join_point
+    @validate_arguments
+    def get_by_contragent(
+        self,
+        contragent_id: conint(gt=0),
+    ) -> List[entities.User]:
+        contragent = self.contragents_repo.get_by_id(contragent_id)
+        if contragent is None:
+            raise errors.ContragentIDNotExistError(contragent_id=contragent_id)
+
+        return [
+            u for u in contragent.employees
+            if u.user_role == constants.UserRole.DRIVER
+        ]
 
     @join_point
     def get_all(self):
