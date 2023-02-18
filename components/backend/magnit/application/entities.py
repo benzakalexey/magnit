@@ -25,8 +25,8 @@ class Contragent:
 class Polygon:
     """Полигон"""
     name: str
-    full_name: str
     owner: Contragent
+    location: Optional[str] = None
     phone_number: Optional[str] = None
     address: Optional[str] = None
     employees: List[User] = field(default_factory=list)
@@ -57,6 +57,11 @@ class User:
 
     @property
     def full_name(self) -> str:
+        if self.second_name is None:
+            return '%s %s' % (
+                self.last_name,
+                self.first_name,
+            )
         return '%s %s %s' % (
             self.last_name,
             self.first_name,
@@ -88,12 +93,12 @@ class Vehicle:
 
 @dataclass
 class Permission:
-    """Разрешение на допуск на полигон"""
+    """Допуск на полигон"""
     contragent: Contragent
     expired_at: datetime
     operator: User
     permit: Permit
-    is_tonar: bool = False
+    is_tonar: bool = False  # Тип допуска
     added_at: datetime = field(default_factory=datetime.utcnow)
     id: Optional[int] = None
 
@@ -109,6 +114,14 @@ class Permit:
     vehicle: Vehicle
     permissions: List[Permission] = field(default_factory=list)
     id: Optional[int] = None
+
+    @property
+    def permission(self) -> Optional[Permission]:
+        """Актуальный допуск"""
+        if len(self.permissions) == 0:
+            return None
+
+        return self.permissions[0]
 
 
 @dataclass
@@ -131,10 +144,13 @@ class Visit:
     @property
     def status(self) -> constants.VisitStatus:
         """Статус визита"""
-        if self.operator_out is None:
-            return constants.VisitStatus.IN
+        if not self.is_deleted:
+            if self.operator_out is None:
+                return constants.VisitStatus.IN
 
-        return constants.VisitStatus.OUT
+            return constants.VisitStatus.OUT
+
+        return constants.VisitStatus.DEL
 
     @property
     def invoice_num(self):

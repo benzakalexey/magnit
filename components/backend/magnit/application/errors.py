@@ -52,8 +52,13 @@ class ContragentNameIsNoneError(AppError):
 
 
 class ContragentIDNotExistError(AppError):
-    msg_template = 'Контрагент с id = {contragent_id} не найден'
+    msg_template = 'Контрагент с id = {contragent_id} не найден.'
     code = 'magnit.contragents.contragent_id_not_exist_error'
+
+
+class ContragentDriversNotExistError(AppError):
+    msg_template = 'У контрагента с id = {contragent_id} нет водителей.'
+    code = 'magnit.contragents.contragent_drivers_not_exist_error'
 
 
 class OwnerIDNotExistError(AppError):
@@ -97,7 +102,12 @@ class VehicleIDNotExistError(AppError):
 
 
 class PermitIDNotExistError(AppError):
-    msg_template = 'Пропуск с id = {permit_id} не найден'
+    msg_template = 'Пропуск с id = {permit_id} не найден.'
+    code = 'magnit.permits.permit_id_not_exist_error'
+
+
+class PermitNumberNotExistError(AppError):
+    msg_template = 'Пропуск с номером №{permit_number} не найден.'
     code = 'magnit.permits.permit_id_not_exist_error'
 
 

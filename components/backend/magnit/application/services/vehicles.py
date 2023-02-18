@@ -33,7 +33,7 @@ class VehicleModel:
     @validate_with_dto
     def add_model(self, vehicle_models_info: VehicleModelInfo):
         vehicle_model = entities.VehicleModel(
-            model=vehicle_models_info.model,
+            name=vehicle_models_info.name,
         )
         self.vehicle_models_repo.add(vehicle_model)
         self.vehicle_models_repo.save()
@@ -62,20 +62,27 @@ class Vehicle:
 
     @join_point
     @validate_with_dto
-    def add_vehicle(self, vehicles_info: VehicleInfo):
-        model = self.vehicle_models_repo.get_by_id(vehicles_info.model_id)
+    def add_vehicle(self, vehicle_info: VehicleInfo):
+        model = self.vehicle_models_repo.get_by_id(vehicle_info.model_id)
         if model is None:
             raise errors.VehicleModelIDNotExistError(
-                vehicle_model_id=vehicles_info.model_id
+                vehicle_model_id=vehicle_info.model_id
             )
 
         vehicle = entities.Vehicle(
-            reg_number=vehicles_info.reg_number,
+            reg_number=vehicle_info.reg_number,
             model=model,
-            vehicle_type=vehicles_info.vehicle_type,
-            pts_number=vehicles_info.pts_number,
-            tara=vehicles_info.tara,
-            max_weight=vehicles_info.max_weight,
+            vehicle_type=vehicle_info.vehicle_type,
+            sts_number=vehicle_info.sts_number,
+            tara=vehicle_info.tara,
+            max_weight=vehicle_info.max_weight,
+            production_year=vehicle_info.production_year,
         )
         self.vehicles_repo.add(vehicle)
         self.vehicles_repo.save()
+
+        # permit = entities.Permit(
+        #     number=permit_info.number,
+        #     vehicle=vehicle
+        #
+        # )

@@ -4,6 +4,8 @@ from enum import Enum, EnumMeta, IntEnum
 from typing import Any
 from uuid import UUID
 
+from pydantic import BaseModel
+
 
 def serialize(obj: Any):
     """Функция рекурсивно преобразовывает объекты в вид,
@@ -32,5 +34,8 @@ def serialize(obj: Any):
 
     if isinstance(obj, bytes):
         return obj.decode('utf-8')
+
+    if isinstance(obj, BaseModel):
+        return serialize(dict(obj))
 
     return obj

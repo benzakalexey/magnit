@@ -1,20 +1,61 @@
-from classic.app import validate_with_dto
+from datetime import datetime
+
+from classic.app import validate_with_dto, DTO
 from classic.components import component
 from pydantic import validate_arguments, conint
-from magnit.application import interfaces, entities, errors
+from magnit.application import interfaces, entities, errors, constants
 from magnit.application.dtos_layer import PermitInfo, PermitLogInfo
 from magnit.application.services.join_point import join_point
 
 
+class PermissionInfo(DTO):
+    contragent_name: str
+    expired_at: datetime
+    vehicle_model: str
+    vehicle_type: constants.VehicleType
+    tara: int
+    max_weight: int
+    reg_number: str
+    permit_status: constants.PermitStatus
+    is_valid: bool
+
+
 @component
 class Permit:
-    """
-        Класс Пропуск
+    """Класс Пропуск
     """
     permits_repo: interfaces.PermitRepo
     users_repo: interfaces.UserRepo
     vehicles_repo: interfaces.VehicleRepo
     contragents_repo: interfaces.ContragentRepo
+    permission_repo: interfaces.PermissionRepo
+
+    @join_point
+    @validate_arguments
+    def check_by_number(self, number: int) -> PermissionInfo:
+        p = self.permission_repo.get_last_by_permit_number(number)
+        if p is None:
+            raise errors.PermitNumberNotExistError(permit_number=number)
+
+        vehicle = p.permit.vehicle
+        permit_status = (
+            constants.PermitStatus.VALID
+            if p.expired_at > datetime.utcnow()
+            else constants.PermitStatus.EXPIRED
+        )
+        is_valid = permit_status == constants.PermitStatus.VALID
+
+        return PermissionInfo(
+            contragent_name=p.contragent.name,
+            expired_at=p.expired_at,
+            vehicle_model=vehicle.model.name,
+            vehicle_type=vehicle.vehicle_type,
+            tara=vehicle.tara,
+            max_weight=vehicle.max_weight,
+            reg_number=vehicle.reg_number,
+            permit_status=permit_status,
+            is_valid=is_valid,
+        )
 
     @join_point
     @validate_arguments
@@ -30,33 +71,16 @@ class Permit:
         return self.permits_repo.get_all()
 
     @join_point
+    @validate_arguments
+    def get_by_check(self, permit_number: conint(gt=0)) -> entities.Permit:
+        permit = self.permits_repo.get_by_number(permit_number)
+
+        return permit
+
+    @join_point
     @validate_with_dto
     def add_permit(self, permits_info: PermitInfo):
-        operator = self.users_repo.get_by_id(permits_info.operator_id)
-        if operator is None:
-            raise errors.UserIDNotExistError(user_id=permits_info.operator_id)
-
-        vehicle = self.vehicles_repo.get_by_id(permits_info.vehicle_id)
-        if vehicle is None:
-            raise errors.VehicleIDNotExistError(
-                vehicle_id=permits_info.vehicle_id
-            )
-
-        contragent = self.contragents_repo.get_by_id(permits_info.contragent_id)
-        if contragent is None:
-            raise errors.ContragentIDNotExistError(
-                contragent_id=permits_info.contragent_id
-            )
-
-        permit = entities.Permit(
-            valid_from=permits_info.valid_from,
-            valid_to=permits_info.valid_to,
-            contragent=contragent,
-            operator=operator,
-            vehicle=vehicle
-        )
-        self.permits_repo.add(permit)
-        self.permits_repo.save()
+        """Add permit"""
 
 
 @component

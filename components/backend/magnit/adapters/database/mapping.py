@@ -56,7 +56,8 @@ mapper.map_imperatively(
     tables.vehicles,
     properties={
         'model': relationship(
-            entities.VehicleModel, uselist=False, lazy='select',
+            # entities.VehicleModel, uselist=False, lazy='select',
+            entities.VehicleModel, uselist=False, lazy='joined', # TODO lazy=?
         )
     }
 )
@@ -65,7 +66,10 @@ mapper.map_imperatively(
     tables.permissions,
     properties={
         'user': relationship(
-            entities.User, uselist=False, lazy='joined',
+            entities.User, uselist=False, lazy='select',
+        ),
+        'contragent': relationship(
+            entities.Contragent, uselist=False, lazy='select',
         )
     }
 )
@@ -75,10 +79,15 @@ mapper.map_imperatively(
     properties={
         'permissions': relationship(
             entities.Permission,
-            lazy='select',
+            lazy='subquery',
             backref=backref('permit'),
             order_by='desc(entities.Permission.added_at)'
         ),
+        'vehicle': relationship(
+            entities.Vehicle,
+            uselist=False,
+            lazy='joined',
+        )
     },
 )
 
@@ -87,32 +96,32 @@ mapper.map_imperatively(
     tables.visits,
     properties={
         'permission': relationship(
-            entities.Permission, uselist=False, lazy='joined',
+            entities.Permission, uselist=False, lazy='select',
         ),
         'polygon': relationship(
-            entities.Polygon, uselist=False, lazy='joined',
+            entities.Polygon, uselist=False, lazy='select',
             foreign_keys=[tables.visits.c.polygon_id],
         ),
         'operator_in': relationship(
             entities.User,
             uselist=False,
-            lazy='joined',
+            lazy='select',
             foreign_keys=[tables.visits.c.operator_in_id],
         ),
         'operator_out': relationship(
             entities.User,
             uselist=False,
-            lazy='joined',
+            lazy='select',
             foreign_keys=[tables.visits.c.operator_out_id],
         ),
         'driver': relationship(
             entities.User,
             uselist=False,
-            lazy='joined',
+            lazy='select',
             foreign_keys=[tables.visits.c.driver_id],
         ),
         'destination': relationship(
-            entities.Polygon, uselist=False, lazy='joined',
+            entities.Polygon, uselist=False, lazy='select',
             foreign_keys=[tables.visits.c.destination_id],
         )
     }

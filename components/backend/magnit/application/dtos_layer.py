@@ -26,26 +26,27 @@ class ContragentInfo(DTO):
 
 class PolygonInfo(DTO):
     name: str
-    full_name: str
+    location: Optional[str] = None
     owner_id: conint(gt=0)
     phone_number: Optional[str] = None
     address: Optional[str] = None
 
 
 class VehicleModelInfo(DTO):
-    model: str
+    name: str
 
 
 class VehicleInfo(DTO):
     model_id: conint(gt=0)
     reg_number: str
-    pts_number: str
+    sts_number: str
     production_year: Optional[conint(gt=0)]
     vehicle_type: constants.VehicleType
     tara: conint(gt=0)
     max_weight: conint(gt=0)
     body_volume: Optional[conint(gt=0)]
     compress_ratio: Optional[conint(gt=0)]
+    permit: int
 
 
 class SecondaryRouteInfo(DTO):
@@ -54,11 +55,8 @@ class SecondaryRouteInfo(DTO):
 
 
 class PermitInfo(DTO):
-    operator_id: conint(gt=0)
+    number: conint(gt=0)
     vehicle_id: conint(gt=0)
-    contragent_id: conint(gt=0)
-    valid_from: datetime
-    valid_to: datetime
 
 
 class PermitLogInfo(DTO):

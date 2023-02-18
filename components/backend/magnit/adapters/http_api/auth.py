@@ -35,9 +35,11 @@ def authenticate(func):
             raise errors.AuthenticationError()
 
         try:
-            Token.check(auth_token, Authenticator().secret)
+            token = Token.check(auth_token, Authenticator().secret)
         except (errors.TokenDecodeError, errors.TokenExpiredError):
             raise errors.AuthenticationError()
+
+        request.uid = token.uid
 
         return func(controller, request, response)
 

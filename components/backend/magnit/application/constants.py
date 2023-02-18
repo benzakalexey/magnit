@@ -26,6 +26,16 @@ class VehicleType(Enum):
     TONAR = 'Тонар'
 
 
+class PermitStatus(Enum):
+    """Статус пропуска"""
+
+    EXPIRED = 0
+    "Просрочен"
+
+    VALID = 1
+    "Действителен"
+
+
 class VisitStatus(Enum):
     """Статус визита"""
     IN = 0
@@ -33,6 +43,9 @@ class VisitStatus(Enum):
 
     OUT = 1
     "Выехал"
+
+    DEL = 2
+    "Удален"
 
 
 class DocType(Enum):
