@@ -28,7 +28,7 @@ class PermissionRepo(BaseRepo, interfaces.PermissionRepo):
             select(self.dto)
             .join(entities.Permit)
             .where(entities.Permit.number == number)
-            .order_by(desc(self.dto.added_at))
+            .order_by(desc(self.dto.expired_at))
             .limit(1)
         )
         return self.session.execute(query).scalars().one_or_none()

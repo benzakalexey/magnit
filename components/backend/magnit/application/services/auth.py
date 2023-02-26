@@ -43,12 +43,12 @@ class Auth:
         cleaned_login = cleaned_login[-10:]
         phone_number = int(cleaned_login)
 
-        user = self.users_repo.get_by_phone_number(phone_number)
+        user = self.users_repo.get_by_phone(phone_number)
         if user is None:
             raise errors.AuthorizationError()
 
-        hashed_password = hash_it(auth_info.password)
-        if hashed_password != user.password:
+        password_hash = hash_it(auth_info.password)
+        if password_hash != user.password_hash:
             raise errors.AuthorizationError()
 
         token = Token(user.id).encode(secret=Authenticator().secret)
@@ -90,7 +90,9 @@ class Token:
         if not isinstance(exp, int):
             raise errors.TokenDecodeError()
 
-        if datetime.fromtimestamp(exp) <= datetime.utcnow():
+        expired_at = datetime.fromtimestamp(exp)
+        iat_d = datetime.fromtimestamp(iat)
+        if expired_at <= datetime.utcnow():
             raise errors.TokenExpiredError()
 
         if not isinstance(uid, int):

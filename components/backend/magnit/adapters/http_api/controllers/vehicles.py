@@ -7,18 +7,18 @@ from magnit.application import services
 
 
 @component
-class VehicleModels:
-    service: services.VehicleModel
+class truckModels:
+    service: services.truckModel
 
     @join_point
     def on_get_get_by_id(self, request, response):
-        vehicle_models = self.service.get_by_id(**request.params)
-        response.media = vehicle_models
+        truck_models = self.service.get_by_id(**request.params)
+        response.media = truck_models
 
     @join_point
     def on_get_get_all(self, request, response):
-        vehicle_models = self.service.get_all(**request.params)
-        response.media = vehicle_models
+        truck_models = self.service.get_all(**request.params)
+        response.media = truck_models
 
     @join_point
     @authenticate
@@ -34,25 +34,25 @@ class VehicleModels:
 
 
 @component
-class Vehicles:
-    service: services.Vehicle
+class trucks:
+    service: services.truck
 
     @join_point
     def on_get_get_by_id(self, request, response):
-        vehicles = self.service.get_by_id(**request.params)
-        response.media = vehicles
+        trucks = self.service.get_by_id(**request.params)
+        response.media = trucks
 
     @join_point
     def on_get_get_all(self, request, response):
-        vehicles = self.service.get_all(**request.params)
-        response.media = vehicles
+        trucks = self.service.get_all(**request.params)
+        response.media = trucks
 
     @join_point
     def on_post_add(self, request, response):
 
         # данные о ТС, номер пропуска, контрагент, дата истечения пропуска
 
-        self.service.add_vehicle(
+        self.service.add_truck(
             user_id=request.uid,
             **request.media,
         )

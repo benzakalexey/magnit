@@ -1,1 +1,10 @@
-from data import permit_data
+from .data import (
+    contracts,
+    drivers,
+    partners,
+    permits,
+    polygon_details,
+    trailers,
+    trucks,
+    visits,
+)

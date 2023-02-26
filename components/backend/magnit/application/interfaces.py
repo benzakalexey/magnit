@@ -11,18 +11,32 @@ class UserRepo(ABC):
         ...
 
     @abstractmethod
-    def get_by_phone_number(
+    def get_by_phone(
         self,
-        phone_number: int,
+        phone: int,
     ) -> Optional[entities.User]:
-        ...
+        """Возвращает пользователя по номеру телефона
+
+        Args:
+            phone: 10-значное число номера телефона
+
+        Returns:
+            Объект "Пользователь" или None
+        """
+
+
+class StaffRepo(ABC):
 
     @abstractmethod
-    def get_by_contragent(
-        self,
-        contragent_id: int,
-    ) -> List[entities.User]:
-        ...
+    def get_by_user_id(self, user_id: int) -> Optional[entities.Staff]:
+        """Возвращает сотрудника по id пользователя
+
+        Args:
+            user_id:
+
+        Returns:
+
+        """
 
     @abstractmethod
     def get_all(self) -> List[entities.User]:
@@ -37,18 +51,18 @@ class UserRepo(ABC):
         ...
 
 
-class ContragentRepo(ABC):
+class PartnerRepo(ABC):
 
     @abstractmethod
-    def get_by_id(self, id_: int) -> Optional[entities.Contragent]:
+    def get_by_id(self, id_: int) -> Optional[entities.Partner]:
         ...
 
     @abstractmethod
-    def get_all(self) -> List[entities.Contragent]:
+    def get_all(self) -> List[entities.Partner]:
         ...
 
     @abstractmethod
-    def add(self, instance: entities.Contragent):
+    def add(self, instance: entities.Partner):
         ...
 
     @abstractmethod
@@ -85,7 +99,7 @@ class PolygonRepo(ABC):
 class SecondaryRouteRepo(ABC):
 
     @abstractmethod
-    def get_by_id(self, id_: int) -> Optional[entities.SecondaryRoute]:
+    def get_by_id(self, id_: int) -> Optional[entities.PartnerDetails]:
         ...
 
     # @abstractmethod
@@ -96,11 +110,11 @@ class SecondaryRouteRepo(ABC):
     #     ...
 
     @abstractmethod
-    def get_all(self) -> List[entities.SecondaryRoute]:
+    def get_all(self) -> List[entities.PartnerDetails]:
         ...
 
     @abstractmethod
-    def add(self, instance: entities.SecondaryRoute):
+    def add(self, instance: entities.PartnerDetails):
         ...
 
     @abstractmethod
@@ -108,10 +122,10 @@ class SecondaryRouteRepo(ABC):
         ...
 
 
-class VehicleModelRepo(ABC):
+class TruckModelRepo(ABC):
 
     @abstractmethod
-    def get_by_id(self, id_: int) -> Optional[entities.VehicleModel]:
+    def get_by_id(self, id_: int) -> Optional[entities.TruckModel]:
         """
 
         :rtype: object
@@ -119,11 +133,11 @@ class VehicleModelRepo(ABC):
         ...
 
     @abstractmethod
-    def get_all(self) -> List[entities.VehicleModel]:
+    def get_all(self) -> List[entities.TruckModel]:
         ...
 
     @abstractmethod
-    def add(self, instance: entities.VehicleModel):
+    def add(self, instance: entities.TruckModel):
         ...
 
     @abstractmethod
@@ -131,18 +145,18 @@ class VehicleModelRepo(ABC):
         ...
 
 
-class VehicleRepo(ABC):
+class TruckRepo(ABC):
 
     @abstractmethod
-    def get_by_id(self, id_: int) -> Optional[entities.Vehicle]:
+    def get_by_id(self, id_: int) -> Optional[entities.Truck]:
         ...
 
     @abstractmethod
-    def get_all(self) -> List[entities.Vehicle]:
+    def get_all(self) -> List[entities.Truck]:
         ...
 
     @abstractmethod
-    def add(self, instance: entities.Vehicle):
+    def add(self, instance: entities.Truck):
         ...
 
     @abstractmethod
@@ -218,7 +232,7 @@ class VisitRepo(ABC):
         ...
 
     @abstractmethod
-    def get_last_12_hours(
+    def get_last_200(
         self,
         polygon_id: int,
     ) -> List[entities.Visit]:
@@ -231,23 +245,4 @@ class VisitRepo(ABC):
             список Визитов
 
         """
-        ...
-
-
-class DocLogRepo(ABC):
-
-    @abstractmethod
-    def get_by_id(self, id_: int) -> Optional[entities.DocsLog]:
-        ...
-
-    @abstractmethod
-    def get_all(self) -> List[entities.DocsLog]:
-        ...
-
-    @abstractmethod
-    def add(self, instance: entities.DocsLog):
-        ...
-
-    @abstractmethod
-    def save(self):
         ...

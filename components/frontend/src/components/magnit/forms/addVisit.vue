@@ -1,63 +1,81 @@
 <script setup>
 import '@/assets/sass/visits/visits.scss';
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useVuelidate } from '@vuelidate/core'
-import { minLength, required, numeric } from '@vuelidate/validators'
+import { minLength, required, numeric, minValue, maxValue } from '@vuelidate/validators';
+import { useStore } from 'vuex';
 import rightSideModal from '@/components/magnit/modals/rightSideModal';
-import '@/assets/sass/font-icons/fontawesome/css/regular.css';
-import '@/assets/sass/font-icons/fontawesome/css/fontawesome.css';
+// import '@/assets/sass/font-icons/fontawesome/css/regular.css';
+// import '@/assets/sass/font-icons/fontawesome/css/fontawesome.css';
 
+import feather from 'feather-icons';
+
+const store = useStore();
 const modalTitle = 'Новый заезд';
-const form = ref(
-    {
-        name: '',
-        email: '',
-        password: '',
-        passwordRepeat: '',
-        hasWebsite: false,
-        websiteURL: ''
-    }
-)
 
 // const mixin = validationMixin
 const permit_num = ref('')
 const weight = ref('')
-const requiredNameLength = ref(3)
 const rules = computed(() => ({
     permit_num: {
         required,
         numeric,
-        minLength: minLength(requiredNameLength.value)
+        minLength: minLength(2)
     },
     weight: {
         required,
         numeric,
-        minLength: minLength(requiredNameLength.value)
+        minValueRef: minValue(store.state.PermitsModule.check_permit.tara || 0),
+        maxValueRef: maxValue(store.state.PermitsModule.check_permit.max_weight * 1.2)
     },
 }))
 
 const v$ = useVuelidate(rules, { permit_num, weight })
 
+
+const isOpen = ref(null);
 const createVisit = (f) => {
-    console.log(permit_num.value)
-    console.log(weight.value)
-    console.log(v$.value)
+    store.dispatch('VisitsModule/add', {
+        permission_id: store.state.PermitsModule.check_permit.permission_id,
+        weight: weight.value
+    }).catch();
+    store.dispatch('VisitsModule/update');
+    closeAndClean();
 }
+
+const checkPermit = (x) => {
+    store.dispatch('PermitsModule/check', {
+        number: permit_num.value
+    }).catch()
+}
+
+const statuses = {
+    0: `<span class="badge inv-status badge-danger">Просрочен</span>`,
+    1: `<span class="badge inv-status badge-success">Активен</span>`,
+};
+
+onMounted(() => {
+    feather.replace();
+});
+
+const closeAndClean = () => {
+    store.commit('PermitsModule/clearCheckPermitData');
+    permit_num.value = '';
+    weight.value = '';
+    isOpen.value = !isOpen.value;
+};
 
 </script>
 
 <template>
-
-    <rightSideModal :modalTitle="modalTitle">
+    <rightSideModal :modalTitle="modalTitle" :isOpen="isOpen">
 
         <form>
             <div class="mb-3 pt-5">
                 <label for="permit_num" class="col-form-label">Номер пропуска</label>
                 <div>
                     <input v-model="permit_num" id="permit_num" type="number" class="form-control"
-                        placeholder="Номер пропуска" />
-                    <!-- :class="[v$.permit_num.$invalid ? (form.name ? 'is-valid' : 'is-invalid') : '']"  -->
-
+                        placeholder="Номер пропуска" v-on:input="checkPermit($event)" />
                 </div>
             </div>
             <div class="mb-3 pt-3">
@@ -66,37 +84,55 @@ const createVisit = (f) => {
                     <input v-model="weight" id="weight" type="number" class="form-control" placeholder="Вес, кг" />
                 </div>
             </div>
-            <button :disabled="v$.$invalid" @click.prevent="createVisit" class="btn btn-primary my-4">Заехать</button>
+            <button :disabled="v$.$invalid" @click.prevent="createVisit" class="btn btn-primary my-4">
+                Заехать
+            </button>
         </form>
 
-        <div v-show="!v$.$invalid" class="permit-info-list pt-5">
-            <!-- <hr /> -->
-            <h5 class="rs-modal-title">Информация о ТС</h5>
+        <div v-show="store.state.PermitsModule.check_permit.reg_number" class="permit-info-list pt-5">
+            <h5 class="rs-modal-title">Пропуск</h5>
+
+
             <ul class="info-block list-inline">
                 <li class="info-block__item">
-                    <i class="far fa-flag" />
-                    Контрагент
+                    <i data-feather="check"></i>
+                    <!-- Статус -->
+                    <text v-html="statuses[store.state.PermitsModule.check_permit.permit_status]" />
                 </li>
                 <li class="info-block__item">
-                    <i class="far fa-bookmark"></i>
-                    Марка ТС
+                    <i data-feather="check"></i>
+                    <!-- Регистрационный номер -->
+                    {{ store.state.PermitsModule.check_permit.reg_number }}
                 </li>
                 <li class="info-block__item">
-                    <i class="far fa-address-book"></i>
-                    Регистрационный номер
+                    <i data-feather="truck"></i>
+                    <!-- Марка ТС -->
+                    {{ store.state.PermitsModule.check_permit.truck_model }}
                 </li>
                 <li class="info-block__item">
-                    <i class="far fa-id-card"></i>
-                    Статус пропуска
+                    <i data-feather="flag"></i>
+                    <!-- Контрагент -->
+                    {{ store.state.PermitsModule.check_permit.contragent }}
                 </li>
                 <li class="info-block__item">
-                    <i class="far fa-clock"></i>
-                    Дата истечения
+                    <i data-feather="minus"></i>
+                    <!-- Марка ТС -->
+                    {{ store.state.PermitsModule.check_permit.truck_type }}
+                </li>
+                <li class="info-block__item">
+                    <i data-feather="minus"></i>Тара:
+                    {{ store.state.PermitsModule.check_permit.tara }}
+                </li>
+                <li class="info-block__item">
+                    <i data-feather="minus"></i>Макс. Брутто:
+                    {{ store.state.PermitsModule.check_permit.max_weight }}
+                </li>
+                <li class="info-block__item">
+                    <i data-feather="minus"></i>Истекает:
+                    {{ new Date(store.state.PermitsModule.check_permit.expired_at).toLocaleDateString('RU') }}
                 </li>
             </ul>
         </div>
 
     </rightSideModal>
-
-
 </template>

@@ -18,10 +18,10 @@ class PolygonRepo(BaseRepo, interfaces.PolygonRepo):
         query = (
             select(self.dto)
             .join(
-                entities.SecondaryRoute,
-                entities.SecondaryRoute.receiver_polygon_id == entities.Polygon.id
+                entities.PartnerDetails,
+                entities.PartnerDetails.receiver_polygon_id == entities.Polygon.id
             )
-            .where(entities.SecondaryRoute.source_polygon_id == source_id)
+            .where(entities.PartnerDetails.source_polygon_id == source_id)
 
         )
         return self.session.execute(query).scalars().all()
@@ -29,4 +29,4 @@ class PolygonRepo(BaseRepo, interfaces.PolygonRepo):
 
 @component
 class SecondaryRouteRepo(BaseRepo, interfaces.SecondaryRouteRepo):
-    dto = entities.SecondaryRoute
+    dto = entities.PartnerDetails

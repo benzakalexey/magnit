@@ -5,10 +5,9 @@ class UserRole(Enum):
     POLYGON_CHIEF = 'Начальник полигона'
     CONTROLLER = 'Контролер'
     SUPERVISOR = 'Супервайзер'
-    DRIVER = 'Водитель'
 
 
-class ContragentType(Enum):
+class PartnerType(Enum):
     """Тип организации"""
 
     PRIMARY_ROUTE = 'Перевозчик 1 плечо'
@@ -17,13 +16,21 @@ class ContragentType(Enum):
     PRINCIPAL = 'Заказчик'
 
 
-class VehicleType(Enum):
+class TruckType(Enum):
     """Тип автомобиля"""
 
-    BUNKER = 'Бункеровоз'
-    GARBAGE = 'Мусоровоз'
-    SCRAP = 'Ломовоз'
-    TONAR = 'Тонар'
+    BUNKER_CARRIER = "БУНКЕРОВОЗ"
+    CAR = "ЛЕГКОВОЙ АВТОМОБИЛЬ"
+    CARGO = "ГРУЗОВОЙ"
+    CARGO_OTHER = "ГРУЗОВОЙ ПРОЧИЕ"
+    DUMP_TRUCK = "ГРУЗОВОЙ САМОСВАЛ"
+    GARBAGE_TRUCK = "МУСОРОВОЗ"
+    MULTILIFT = "МУЛЬТИЛИФТ"
+    SCRAP_TRUCK = "ЛОМОВОЗ"
+    SPECIALIZED = "СПЕЦИАЛИЗИРОВАННЫЙ АВТОМОБИЛЬ"
+    SPECIALIZED_OTHER = "ПРОЧИЕ СПЕЦИАЛИЗИРОВАННЫЕ"
+    TIPPER = "САМОСВАЛ"
+    TRACTOR = "ТЯГАЧ"
 
 
 class PermitStatus(Enum):

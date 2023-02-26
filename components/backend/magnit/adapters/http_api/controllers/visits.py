@@ -24,14 +24,14 @@ class Visits:
 
     @join_point
     @authenticate
-    def on_get_get_all(self, request, response):
+    def on_get_get_all(self, _, response):
         visits = self.service.get_all()
         response.media = visits
 
     @join_point
     @authenticate
     def on_get_get(self, request, response):
-        visites: List[entities.Visit] = self.service.get_on_polygon(
+        visits: List[entities.Visit] = self.service.get_on_polygon(
             user_id=request.uid,
             **request.params,
         )
@@ -39,24 +39,31 @@ class Visits:
             {
                 'id': v.id,
                 'permit': v.permission.permit.number,
-                'contragent_id': v.permission.contragent.id,
-                'contragent_name': v.permission.contragent.name,
-                'vehicle_model': v.permission.permit.vehicle.model.name,
-                'vehicle_type': v.permission.permit.vehicle.vehicle_type.value,
+                'contragent_id': v.permission.owner.id,
+                'is_deleted': v.is_deleted,
+                'delete_reason': v.delete_reason,
+                'carrier': v.permission.owner.short_name,
+                'invoice_num': v.invoice_num,
+                'tonar': v.permission.is_tonar,
+                'truck_model': v.permission.permit.truck.model.name,
+                'truck_type': v.permission.permit.truck.type.value,
                 'tara': v.tara,
                 'netto': v.netto,
                 'brutto': v.brutto,
-                'max_weight': v.permission.permit.vehicle.max_weight,
-                'reg_number': v.permission.permit.vehicle.reg_number,
-                'weighing_in': v.weight_in,
+                'max_weight': v.permission.permit.truck.max_weight,
+                'reg_number': v.permission.permit.truck.reg_number,
+                'weight_in': v.weight_in,
                 'checked_in': v.checked_in,
-                'weighing_out': v.weight_out,
+                'weight_out': v.weight_out,
                 'checked_out': v.checked_out,
-                'driver_name': v.driver.full_name,
-                'driver_phone': v.driver.phone_number,
-                'destination': v.destination.name,
+                'driver_name': f'{v.driver.surname} {v.driver.name}'
+                if v.driver else None,
+                # 'driver_phone': v.driver.phone
+                # if v.driver else None,
+                'destination': v.contract.destination.name
+                if v.contract else None,
                 'status': v.status,
-            } for v in visites
+            } for v in visits
         ]
 
     @join_point
@@ -68,7 +75,7 @@ class Visits:
     @join_point
     @authenticate
     def on_post_add(self, request, response):
-        self.service.create_visit(**request.media)
+        self.service.create_visit(user_id=request.uid, **request.media)
         response.media = constants.SUCCESS_TRUE
 
     @join_point
@@ -77,6 +84,7 @@ class Visits:
         response.media = constants.SUCCESS_TRUE
 
     @join_point
+    @authenticate
     def on_post_delete(self, request, response):
         self.service.delete_visit(**request.media)
         response.media = constants.SUCCESS_TRUE

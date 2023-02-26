@@ -34,23 +34,3 @@ class Polygons:
     def on_post_add(self, request, response):
         self.service.add_polygon(**request.media)
         response.media = constants.SUCCESS_TRUE
-
-
-@component
-class SecondaryRoutes:
-    service: services.SecondaryRoute
-
-    @join_point
-    def on_get_get_by_id(self, request, response):
-        secondary_routes = self.service.get_by_id(**request.params)
-        response.media = secondary_routes
-
-    @join_point
-    def on_get_get_all(self, request, response):
-        secondary_routes = self.service.get_all(**request.params)
-        response.media = secondary_routes
-
-    @join_point
-    def on_post_add(self, request, response):
-        self.service.add_secondary_route(**request.media)
-        response.media = constants.SUCCESS_TRUE

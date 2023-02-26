@@ -1,4 +1,4 @@
-/api/users/add
+api/users/add
 method: POST
 body:
     {
@@ -41,19 +41,19 @@ body:
         "receiver_polygon_id": int
     }
 
-/api/vehicle_models/add
+/api/truck_models/add
 method: POST
 body:
     {
         "model": str
     }
 
-/api/vehicles/add
+/api/trucks/add
 method: POST
 body:
     {
         "reg_number": str,
-        "vehicle_type": Enum,
+        "truck_type": Enum,
         "model_id": int,
         "pts_number": str,
         "tara": str,
@@ -65,7 +65,7 @@ method: POST
 body:
     {
         "operator_id": imt,
-        "vehicle_id": int,
+        "truck_id": int,
         "contragent_id": int,
         "valid_from": datetime,
         "valid_to": datetime

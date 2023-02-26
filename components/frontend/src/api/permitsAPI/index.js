@@ -19,7 +19,7 @@ export const PermitsAPI = {
         const url = 'permits/get_all';
         return DefaultAPIInstance.get(url, {
             params: {
-                num: num
+                num: { num }
             }
         });
     },
@@ -37,6 +37,17 @@ export const PermitsAPI = {
             }
         });
     },
+    
+    /**Получить информацию по номеру пропуска
+     * 
+     * @param {number} num 
+     * @returns 
+     */
+    async check(number) {
+        const url = 'permits/check';
+        const data = { number };
+        return await DefaultAPIInstance.get(url, {params: data});
+    }, 
 
     /**Пометить визит как удаленный
      *      

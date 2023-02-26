@@ -1,18 +1,15 @@
 <script setup>
 
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 const isOpen = ref(null);
 
 const props = defineProps({
     modalTitle: false,
+    isOpen: false,
 })
 
-const checkPermit = (i) => {
-
-
-    console.log(i.target.value)
-}
+watch(() => props.isOpen, (n, _) => isOpen.value = false)
 
 </script>
 

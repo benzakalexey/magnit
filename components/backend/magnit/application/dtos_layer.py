@@ -15,11 +15,11 @@ class UserAddInfo(DTO):
     last_name: str
 
 
-class ContragentInfo(DTO):
+class PartnerInfo(DTO):
     name: str
     inn: str
     kpp: Optional[str]
-    contragent_type: constants.ContragentType
+    contragent_type: constants.PartnerType
     address: Optional[str]
     phone_number: Optional[str]
 
@@ -32,16 +32,16 @@ class PolygonInfo(DTO):
     address: Optional[str] = None
 
 
-class VehicleModelInfo(DTO):
+class truckModelInfo(DTO):
     name: str
 
 
-class VehicleInfo(DTO):
+class truckInfo(DTO):
     model_id: conint(gt=0)
     reg_number: str
     sts_number: str
     production_year: Optional[conint(gt=0)]
-    vehicle_type: constants.VehicleType
+    truck_type: constants.TruckType
     tara: conint(gt=0)
     max_weight: conint(gt=0)
     body_volume: Optional[conint(gt=0)]
@@ -56,7 +56,7 @@ class SecondaryRouteInfo(DTO):
 
 class PermitInfo(DTO):
     number: conint(gt=0)
-    vehicle_id: conint(gt=0)
+    truck_id: conint(gt=0)
 
 
 class PermitLogInfo(DTO):
@@ -67,7 +67,7 @@ class PermitLogInfo(DTO):
 
 
 class VisitInInfo(DTO):
-    permit_id: int
+    permission_id: int
     user_id: int
     weight: conint(gt=0)
     polygon_id: Optional[conint(gt=0)] = None
