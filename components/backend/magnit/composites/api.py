@@ -26,70 +26,69 @@ class DB:
 
     # repos
     users_repo = repositories.UserRepo(context=context)
-    contragents_repo = repositories.ContragentRepo(context=context)
+    staff_repo = repositories.StaffRepo(context=context)
+    partners_repo = repositories.PartnerRepo(context=context)
     polygons_repo = repositories.PolygonRepo(context=context)
     secondary_routes_repo = repositories.SecondaryRouteRepo(context=context)
-    vehicle_models_repo = repositories.VehicleModelRepo(context=context)
-    vehicles_repo = repositories.VehicleRepo(context=context)
+    truck_models_repo = repositories.TruckModelRepo(context=context)
+    trucks_repo = repositories.TruckRepo(context=context)
     permits_repo = repositories.PermitRepo(context=context)
-    permits_log_repo = repositories.PermitLogRepo(context=context)
+    permission_repo = repositories.PermissionRepo(context=context)
     visits_repo = repositories.VisitRepo(context=context)
-    docs_log_repo = repositories.DocLogRepo(context=context)
+    # docs_log_repo = repositories.DocLogRepo(context=context)
 
 
 class Application:
     auth_service = services.Auth(users_repo=DB.users_repo)
     user = services.User(
         users_repo=DB.users_repo,
-        contragents_repo=DB.contragents_repo,
+        contragents_repo=DB.partners_repo,
         polygons_repo=DB.polygons_repo,
     )
-    contragent = services.Contragent(
-        contragents_repo=DB.contragents_repo,
+    contragent = services.Partner(
+        contragents_repo=DB.partners_repo,
     )
     polygon = services.Polygon(
         polygons_repo=DB.polygons_repo,
-        contragents_repo=DB.contragents_repo,
+        contragents_repo=DB.partners_repo,
     )
-    secondary_route = services.SecondaryRoute(
-        secondary_routes_repo=DB.secondary_routes_repo,
-        polygons_repo=DB.polygons_repo,
+    # secondary_route = services.SecondaryRoute(
+    #     secondary_routes_repo=DB.secondary_routes_repo,
+    #     polygons_repo=DB.polygons_repo,
+    # )
+    truck_model = services.TruckModel(
+        truck_models_repo=DB.truck_models_repo,
     )
-    vehicle_model = services.VehicleModel(
-        vehicle_models_repo=DB.vehicle_models_repo,
-    )
-    vehicle = services.Vehicle(
-        vehicles_repo=DB.vehicles_repo,
-        vehicle_models_repo=DB.vehicle_models_repo,
+    truck = services.Truck(
+        trucks_repo=DB.trucks_repo,
+        truck_models_repo=DB.truck_models_repo,
     )
     permit = services.Permit(
         permits_repo=DB.permits_repo,
         users_repo=DB.users_repo,
-        contragents_repo=DB.contragents_repo,
-        vehicles_repo=DB.vehicles_repo,
-    )
-    permit_log = services.PermitLog(
-        permits_log_repo=DB.permits_log_repo,
-        users_repo=DB.users_repo,
-        permits_repo=DB.permits_repo,
+        contragents_repo=DB.partners_repo,
+        trucks_repo=DB.trucks_repo,
+        permission_repo=DB.permission_repo,
     )
     visit = services.Visit(
         visits_repo=DB.visits_repo,
         permits_repo=DB.permits_repo,
         users_repo=DB.users_repo,
+        staff_repo=DB.staff_repo,
         polygons_repo=DB.polygons_repo,
-        vehicle_repo=DB.vehicles_repo,
+        truck_repo=DB.trucks_repo,
         secondary_routes_repo=DB.secondary_routes_repo,
+        permission_repo=DB.permission_repo,
     )
-    doc = services.Doc(
-        visits_repo=DB.visits_repo,
-        template_dir=Settings.http_api.TEMPLATE_DIR
-    )
-    doc_log = services.DocLog(
-        docs_log_repo=DB.docs_log_repo,
-        visits_repo=DB.visits_repo,
-        users_repo=DB.users_repo,
-    )
+    # doc = services.Doc(
+    #     visits_repo=DB.visits_repo,
+    #     template_dir=Settings.http_api.TEMPLATE_DIR
+    # )
+    # doc_log = services.DocLog(
+    #     docs_log_repo=DB.docs_log_repo,
+    #     visits_repo=DB.visits_repo,
+    #     users_repo=DB.users_repo,
+    # )
 
 
 class Aspects:
@@ -99,23 +98,20 @@ class Aspects:
 
 if Settings.http_api.IS_DEV_MODE:
     key = ''
-    allow_all_origins = True
 else:
     key = secrets.token_urlsafe(16)
-    allow_all_origins = False
 
 app = http_api.create_app(
-    allow_all_origins=allow_all_origins,
+    allow_all_origins=Settings.http_api.ALLOW_ORIGINS,
     auth_service=Application.auth_service,
     contragent=Application.contragent,
-    doc=Application.doc,
-    doc_log=Application.doc_log,
+    # doc=Application.doc,
+    # doc_log=Application.doc_log,
     permit=Application.permit,
-    permit_log=Application.permit_log,
     polygon=Application.polygon,
-    secondary_route=Application.secondary_route,
+    # secondary_route=Application.secondary_route,
     user=Application.user,
-    vehicle=Application.vehicle,
-    vehicle_model=Application.vehicle_model,
+    truck=Application.truck,
+    truck_model=Application.truck_model,
     visit=Application.visit,
 )

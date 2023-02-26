@@ -11,11 +11,32 @@ class UserRepo(ABC):
         ...
 
     @abstractmethod
-    def get_by_phone_number(
+    def get_by_phone(
         self,
-        phone_number: int,
+        phone: int,
     ) -> Optional[entities.User]:
-        ...
+        """Возвращает пользователя по номеру телефона
+
+        Args:
+            phone: 10-значное число номера телефона
+
+        Returns:
+            Объект "Пользователь" или None
+        """
+
+
+class StaffRepo(ABC):
+
+    @abstractmethod
+    def get_by_user_id(self, user_id: int) -> Optional[entities.Staff]:
+        """Возвращает сотрудника по id пользователя
+
+        Args:
+            user_id:
+
+        Returns:
+
+        """
 
     @abstractmethod
     def get_all(self) -> List[entities.User]:
@@ -30,18 +51,18 @@ class UserRepo(ABC):
         ...
 
 
-class ContragentRepo(ABC):
+class PartnerRepo(ABC):
 
     @abstractmethod
-    def get_by_id(self, id_: int) -> Optional[entities.Contragent]:
+    def get_by_id(self, id_: int) -> Optional[entities.Partner]:
         ...
 
     @abstractmethod
-    def get_all(self) -> List[entities.Contragent]:
+    def get_all(self) -> List[entities.Partner]:
         ...
 
     @abstractmethod
-    def add(self, instance: entities.Contragent):
+    def add(self, instance: entities.Partner):
         ...
 
     @abstractmethod
@@ -78,15 +99,22 @@ class PolygonRepo(ABC):
 class SecondaryRouteRepo(ABC):
 
     @abstractmethod
-    def get_by_id(self, id_: int) -> Optional[entities.SecondaryRoute]:
+    def get_by_id(self, id_: int) -> Optional[entities.PartnerDetails]:
+        ...
+
+    # @abstractmethod
+    # def get_by_source_polygon(
+    #     self,
+    #     source_polygon_id: int,
+    # ) -> List[entities.Polygon]:
+    #     ...
+
+    @abstractmethod
+    def get_all(self) -> List[entities.PartnerDetails]:
         ...
 
     @abstractmethod
-    def get_all(self) -> List[entities.SecondaryRoute]:
-        ...
-
-    @abstractmethod
-    def add(self, instance: entities.SecondaryRoute):
+    def add(self, instance: entities.PartnerDetails):
         ...
 
     @abstractmethod
@@ -94,10 +122,10 @@ class SecondaryRouteRepo(ABC):
         ...
 
 
-class VehicleModelRepo(ABC):
+class TruckModelRepo(ABC):
 
     @abstractmethod
-    def get_by_id(self, id_: int) -> Optional[entities.VehicleModel]:
+    def get_by_id(self, id_: int) -> Optional[entities.TruckModel]:
         """
 
         :rtype: object
@@ -105,11 +133,11 @@ class VehicleModelRepo(ABC):
         ...
 
     @abstractmethod
-    def get_all(self) -> List[entities.VehicleModel]:
+    def get_all(self) -> List[entities.TruckModel]:
         ...
 
     @abstractmethod
-    def add(self, instance: entities.VehicleModel):
+    def add(self, instance: entities.TruckModel):
         ...
 
     @abstractmethod
@@ -117,18 +145,18 @@ class VehicleModelRepo(ABC):
         ...
 
 
-class VehicleRepo(ABC):
+class TruckRepo(ABC):
 
     @abstractmethod
-    def get_by_id(self, id_: int) -> Optional[entities.Vehicle]:
+    def get_by_id(self, id_: int) -> Optional[entities.Truck]:
         ...
 
     @abstractmethod
-    def get_all(self) -> List[entities.Vehicle]:
+    def get_all(self) -> List[entities.Truck]:
         ...
 
     @abstractmethod
-    def add(self, instance: entities.Vehicle):
+    def add(self, instance: entities.Truck):
         ...
 
     @abstractmethod
@@ -140,6 +168,10 @@ class PermitRepo(ABC):
 
     @abstractmethod
     def get_by_id(self, id_: int) -> Optional[entities.Permit]:
+        ...
+
+    @abstractmethod
+    def get_by_number(self, number: int) -> Optional[entities.Permit]:
         ...
 
     @abstractmethod
@@ -156,6 +188,13 @@ class PermitRepo(ABC):
 
 
 class PermissionRepo(ABC):
+
+    @abstractmethod
+    def get_last_by_permit_number(
+        self,
+        number: int,
+    ) -> Optional[entities.Permission]:
+        """Возвращает последний Допуск по номеру пропуска"""
 
     @abstractmethod
     def get_by_id(self, id_: int) -> Optional[entities.Permission]:
@@ -192,21 +231,18 @@ class VisitRepo(ABC):
     def save(self):
         ...
 
-
-class DocLogRepo(ABC):
-
     @abstractmethod
-    def get_by_id(self, id_: int) -> Optional[entities.DocsLog]:
-        ...
+    def get_last_200(
+        self,
+        polygon_id: int,
+    ) -> List[entities.Visit]:
+        """Возвращает визиты за последние 12 часов по ИД Полигона.
 
-    @abstractmethod
-    def get_all(self) -> List[entities.DocsLog]:
-        ...
+        Args:
+            polygon_id: ИД Полигона
 
-    @abstractmethod
-    def add(self, instance: entities.DocsLog):
-        ...
+        Returns:
+            список Визитов
 
-    @abstractmethod
-    def save(self):
+        """
         ...

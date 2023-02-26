@@ -7,7 +7,6 @@ import largeCenterModal from '@/components/magnit/modals/largeCenterModal';
 import '@/assets/sass/font-icons/fontawesome/css/regular.css';
 import '@/assets/sass/font-icons/fontawesome/css/fontawesome.css';
 
-const modalTitle = 'Информация о визите';
 const form = ref({
     name: '',
     email: '',
@@ -22,6 +21,7 @@ const props = defineProps({
     item: false,
 });
 const { item } = toRefs(props);
+const modalTitle = 'Информация о визите';
 
 const isOpen = ref(false);
 watchEffect(() => (isOpen.value = props.isOpen))
@@ -41,7 +41,7 @@ const rules = computed(() => ({
     },
 }));
 
-const v$ = useVuelidate(rules, { permit_num, weight });
+// const v$ = useVuelidate(rules, { permit_num, weight });
 const emit = defineEmits(['closed', 'deleted']);
 const close = () => {
     emit('closed');
@@ -78,11 +78,11 @@ const deleteVisit = async () => {
                 cancelButtonText: 'Отменить',
                 currentProgressStep: step,
             });
-            
+
             if (result.dismiss === window.Swal.DismissReason.cancel) {
                 break;
             };
-            
+
             if (result.dismiss === window.Swal.DismissReason.backdrop) {
                 break;
             };
@@ -95,54 +95,57 @@ const deleteVisit = async () => {
         if (result.value) {
             emit('deleted', item.value.id, delete_reason)
         };
-    }
+    };
 }
 
 </script>
 
 <template>
-    <largeCenterModal :modalTitle="modalTitle" :status="item.status" @closed="close" :isOpen="isOpen">
+    <largeCenterModal :modalTitle="item.invoice_num" :status="item.status" @closed="close" :isOpen="isOpen">
 
         <template #form>
             <form>
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="col-form-label" for="permit_num">Пропуск</label>
-                        <input v-model="item.permit_num" type=text readonly="true" class="form-control"
-                            id="permit_num" />
+                        <input v-model="item.permit" type=text readonly="true" class="form-control" id="permit_num" />
                     </div>
                     <div class="col-md-6">
                         <label class="col-form-label" for="reg_num">Рег. номер</label>
-                        <input v-model="item.reg_num" type="text" readonly="true" class="form-control" id="reg_num" />
+                        <input v-model="item.reg_number" type="text" readonly="true" class="form-control" id="reg_num" />
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="col-form-label" for="vehicle_type">Тип ТС</label>
-                        <input v-model="item.vehicle_type" type="text" readonly="true" class="form-control"
+                        <input v-model="item.truck_type" type="text" readonly="true" class="form-control"
                             id="vehicle_type" />
                     </div>
                     <div class="col-md-6">
                         <label class="col-form-label" for="vehicle_mark">Марка ТС</label>
-                        <input v-model="item.vehicle_mark" type="text" readonly="true" class="form-control"
+                        <input v-model="item.truck_model" type="text" readonly="true" class="form-control"
                             id="vehicle_mark" />
                     </div>
                 </div>
-                <div class="mb-3">
-                    <label for="contragent_name">Контрагент</label>
-                    <input v-model="item.contragent_name" type="text" readonly="true" class="form-control"
-                        id="contragent_name" />
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="col-form-label" for="contragent_name">Контрагент</label>
+                        <input v-model="item.carrier" type="text" readonly="true" class="form-control" id="carrier" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="col-form-label" for="invoice_num">Номер накладной</label>
+                        <input v-model="item.invoice_num" type="text" readonly="true" class="form-control"
+                            id="invoice_num" />
+                    </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="col-form-label" for="checked_in">Дата въезда</label>
-                        <input v-model="item.checked_in" type="text" readonly="true" class="form-control"
-                            id="checked_in" />
+                        <input v-model="item.checked_in" type="text" readonly="true" class="form-control" id="checked_in" />
                     </div>
                     <div class="col-md-6">
                         <label class="col-form-label" for="weight_in">Масса при въезде</label>
-                        <input v-model="item.weight_in" type="text" readonly="true" class="form-control"
-                            id="weight_in" />
+                        <input v-model="item.weight_in" type="text" readonly="true" class="form-control" id="weight_in" />
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -153,15 +156,14 @@ const deleteVisit = async () => {
                     </div>
                     <div class="col-md-6">
                         <label class="col-form-label" for="weight_out">Масса при выезде</label>
-                        <input v-model="item.weight_out" type="text" readonly="true" class="form-control"
-                            id="weight_out" />
+                        <input v-model="item.weight_out" type="text" readonly="true" class="form-control" id="weight_out" />
                     </div>
                 </div>
             </form>
         </template>
 
         <template #removeButton>
-            <button type="button" class="btn btn-danger me-auto" @click="deleteVisit">Удалить</button>
+            <button :disabled="item.is_deleted" type="button" class="btn btn-danger me-auto" @click.prevent="deleteVisit">Удалить</button>
         </template>
 
         <template #submitButton>

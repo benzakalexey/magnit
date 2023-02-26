@@ -100,3 +100,4 @@ Temporary Items
 .idea/
 /tmp/
 *node_modules
+*.env

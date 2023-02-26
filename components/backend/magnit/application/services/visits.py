@@ -1,12 +1,14 @@
 from datetime import datetime
-import os
+
+from typing import List, Dict, Any
 
 from classic.app import validate_with_dto
 from classic.components import component
-from openpyxl import load_workbook
+
 from pydantic import validate_arguments, conint
 
 from magnit.application import interfaces, entities, errors, dtos_layer
+from magnit.application.constants import UserRole, TruckType
 
 from magnit.application.services.join_point import join_point
 
@@ -18,11 +20,13 @@ class Visit:
     """
     visits_repo: interfaces.VisitRepo
     users_repo: interfaces.UserRepo
+    staff_repo: interfaces.StaffRepo
     polygons_repo: interfaces.PolygonRepo
     permits_repo: interfaces.PermitRepo
     # copy_visits_repo: interfaces.CopyVisitRepo
-    vehicle_repo: interfaces.VehicleRepo
+    truck_repo: interfaces.TruckRepo
     secondary_routes_repo: interfaces.SecondaryRouteRepo
+    permission_repo: interfaces.PermissionRepo
 
     @join_point
     @validate_arguments
@@ -42,26 +46,28 @@ class Visit:
     @join_point
     @validate_with_dto
     def create_visit(self, visit_info: dtos_layer.VisitInInfo):
-        permit = self.permits_repo.get_by_id(visit_info.permit_id)
-        if permit is None:
+        permission = self.permission_repo.get_by_id(visit_info.permission_id)
+        if permission is None:
             raise errors.PermitIDNotExistError(
-                permit_id=visit_info.permit_id)
+                permit_id=visit_info.permission_id
+            )
 
-        user = self.users_repo.get_by_id(visit_info.user_id)
-        if user is None:
+        staff = self.staff_repo.get_by_user_id(visit_info.user_id)
+        if staff is None:
             raise errors.UserIDNotExistError(user_id=visit_info.user_id)
 
-        polygon = self.polygons_repo.get_by_id(visit_info.polygon_id)
-        if polygon is None:
-            raise errors.PolygonIDNotExistError(
-                polygon_id=visit_info.polygon_id
-            )
+        # polygon = staff.polygon
+        if staff.polygon is None:
+            raise errors.PolygonIDNotExistError()
+
+        # permit = self.permits_repo.get_by_id(visit_info.permit_id)
 
         visit = entities.Visit(
             weight_in=visit_info.weight,
-            permit=permit,
-            operator_in=user,
-            polygon=polygon,
+            permission=permission,
+            operator_in=staff.user,
+            polygon=staff.polygon,
+            invoice_num='GHGHGH'
         )
         self.visits_repo.add(visit)
         self.visits_repo.save()
@@ -88,7 +94,9 @@ class Visit:
         visit: entities.Visit,
         visit_info: dtos_layer.VisitOutInfo,
     ):
-        if visit.permit.is_tonar is False:
+        # if visit.permit.is_tonar is False:
+        #     return
+        if visit.permission.is_tonar is False:
             return
 
         driver = self.users_repo.get_by_id(visit_info.driver_id)
@@ -105,17 +113,17 @@ class Visit:
                 polygon_id=visit_info.destination_id)
 
         visit.destination = destination
-        copy_visit = entities.CopyVisit(
-            visit=visit,
-            permit=visit.permit,
-            polygon=visit.polygon,
-            weight_in=visit.weight_in,
-            weight_out=visit.weight_out,
-            driver=visit.driver,
-            destination=visit.destination,
-        )
-        self.copy_visits_repo.add(copy_visit)
-        self.copy_visits_repo.save()
+        # copy_visit = entities.CopyVisit(
+        #     visit=visit,
+        #     permit=visit.permit,
+        #     polygon=visit.polygon,
+        #     weight_in=visit.weight_in,
+        #     weight_out=visit.weight_out,
+        #     driver=visit.driver,
+        #     destination=visit.destination,
+        # )
+        # self.copy_visits_repo.add(copy_visit)
+        # self.copy_visits_repo.save() # TODO что у нас с копией Визитов
 
     @join_point
     @validate_arguments
@@ -130,3 +138,56 @@ class Visit:
         visit.is_deleted = True
         visit.delete_reason = reason
         self.visits_repo.save()
+
+    @join_point
+    @validate_arguments
+    def get_on_polygon(self, user_id: int) -> List[entities.Visit]:
+        # user = self.users_repo.get_by_id(user_id)
+        # if user is None:
+        #     raise errors.UserIDNotExistError(user_id=user_id)
+
+        # if not user.is_staff:
+        #     return
+
+        staff = self.staff_repo.get_by_user_id(user_id)
+        if staff is None:
+            raise errors.UserIDNotExistError(user_id=user_id)
+
+        polygon = staff.polygon
+        if polygon is None:
+            raise errors.PolygonIDNotExistError(
+                polygon_id=staff.polygon.id)  # TODO <- !!!
+
+        return self.visits_repo.get_last_200(polygon.id)
+
+    @join_point
+    @validate_arguments
+    def get_invoice_by_visit(self, visit_id: int) -> Dict[str, Any]:
+        visit = self.visits_repo.get_by_id(visit_id)
+
+        if visit is None:
+            raise errors.VisitIDNotExistError(visit_id=visit_id)
+
+        truck = visit.permission.permit.truck
+
+        return {
+            'invoice_num': visit.invoice_num,
+            'reg_number': truck.reg_number,
+            'truck_model': truck.model.name,
+            'truck_type': truck.truck_type.value,
+            'contragent_name': visit.permission.contragent.name,
+            'tara': visit.tara,
+            'netto': visit.netto,
+            'brutto': visit.brutto,
+            'body_volume': truck.body_volume,
+            'polygon_name': visit.polygon.name,
+            'polygon_address': visit.polygon.address,
+            'date': visit.checked_in,
+            'destination_name': visit.destination.name,
+            # TODO это полигон или владелец
+            'destination_address': visit.destination.address,  # TODO
+            'destination_inn': visit.destination.owner.inn,
+            'driver_name': visit.driver.full_name,
+            'driver_phone': visit.driver.phone,
+            'permit_num': visit.permission.permit.number,
+        }

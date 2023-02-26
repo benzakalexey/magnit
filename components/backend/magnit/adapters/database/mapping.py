@@ -6,22 +6,18 @@ from magnit.application import entities
 mapper = registry()
 
 mapper.map_imperatively(entities.User, tables.users)
-mapper.map_imperatively(entities.VehicleModel, tables.vehicle_models)
+mapper.map_imperatively(entities.TruckModel, tables.truck_models)
+mapper.map_imperatively(entities.Trailer, tables.trailers)
+mapper.map_imperatively(entities.PartnerDetails, tables.partner_details)
 mapper.map_imperatively(
-    entities.Contragent,
-    tables.contragents,
+    entities.Partner,
+    tables.partners,
     properties={
-        'polygons': relationship(
-            entities.Polygon,
+        'details': relationship(
+            entities.PartnerDetails,
             lazy='select',
             cascade='all, delete, delete-orphan',
-            backref=backref('owner')
-        ),
-        'employees': relationship(
-            entities.User,
-            lazy='select',
-            cascade='all, delete, delete-orphan',
-            backref=backref('contragent')
+            backref=backref('partner')
         )
     },
 )
@@ -29,8 +25,8 @@ mapper.map_imperatively(
     entities.Polygon,
     tables.polygons,
     properties={
-        'employees': relationship(
-            entities.User,
+        'details': relationship(
+            entities.PolygonDetails,
             lazy='select',
             cascade='all, delete, delete-orphan',
             backref=backref('polygon')
@@ -38,25 +34,62 @@ mapper.map_imperatively(
     },
 )
 mapper.map_imperatively(
-    entities.SecondaryRoute,
-    tables.secondary_routes,
+    entities.PolygonDetails,
+    tables.polygon_details,
     properties={
-        'source_polygon': relationship(
-            entities.Polygon, lazy='joined',
-            foreign_keys=[tables.secondary_routes.c.source_polygon_id]
-        ),
-        'receiver_polygon': relationship(
-            entities.Polygon, lazy='joined',
-            foreign_keys=[tables.secondary_routes.c.receiver_polygon_id]
+        'added_by': relationship(
+            entities.User,
+            uselist=False,
+            lazy='select',
         )
     }
 )
 mapper.map_imperatively(
-    entities.Vehicle,
-    tables.vehicles,
+    entities.Driver,
+    tables.drivers,
+    properties={
+        'details': relationship(
+            entities.DriverDetails,
+            lazy='select',
+            cascade='all, delete, delete-orphan',
+            backref=backref('driver')
+        )
+    },
+)
+mapper.map_imperatively(
+    entities.DriverDetails,
+    tables.driver_details,
+    properties={
+        'added_by': relationship(
+            entities.User,
+            uselist=False,
+            lazy='select'
+        )
+    }
+)
+mapper.map_imperatively(
+    entities.Staff,
+    tables.staff,
+    properties={
+        'user': relationship(
+            entities.User, lazy='joined',
+            foreign_keys=[tables.staff.c.user_id]
+        ),
+        'polygon': relationship(
+            entities.Polygon, lazy='select',
+        ),
+        'added_by': relationship(
+            entities.User, lazy='noload',
+            foreign_keys=[tables.staff.c.added_by_id]
+        )
+    }
+)
+mapper.map_imperatively(
+    entities.Truck,
+    tables.trucks,
     properties={
         'model': relationship(
-            entities.VehicleModel, uselist=False, lazy='select',
+            entities.TruckModel, uselist=False, lazy='select'
         )
     }
 )
@@ -64,9 +97,10 @@ mapper.map_imperatively(
     entities.Permission,
     tables.permissions,
     properties={
-        'user': relationship(
-            entities.User, uselist=False, lazy='joined',
-        )
+        'owner': relationship(
+            entities.Partner, uselist=False, lazy='select',
+        ),
+        'added_by': relationship(entities.User, uselist=False, lazy='select')
     }
 )
 mapper.map_imperatively(
@@ -75,10 +109,15 @@ mapper.map_imperatively(
     properties={
         'permissions': relationship(
             entities.Permission,
-            lazy='select',
+            lazy='subquery',
             backref=backref('permit'),
-            order_by='desc(entities.Permission.added_at)'
+            order_by='desc(entities.Permission.expired_at)'
         ),
+        'truck': relationship(
+            entities.Truck,
+            uselist=False,
+            lazy='joined',
+        )
     },
 )
 
@@ -87,43 +126,67 @@ mapper.map_imperatively(
     tables.visits,
     properties={
         'permission': relationship(
-            entities.Permission, uselist=False, lazy='joined',
+            entities.Permission, uselist=False, lazy='select',
         ),
         'polygon': relationship(
-            entities.Polygon, uselist=False, lazy='joined',
-            foreign_keys=[tables.visits.c.polygon_id],
+            entities.Polygon, uselist=False, lazy='select'
         ),
         'operator_in': relationship(
             entities.User,
             uselist=False,
-            lazy='joined',
+            lazy='select',
             foreign_keys=[tables.visits.c.operator_in_id],
         ),
         'operator_out': relationship(
             entities.User,
             uselist=False,
-            lazy='joined',
+            lazy='select',
             foreign_keys=[tables.visits.c.operator_out_id],
         ),
         'driver': relationship(
-            entities.User,
+            entities.Driver,
             uselist=False,
-            lazy='joined',
-            foreign_keys=[tables.visits.c.driver_id],
+            lazy='select'
         ),
-        'destination': relationship(
-            entities.Polygon, uselist=False, lazy='joined',
-            foreign_keys=[tables.visits.c.destination_id],
+        'contract': relationship(
+            entities.Contract, uselist=False, lazy='select'
         )
     }
 )
 
 mapper.map_imperatively(
-    entities.DocsLog,
-    tables.docs_log,
+    entities.Contract,
+    tables.contracts,
     properties={
-        'user': relationship(
-            entities.User, uselist=False, lazy='joined',
+        'sender': relationship(
+            entities.Partner,
+            uselist=False,
+            lazy='select',
+            foreign_keys=[tables.contracts.c.sender_id],
+        ),
+        'receiver': relationship(
+            entities.Partner,
+            uselist=False,
+            lazy='select',
+            foreign_keys=[tables.contracts.c.receiver_id],
+        ),
+        'carrier': relationship(
+            entities.Partner,
+            uselist=False,
+            lazy='select',
+            foreign_keys=[tables.contracts.c.carrier_id],
+        ),
+        'destination': relationship(
+            entities.Polygon,
+            uselist=False,
+            lazy='select',
+            foreign_keys=[tables.contracts.c.destination_id],
+        ),
+        'departure_point': relationship(
+            entities.Polygon,
+            uselist=False,
+            lazy='select',
+            foreign_keys=[tables.contracts.c.departure_point_id],
         )
     }
 )
