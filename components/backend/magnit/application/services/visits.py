@@ -8,8 +8,7 @@ from classic.components import component
 from pydantic import validate_arguments, conint
 
 from magnit.application import interfaces, entities, errors, dtos_layer
-from magnit.application.constants import UserRole, VehicleType
-from magnit.application.entities import VehicleModel
+from magnit.application.constants import UserRole, TruckType
 
 from magnit.application.services.join_point import join_point
 
@@ -21,11 +20,13 @@ class Visit:
     """
     visits_repo: interfaces.VisitRepo
     users_repo: interfaces.UserRepo
+    staff_repo: interfaces.StaffRepo
     polygons_repo: interfaces.PolygonRepo
     permits_repo: interfaces.PermitRepo
     # copy_visits_repo: interfaces.CopyVisitRepo
-    vehicle_repo: interfaces.VehicleRepo
+    truck_repo: interfaces.TruckRepo
     secondary_routes_repo: interfaces.SecondaryRouteRepo
+    permission_repo: interfaces.PermissionRepo
 
     @join_point
     @validate_arguments
@@ -45,28 +46,28 @@ class Visit:
     @join_point
     @validate_with_dto
     def create_visit(self, visit_info: dtos_layer.VisitInInfo):
-        permit = self.permits_repo.get_by_id(visit_info.permit_id)
-        if permit is None:
+        permission = self.permission_repo.get_by_id(visit_info.permission_id)
+        if permission is None:
             raise errors.PermitIDNotExistError(
-                permit_id=visit_info.permit_id)
-
-        user = self.users_repo.get_by_id(visit_info.user_id)
-        if user is None:
-            raise errors.UserIDNotExistError(user_id=visit_info.user_id)
-
-        polygon = self.polygons_repo.get_by_id(visit_info.polygon_id)
-        if polygon is None:
-            raise errors.PolygonIDNotExistError(
-                polygon_id=visit_info.polygon_id
+                permit_id=visit_info.permission_id
             )
 
-        permit = self.permits_repo.get_by_id(visit_info.permit_id)
+        staff = self.staff_repo.get_by_user_id(visit_info.user_id)
+        if staff is None:
+            raise errors.UserIDNotExistError(user_id=visit_info.user_id)
+
+        # polygon = staff.polygon
+        if staff.polygon is None:
+            raise errors.PolygonIDNotExistError()
+
+        # permit = self.permits_repo.get_by_id(visit_info.permit_id)
 
         visit = entities.Visit(
             weight_in=visit_info.weight,
-            permission=permit.permission,
-            operator_in=user,
-            polygon=polygon,
+            permission=permission,
+            operator_in=staff.user,
+            polygon=staff.polygon,
+            invoice_num='GHGHGH'
         )
         self.visits_repo.add(visit)
         self.visits_repo.save()
@@ -141,17 +142,23 @@ class Visit:
     @join_point
     @validate_arguments
     def get_on_polygon(self, user_id: int) -> List[entities.Visit]:
-        user = self.users_repo.get_by_id(user_id)
-        if user is None:
+        # user = self.users_repo.get_by_id(user_id)
+        # if user is None:
+        #     raise errors.UserIDNotExistError(user_id=user_id)
+
+        # if not user.is_staff:
+        #     return
+
+        staff = self.staff_repo.get_by_user_id(user_id)
+        if staff is None:
             raise errors.UserIDNotExistError(user_id=user_id)
 
-        if user.user_role == UserRole.CONTROLLER:
-            polygon = user.polygon
-            if polygon is None:
-                raise errors.PolygonIDNotExistError(
-                    polygon_id=user.polygon.id)  # TODO <- !!!
+        polygon = staff.polygon
+        if polygon is None:
+            raise errors.PolygonIDNotExistError(
+                polygon_id=staff.polygon.id)  # TODO <- !!!
 
-            return self.visits_repo.get_last_12_hours(polygon.id)
+        return self.visits_repo.get_last_200(polygon.id)
 
     @join_point
     @validate_arguments
@@ -161,18 +168,18 @@ class Visit:
         if visit is None:
             raise errors.VisitIDNotExistError(visit_id=visit_id)
 
-        vehicle = visit.permission.permit.vehicle
+        truck = visit.permission.permit.truck
 
         return {
             'invoice_num': visit.invoice_num,
-            'reg_number': vehicle.reg_number,
-            'vehicle_model': vehicle.model.name,
-            'vehicle_type': vehicle.vehicle_type.value,
+            'reg_number': truck.reg_number,
+            'truck_model': truck.model.name,
+            'truck_type': truck.truck_type.value,
             'contragent_name': visit.permission.contragent.name,
             'tara': visit.tara,
             'netto': visit.netto,
             'brutto': visit.brutto,
-            'body_volume': vehicle.body_volume,
+            'body_volume': truck.body_volume,
             'polygon_name': visit.polygon.name,
             'polygon_address': visit.polygon.address,
             'date': visit.checked_in,
@@ -181,6 +188,6 @@ class Visit:
             'destination_address': visit.destination.address,  # TODO
             'destination_inn': visit.destination.owner.inn,
             'driver_name': visit.driver.full_name,
-            'driver_phone': visit.driver.phone_number,
+            'driver_phone': visit.driver.phone,
             'permit_num': visit.permission.permit.number,
         }

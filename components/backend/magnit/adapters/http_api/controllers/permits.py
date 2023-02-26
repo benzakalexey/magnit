@@ -11,7 +11,7 @@ class Permits:
 
     @join_point
     def on_get_check(self, request, response):
-        response.media =self.service.check_by_number(**request.params)
+        response.media = self.service.check_by_number(**request.params)
 
     @join_point
     def on_get_get_by_id(self, request, response):
@@ -25,8 +25,9 @@ class Permits:
 
     @join_point
     def on_post_add(self, request, response):
-        self.service.add_permit(**request.media)
+        self.service.add_permit(user_id=request.uid, **request.media)
         response.media = constants.SUCCESS_TRUE
+
 
 @component
 class PermitsLog:

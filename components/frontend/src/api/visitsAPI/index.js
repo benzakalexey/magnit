@@ -6,7 +6,7 @@ export const VisitsAPI = {
      * @returns {Promise<AxiosResponse<any>>}
      */
     get_all() {
-        const url = 'visits/get_all';
+        const url = 'visits/get';
         return DefaultAPIInstance.get(url);
     },
     /**Пометить визит как удаленный
@@ -15,9 +15,20 @@ export const VisitsAPI = {
      * @param {string} reason 
      * @returns {Promise<AxiosResponse<any>>}
      */
-    delete(id, reason) {
+    delete(visit_id, reason) {
         const url = 'visits/delete'
-        const data = { id, reason };
+        const data = { visit_id, reason };
+        return DefaultAPIInstance.post(url, data);
+    },
+    /**Добавить визит
+     *      
+     * @param {number} id 
+     * @param {string} reason 
+     * @returns {Promise<AxiosResponse<any>>}
+     */
+    add(permission_id, weight) {
+        const url = 'visits/add'
+        const data = { permission_id, weight };
         return DefaultAPIInstance.post(url, data);
     }
 }

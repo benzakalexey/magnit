@@ -46,17 +46,17 @@ class UserRoleIsNoneError(AppError):
     code = 'magnit.users.user_role_is_none_error'
 
 
-class ContragentNameIsNoneError(AppError):
+class PartnerNameIsNoneError(AppError):
     msg_template = 'Название контрагента не может быть пустым.'
     code = 'magnit.contragents.contragent_name_is_none_error'
 
 
-class ContragentIDNotExistError(AppError):
+class PartnerIDNotExistError(AppError):
     msg_template = 'Контрагент с id = {contragent_id} не найден.'
     code = 'magnit.contragents.contragent_id_not_exist_error'
 
 
-class ContragentDriversNotExistError(AppError):
+class PartnerDriversNotExistError(AppError):
     msg_template = 'У контрагента с id = {contragent_id} нет водителей.'
     code = 'magnit.contragents.contragent_drivers_not_exist_error'
 
@@ -81,24 +81,24 @@ class SecondaryRouteIDNotExistError(AppError):
     code = 'magnit.polygons.secondary_route_id_not_exist_error'
 
 
-class VehicleModelNameIsNoneError(AppError):
+class truckModelNameIsNoneError(AppError):
     msg_template = 'Название модели автомобиля не может быть пустым.'
-    code = 'magnit.vehicles.vehicle_model_name_is_none_error'
+    code = 'magnit.trucks.truck_model_name_is_none_error'
 
 
-class VehicleModelIDNotExistError(AppError):
-    msg_template = 'Модель автомобиля с id = {vehicle_model_id} не найдена'
-    code = 'magnit.vehicles.vehicle_model_id_not_exist_error'
+class truckModelIDNotExistError(AppError):
+    msg_template = 'Модель автомобиля с id = {truck_model_id} не найдена'
+    code = 'magnit.trucks.truck_model_id_not_exist_error'
 
 
-class VehicleNameIsNoneError(AppError):
+class truckNameIsNoneError(AppError):
     msg_template = 'Название автомобиля не может быть пустым.'
-    code = 'magnit.vehicles.vehicle_name_is_none_error'
+    code = 'magnit.trucks.truck_name_is_none_error'
 
 
-class VehicleIDNotExistError(AppError):
-    msg_template = 'Автомобиль с id = {vehicle_id} не найден'
-    code = 'magnit.vehicles.vehicle_id_not_exist_error'
+class truckIDNotExistError(AppError):
+    msg_template = 'Автомобиль с id = {truck_id} не найден'
+    code = 'magnit.trucks.truck_id_not_exist_error'
 
 
 class PermitIDNotExistError(AppError):

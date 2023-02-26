@@ -6,8 +6,8 @@ from magnit.application import services
 
 
 @component
-class Contragents:
-    service: services.Contragent
+class Partners:
+    service: services.Partner
 
     @join_point
     def on_get_get_by_id(self, request, response):

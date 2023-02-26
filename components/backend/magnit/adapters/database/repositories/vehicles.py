@@ -5,9 +5,9 @@ from magnit.application import interfaces, entities
 
 
 @component
-class VehicleModelRepo(BaseRepo, interfaces.VehicleModelRepo):
-    dto = entities.VehicleModel
+class TruckModelRepo(BaseRepo, interfaces.TruckModelRepo):
+    dto = entities.TruckModel
 
 @component
-class VehicleRepo(BaseRepo, interfaces.VehicleRepo):
-    dto = entities.Vehicle
+class TruckRepo(BaseRepo, interfaces.TruckRepo):
+    dto = entities.Truck

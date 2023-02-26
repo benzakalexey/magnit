@@ -8,81 +8,145 @@ from magnit.application import constants
 
 
 @dataclass
-class Contragent:
-    """Контрагент (организация)"""
-    contragent_type: constants.ContragentType
-    inn: str
-    kpp: Optional[str]
+class User:
+    """Пользователь"""
+    phone: int
+    password_hash: str
+    user_role: constants.UserRole
+    is_staff: bool
+    is_active: bool
+    surname: str
     name: str
-    address: Optional[str] = None
-    phone_number: Optional[str] = None
-    polygons: List[Polygon] = field(default_factory=list)
-    employees: List[User] = field(default_factory=list)
+    patronymic: Optional[str] = None
     id: Optional[int] = None
+
+    @property
+    def full_name(self) -> str:
+        if self.patronymic is None:
+            return '%s %s' % (
+                self.surname,
+                self.name,
+            )
+        return '%s %s %s' % (
+            self.surname,
+            self.name,
+            self.patronymic,
+        )
 
 
 @dataclass
 class Polygon:
     """Полигон"""
     name: str
-    owner: Contragent
-    location: Optional[str] = None
-    phone_number: Optional[str] = None
-    address: Optional[str] = None
-    employees: List[User] = field(default_factory=list)
+    details: List[PolygonDetails] = field(default_factory=list)
     id: Optional[int] = None
 
 
 @dataclass
-class SecondaryRoute:
-    """Связь полигонов первого и второго плеча"""
-    source_polygon: Polygon
-    receiver_polygon: Polygon
-
-
-@dataclass
-class User:
-    """Пользователь"""
-    phone_number: int
-    password: str
-    user_role: constants.UserRole
-    first_name: str
-    last_name: str
-    second_name: Optional[str] = None
-    user_position: Optional[str] = None
-    contragent: Optional[Contragent] = None
+class Staff:
+    """Персонал"""
+    user: User
+    role: constants.UserRole
     polygon: Optional[Polygon] = None
-    e_mail: Optional[str] = None
+    added_by: Optional[User] = None
+    added_at: datetime = field(default_factory=datetime.utcnow)
     id: Optional[int] = None
-
-    @property
-    def full_name(self) -> str:
-        if self.second_name is None:
-            return '%s %s' % (
-                self.last_name,
-                self.first_name,
-            )
-        return '%s %s %s' % (
-            self.last_name,
-            self.first_name,
-            self.second_name,
-        )
 
 
 @dataclass
-class VehicleModel:
+class Driver:
+    """Водитель"""
+    surname: str
+    name: str
+    details: List[DriverDetails] = field(default_factory=list)
+    patronymic: Optional[str] = None
+    id: Optional[int] = None
+
+
+@dataclass
+class Partner:
+    """Контрагент (организация)"""
+    inn: str
+    name: str
+    short_name: str
+    details: List[PartnerDetails] = field(default_factory=list)
+    id: Optional[int] = None
+
+
+@dataclass
+class Contract:
+    """Договор"""
+    number: str
+    sender: Partner
+    'Отправитель'
+
+    receiver: Partner
+    'Получатель'
+
+    destination: Polygon
+    'Полигон назначения'
+
+    valid_from: datetime
+    carrier: Optional[Partner] = None
+    'Перевозчик'
+
+    departure_point: Optional[Polygon] = None
+    'Полигон отправления'
+
+    valid_to: Optional[datetime] = None
+    added_by: Optional[User] = None
+    added_at: datetime = field(default_factory=datetime.utcnow)
+    id: Optional[int] = None
+
+
+@dataclass
+class DriverDetails:
+    """Данные о водителе"""
+    driver: Driver
+    license: str
+    employer: Partner
+    added_by: Optional[User] = None
+    added_at: datetime = field(default_factory=datetime.utcnow)
+    id: Optional[int] = None
+
+
+@dataclass
+class PartnerDetails:
+    partner: Partner
+    kpp: str
+    address: str
+    phone: Optional[str]
+    valid_from: datetime
+    valid_to: Optional[datetime]
+    id: Optional[int] = None
+
+
+@dataclass
+class PolygonDetails:
+    """Данные о полигоне"""
+    polygon: Polygon
+    address: str
+    valid_from: datetime
+    valid_to: Optional[datetime] = None
+    added_by: Optional[User] = None
+    added_at: datetime = field(default_factory=datetime.utcnow)
+    id: Optional[int] = None
+
+
+@dataclass
+class TruckModel:
     """Модель транспортного средства"""
     name: str
     id: Optional[int] = None
 
 
 @dataclass
-class Vehicle:
+class Truck:
     """Транспортное средство"""
-    model: VehicleModel
+    model: TruckModel
     reg_number: str
-    sts_number: str
-    vehicle_type: constants.VehicleType
+    passport: str
+    type: constants.TruckType
     tara: int
     max_weight: int
     production_year: int
@@ -92,13 +156,23 @@ class Vehicle:
 
 
 @dataclass
+class Trailer:
+    """Прицеп"""
+    model: str
+    reg_number: str
+    tara: int
+    id: Optional[int] = None
+
+
+@dataclass
 class Permission:
     """Допуск на полигон"""
-    contragent: Contragent
+    owner: Partner
     expired_at: datetime
-    operator: User
     permit: Permit
+    is_active: bool = True  # Валидность допуска
     is_tonar: bool = False  # Тип допуска
+    added_by: Optional[User] = None
     added_at: datetime = field(default_factory=datetime.utcnow)
     id: Optional[int] = None
 
@@ -111,7 +185,7 @@ class Permission:
 class Permit:
     """Пропуск"""
     number: int
-    vehicle: Vehicle
+    truck: Truck
     permissions: List[Permission] = field(default_factory=list)
     id: Optional[int] = None
 
@@ -127,16 +201,17 @@ class Permit:
 @dataclass
 class Visit:
     """Визит на полигон"""
+    invoice_num: str
+    weight_in: int
     operator_in: User
     permission: Permission
     polygon: Polygon
-    weight_in: int
     checked_in: datetime = field(default_factory=datetime.utcnow)
     checked_out: Optional[datetime] = None
     operator_out: Optional[User] = None
     weight_out: Optional[int] = None
     driver: Optional[User] = None
-    destination: Optional[Polygon] = None
+    contract: Optional[Contract] = None
     is_deleted: Optional[bool] = False
     delete_reason: Optional[str] = None
     id: Optional[int] = None
@@ -152,14 +227,15 @@ class Visit:
 
         return constants.VisitStatus.DEL
 
-    @property
-    def invoice_num(self):
-        """Номер документа о визите"""
-        p = self.polygon.name[:3].upper()
-        m = constants.months_translator.get(self.checked_in.month)
-        y = self.checked_in.year
-        num = self.id
-        return f'{p}-{m}.{y}-{num}'  # ЛЕН-МАЙ.2022-23
+    # @property
+    # def invoice_num(self):
+    #     """Номер документа о визите"""
+    #     p = self.polygon.name[:3].upper()
+    #     m = constants.months_translator.get(self.checked_in.month)
+    #     y = self.checked_in.year
+    #     num = self.id
+    #     return f'{p}-{m}.{y}-{num}'  # ЛЕН-МАЙ.2022-23
+    # TODO create util for generate invoice_num
 
     @property
     def invoice_date(self) -> str:
@@ -169,29 +245,22 @@ class Visit:
     @property
     def netto(self) -> int:
         """Масса груза"""
-        assert self.weight_out is not None, 'Visit is active. ' \
-                                            'Finish visit before call.'
-        return abs(self.weight_in - self.weight_out)
+        return abs(
+            self.weight_in - self.weight_out
+        ) if self.weight_out else None
 
     @property
     def tara(self) -> int:
         """Масса пустого"""
-        assert self.weight_out is not None, 'Visit is active. ' \
-                                            'Finish visit before call.'
-        return min(self.weight_in, self.weight_out)
+        if self.permission.is_tonar:
+            return self.weight_in
+        else:
+            return self.weight_out
 
     @property
     def brutto(self) -> int:
         """Масса с грузом"""
-        assert self.weight_out is not None, 'Visit is active. ' \
-                                            'Finish visit before call.'
-        return max(self.weight_in, self.weight_out)
-
-
-@dataclass
-class DocsLog:
-    title: str
-    type: constants.DocType
-    user: User
-    created_at: datetime = field(default_factory=datetime.utcnow)
-    id: Optional[int] = None
+        if not self.permission.is_tonar:
+            return self.weight_in
+        else:
+            return self.weight_out

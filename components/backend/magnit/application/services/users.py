@@ -15,7 +15,7 @@ from magnit.application.services.join_point import join_point
 @component
 class User:
     users_repo: interfaces.UserRepo
-    contragents_repo: interfaces.ContragentRepo
+    contragents_repo: interfaces.PartnerRepo
     polygons_repo: interfaces.PolygonRepo
 
     @join_point
@@ -35,7 +35,7 @@ class User:
     ) -> List[entities.User]:
         contragent = self.contragents_repo.get_by_id(contragent_id)
         if contragent is None:
-            raise errors.ContragentIDNotExistError(contragent_id=contragent_id)
+            raise errors.PartnerIDNotExistError(contragent_id=contragent_id)
 
         return [
             u for u in contragent.employees
@@ -69,7 +69,7 @@ class User:
         last_name = user_info.last_name
 
         user = entities.User(
-            phone_number=phone_number,
+            phone=phone_number,
             password=password,
             user_role=user_role,
             first_name=first_name,

@@ -9,14 +9,13 @@ export const PermitsModule = {
             permit_histoty: [],
             check_permit: {
                 permit_num: null,
-                vehicle_num: null,
-                vehicle_type: null,
-                vehicle_mark: null,
+                truck_model: null,
+                truck_type: null,
+                reg_number: null,
                 contragent: null,
                 expired_at: null,
-                is_active: null,
-                days_before_exp: null,
-                min_weight: null,
+                is_valid: null,
+                tara: null,
                 max_weight: null,
             }
         }
@@ -31,6 +30,8 @@ export const PermitsModule = {
             for (var p of data) {
                 state.permits.push({
                     permit_num: p.permit_num,
+                    permit_status: p.permit_status,
+                    permission_id: p.permission_id,
                     vehicle_num: p.vehicle_num,
                     vehicle_type: p.vehicle_type,
                     vehicle_mark: p.vehicle_mark,
@@ -49,30 +50,29 @@ export const PermitsModule = {
         setCheckPermitData(state, data) {
             state.check_permit = {
                 permit_num: data.permit_num,
-                vehicle_num: data.vehicle_num,
-                vehicle_type: data.vehicle_type,
-                vehicle_mark: data.vehicle_mark,
-                contragent: data.contragent,
+                permit_status: data.permit_status,
+                permission_id: data.permission_id,
+                truck_model: data.truck_model,
+                truck_type: data.truck_type,
+                reg_number: data.reg_number,
+                contragent: data.contragent_name,
                 expired_at: data.expired_at,
-                is_active: data.is_active,
-                days_before_exp: data.days_before_exp,
-                min_weight: data.min_weight,
+                is_valid: data.is_valid,
+                tara: data.tara,
                 max_weight: data.max_weight,
             }
         },
         clearCheckPermitData(state) {
-            state.check_permit = {
-                permit_num: null,
-                vehicle_num: null,
-                vehicle_type: null,
-                vehicle_mark: null,
-                contragent: null,
-                expired_at: null,
-                is_active: null,
-                days_before_exp: null,
-                min_weight: null,
-                max_weight: null,
-            }
+                state.check_permit.truck_model = null
+                state.check_permit.permit_status = null
+                state.check_permit.permission_id = null
+                state.check_permit.truck_type = null
+                state.check_permit.reg_number = null
+                state.check_permit.contragent = null
+                state.check_permit.expired_at = null
+                state.check_permit.is_valid = null
+                state.check_permit.tara = null
+                state.check_permit.max_weight = null
         },
         setPermitHistory(state, data) {
             for (var i in data) {
@@ -107,6 +107,15 @@ export const PermitsModule = {
             } catch (err) {
                 commit('clearPermitHistory')
                 throw err;
+            }
+
+        },
+        async check({ commit }, { number }) {
+            try {
+                const res = await PermitsAPI.check(number);
+                commit('setCheckPermitData', res.data);
+            } catch (error) {
+                commit('clearCheckPermitData');
             }
 
         },

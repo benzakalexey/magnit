@@ -5,5 +5,5 @@ from magnit.application import interfaces, entities
 
 
 @component
-class ContragentRepo(BaseRepo, interfaces.ContragentRepo):
-    dto = entities.Contragent
+class PartnerRepo(BaseRepo, interfaces.PartnerRepo):
+    dto = entities.Partner

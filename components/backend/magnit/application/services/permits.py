@@ -11,11 +11,13 @@ from magnit.application.services.join_point import join_point
 class PermissionInfo(DTO):
     contragent_name: str
     expired_at: datetime
-    vehicle_model: str
-    vehicle_type: constants.VehicleType
+    truck_model: str
+    truck_type: constants.TruckType
     tara: int
     max_weight: int
     reg_number: str
+    permit_num: int
+    permission_id: int
     permit_status: constants.PermitStatus
     is_valid: bool
 
@@ -26,8 +28,8 @@ class Permit:
     """
     permits_repo: interfaces.PermitRepo
     users_repo: interfaces.UserRepo
-    vehicles_repo: interfaces.VehicleRepo
-    contragents_repo: interfaces.ContragentRepo
+    trucks_repo: interfaces.TruckRepo
+    contragents_repo: interfaces.PartnerRepo
     permission_repo: interfaces.PermissionRepo
 
     @join_point
@@ -37,7 +39,7 @@ class Permit:
         if p is None:
             raise errors.PermitNumberNotExistError(permit_number=number)
 
-        vehicle = p.permit.vehicle
+        truck = p.permit.truck
         permit_status = (
             constants.PermitStatus.VALID
             if p.expired_at > datetime.utcnow()
@@ -46,15 +48,17 @@ class Permit:
         is_valid = permit_status == constants.PermitStatus.VALID
 
         return PermissionInfo(
-            contragent_name=p.contragent.name,
+            contragent_name=p.owner.short_name,
             expired_at=p.expired_at,
-            vehicle_model=vehicle.model.name,
-            vehicle_type=vehicle.vehicle_type,
-            tara=vehicle.tara,
-            max_weight=vehicle.max_weight,
-            reg_number=vehicle.reg_number,
-            permit_status=permit_status,
             is_valid=is_valid,
+            max_weight=truck.max_weight,
+            permit_num=p.permit.number,
+            permission_id=p.id,
+            permit_status=permit_status,
+            reg_number=truck.reg_number,
+            tara=truck.tara,
+            truck_model=truck.model.name,
+            truck_type=truck.type,
         )
 
     @join_point

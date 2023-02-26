@@ -9,33 +9,39 @@ const store = useStore();
 useMeta({ title: 'Полигон' });
 
 const columns = ref([
-    'permit_num',
-    'reg_num',
-    'contragent_name',
-    'vehicle_mark',
-    'vehicle_type',
-    'weight_in',
-    'weight_out',
-    'loading_weight',
-    'checked_in',
-    'checked_out',
-    'status',
-    'actions',
+        'permit',
+        'reg_number',
+        'carrier',
+        'truck_model',
+        'truck_type',
+        'checked_in',
+        'tonar',
+        'status',
+        'actions',
 ]);
 const isOpen = ref(null);
 const item = ref(
     {
-        permit_num: '',
-        reg_num: '',
-        contragent_name: '',
-        vehicle_mark: '',
-        vehicle_type: '',
-        weight_in: '',
-        weight_out: '',
-        loading_weight: '',
+        id: '',
+        permit: '',
+        contragent_id: '',
+        tonar: '',
+        carrier: '',
+        invoice_num: '',
+        truck_model: '',
+        truck_type: '',
+        tara: '',
+        netto: '',
+        brutto: '',
+        max_weight: '',
+        reg_number: '',
+        weighing_in: '',
         checked_in: '',
+        weighing_out: '',
         checked_out: '',
-        status: '',
+        driver_name: '',
+        destination: '',
+        status: ''
     }
 );
 const items = ref([]);
@@ -44,21 +50,18 @@ const table_option = ref({
     perPageValues: [5, 10, 20, 50],
     skin: 'table table-hover',
     headings: {
-        permit_num: 'Пропуск',
-        reg_num: 'Номер',
-        contragent_name: 'Контрагент',
-        vehicle_mark: 'Марка ТС',
-        vehicle_type: 'Тип ТС',
-        weight_in: 'Вес заезда',
-        weight_out: 'Вес выезда',
-        loading_weight: 'Вес загрузки',
+        tonar: '',
+        permit: 'Пропуск',
+        reg_number: 'Номер',
+        carrier: 'Контрагент',
+        truck_model: 'Марка ТС',
+        truck_type: 'Тип ТС',
         checked_in: 'Въезд',
-        checked_out: 'Выезд',
         status: 'Статус',
         actions: '',
     },
     columnsClasses: { actions: 'actions text-center' },
-    sortable: [],
+    sortable: true,
     pagination: { nav: 'scroll', chunk: 5 },
     texts: {
         count: 'С {from} по {to} из {count}',
@@ -74,6 +77,11 @@ const statuses = {
     2: `<span class="badge inv-status badge-dark">Удален</span>`,
 };
 
+const tonar = {
+    true: `<span class="badge inv-status badge-warning">Tонар</span>`,
+    false: '',
+};
+
 const openDetails = (i) => {
     item.value = i;
     isOpen.value = !isOpen.value;
@@ -83,11 +91,12 @@ const closeDetails = () => {
 };
 const deleteItem = (id, reason) => {
     store.dispatch('VisitsModule/delete', {
-        id: id,
+        visit_id: id,
         reason: reason,
     }).then((res) => {
         if (res.data.success) {
-            new window.Swal('Удалено!', 'Данные помечены как удаленные.', 'success')
+            new window.Swal('Удалено!', 'Данные помечены как удаленные.', 'success');
+            store.dispatch('VisitsModule/update');
         }
     }).catch((error) => new window.Swal('Ошибка!', error.message, 'error'))
 };
@@ -125,13 +134,15 @@ onMounted(
                             <template #status="props">
                                 <div v-html="statuses[props.row.status]"></div>
                             </template>
+                            <template #tonar="props">
+                                <div v-html="tonar[props.row.tonar]"></div>
+                            </template>
                             <template #actions="props">
                                 <div class="actions text-center">
                                     <a href="javascript:;" class="btn btn-primary btn-sm"
                                         @click="openDetails(props.row)">Открыть</a>
                                 </div>
                             </template>
-                            <template #salary="props"> ${{ props.row.salary }} </template>
                         </v-client-table>
                     </div>
                 </div>
