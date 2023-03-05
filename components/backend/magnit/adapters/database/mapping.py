@@ -89,7 +89,7 @@ mapper.map_imperatively(
     tables.trucks,
     properties={
         'model': relationship(
-            entities.TruckModel, uselist=False, lazy='select'
+            entities.TruckModel, uselist=False, lazy='joined'
         )
     }
 )
@@ -98,7 +98,7 @@ mapper.map_imperatively(
     tables.permissions,
     properties={
         'owner': relationship(
-            entities.Partner, uselist=False, lazy='select',
+            entities.Partner, uselist=False, lazy='joined',
         ),
         'added_by': relationship(entities.User, uselist=False, lazy='select')
     }
@@ -126,10 +126,10 @@ mapper.map_imperatively(
     tables.visits,
     properties={
         'permission': relationship(
-            entities.Permission, uselist=False, lazy='select',
+            entities.Permission, uselist=False, lazy='joined',
         ),
         'polygon': relationship(
-            entities.Polygon, uselist=False, lazy='select'
+            entities.Polygon, uselist=False, lazy='joined'
         ),
         'operator_in': relationship(
             entities.User,

@@ -13,9 +13,10 @@ import feather from 'feather-icons';
 const store = useStore();
 const modalTitle = 'Новый заезд';
 
-// const mixin = validationMixin
 const permit_num = ref('')
 const weight = ref('')
+const permit_error = ref(false)
+const weight_error = ref(false)
 const rules = computed(() => ({
     permit_num: {
         required,
@@ -34,19 +35,27 @@ const v$ = useVuelidate(rules, { permit_num, weight })
 
 
 const isOpen = ref(null);
-const createVisit = (f) => {
+const createVisit = () => {
     store.dispatch('VisitsModule/add', {
         permission_id: store.state.PermitsModule.check_permit.permission_id,
         weight: weight.value
-    }).catch();
-    store.dispatch('VisitsModule/update');
+    })
+    .then(() => store.dispatch('VisitsModule/update'))
+    .catch();
     closeAndClean();
 }
 
 const checkPermit = (x) => {
     store.dispatch('PermitsModule/check', {
         number: permit_num.value
-    }).catch()
+    })
+    .then(() => permit_error.value = false)
+    .catch(() => permit_error.value = true)
+}
+const checkWeight = () => {
+    let minWeight = store.state.PermitsModule.check_permit.tara || 0
+    let maxWeight = store.state.PermitsModule.check_permit.max_weight * 1.2
+    weight_error.value = !(minWeight <= weight.value && weight.value <= maxWeight)
 }
 
 const statuses = {
@@ -70,21 +79,26 @@ const closeAndClean = () => {
 <template>
     <rightSideModal :modalTitle="modalTitle" :isOpen="isOpen">
 
-        <form>
+        <form novalidate>
             <div class="mb-3 pt-5">
                 <label for="permit_num" class="col-form-label">Номер пропуска</label>
                 <div>
                     <input v-model="permit_num" id="permit_num" type="number" class="form-control"
-                        placeholder="Номер пропуска" v-on:input="checkPermit($event)" />
+                        placeholder="Номер пропуска" v-on:input="checkPermit($event)"
+                        :class="[permit_error ? 'is-invalid' : '']" />
+                    <div class="invalid-feedback">Нет данных о пропуске</div>
                 </div>
             </div>
             <div class="mb-3 pt-3">
                 <label for="weight" class="col-form-label">Вес въезда</label>
                 <div>
-                    <input v-model="weight" id="weight" type="number" class="form-control" placeholder="Вес, кг" />
+                    <input v-model="weight" id="weight" type="number" class="form-control" placeholder="Вес, кг"
+                        v-on:input="checkWeight($event)" :class="[weight_error ? 'is-invalid' : '']" />
+                    <div class="invalid-feedback">Недопустимый вес</div>
                 </div>
             </div>
-            <button :disabled="v$.$invalid" @click.prevent="createVisit" class="btn btn-primary my-4">
+            <button :disabled="v$.$invalid || Array(null, 0, undefined).includes(store.state.PermitsModule.check_permit.permit_status)"
+                @click.prevent="createVisit" class="btn btn-primary my-4">
                 Заехать
             </button>
         </form>
