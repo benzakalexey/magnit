@@ -63,16 +63,16 @@ export const PermitsModule = {
             }
         },
         clearCheckPermitData(state) {
-                state.check_permit.truck_model = null
-                state.check_permit.permit_status = null
-                state.check_permit.permission_id = null
-                state.check_permit.truck_type = null
-                state.check_permit.reg_number = null
-                state.check_permit.contragent = null
-                state.check_permit.expired_at = null
-                state.check_permit.is_valid = null
-                state.check_permit.tara = null
-                state.check_permit.max_weight = null
+            state.check_permit.truck_model = null
+            state.check_permit.permit_status = null
+            state.check_permit.permission_id = null
+            state.check_permit.truck_type = null
+            state.check_permit.reg_number = null
+            state.check_permit.contragent = null
+            state.check_permit.expired_at = null
+            state.check_permit.is_valid = null
+            state.check_permit.tara = null
+            state.check_permit.max_weight = null
         },
         setPermitHistory(state, data) {
             for (var i in data) {
@@ -111,13 +111,12 @@ export const PermitsModule = {
 
         },
         async check({ commit }, { number }) {
-            try {
-                const res = await PermitsAPI.check(number);
-                commit('setCheckPermitData', res.data);
-            } catch (error) {
+            return await PermitsAPI.check(number)
+            .then((res) => commit('setCheckPermitData', res.data))
+            .catch((err) => {
                 commit('clearCheckPermitData');
-            }
-
+                throw err;
+            });
         },
     }
 }

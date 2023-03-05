@@ -58,15 +58,6 @@ const deleteVisit = async () => {
         validationMessage: 'Обязательно для заполнения!',
         padding: '2em',
     });
-    const deleteConfirmQ = window.Swal.mixin({
-        icon: 'warning',
-        title: 'Уверены что хотите удалить?',
-        text: "Информацию о визите невозможно восстановить!",
-        showCancelButton: true,
-        cancelButtonText: 'Отменить',
-        confirmButtonText: 'Удалить',
-        padding: '2em',
-    });
 
     let delete_reason;
     for (let step = 0; step < 2; step++) {
@@ -88,15 +79,19 @@ const deleteVisit = async () => {
             };
 
             delete_reason = result.value;
+            if (result.value) {
+                emit('deleted', item.value.id, delete_reason)
+            };
             continue;
         };
 
-        const result = await deleteConfirmQ.fire();
-        if (result.value) {
-            emit('deleted', item.value.id, delete_reason)
-        };
     };
-}
+};
+
+const print = () => {
+
+    window.print('left=0,top=0,width=1000,height=600,toolbar=0,scrollbars=0,status=0');
+};
 
 </script>
 
@@ -163,11 +158,12 @@ const deleteVisit = async () => {
         </template>
 
         <template #removeButton>
-            <button :disabled="item.is_deleted" type="button" class="btn btn-danger me-auto" @click.prevent="deleteVisit">Удалить</button>
+            <button :disabled="item.is_deleted" type="button" class="btn btn-danger me-auto"
+                @click.prevent="deleteVisit">Удалить</button>
         </template>
 
         <template #submitButton>
-            <button type="button" class="btn btn-primary" @click="test">Сохранить</button>
+            <button type="button" class="btn btn-primary" @click="print()"><i data-feather="printer"></i>  Print</button>
         </template>
 
     </largeCenterModal>
