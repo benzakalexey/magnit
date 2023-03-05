@@ -57,6 +57,13 @@ const routes = [
         component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/catalogs/contragents.vue'),
         beforeEnter: authGuard
     },
+    {
+        path: '/invoice',
+        name: 'invoice',
+        component: () => import(/* webpackChunkName: "components-tabs" */ '../views/magnit/doc/invoice.vue'),
+        meta: { layout: 'auth' },
+        beforeEnter: setAuthLayout,
+    },
 
 
     //auth

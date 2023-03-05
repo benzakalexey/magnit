@@ -22,7 +22,7 @@ class VisitRepo(BaseRepo, interfaces.VisitRepo):
             .where(self.dto.polygon_id == polygon_id)
             # .where(self.dto.checked_in > time_limit)
             .order_by(desc(self.dto.checked_in))
-            .limit(200)
+            .limit(100)
         )
 
         return self.session.execute(query).scalars().all()

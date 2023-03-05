@@ -32,9 +32,8 @@ const onSubmit = () => {
         password: password.value,
     })
         .then(() => { router.push(redirectTo) })
-        .catch((error) => {
+        .catch(() => {
             err_show.value = true;
-            console.log(error)
         })
 }
 </script>
