@@ -45,8 +45,8 @@ const item = ref(
 );
 const items = ref([]);
 const table_option = ref({
-    perPage: 20,
-    perPageValues: [5, 10, 20, 50],
+    perPage: 15,
+    perPageValues: [15, 50, 100],
     skin: 'table table-hover',
     headings: {
         tonar: '',
@@ -108,11 +108,11 @@ const printInvoice = (visit_id) => {
     );
     winPrint.focus();
     winPrint.onafterprint = winPrint.close;
-
-    function delay(time=1000) {
-        return new Promise(resolve => setTimeout(resolve, time));
-    }
-    delay().then(() => winPrint.print());
+    winPrint.onloadeddata = winPrint.print();
+    // function delay(time=1500) {
+    //     return new Promise(resolve => setTimeout(resolve, time));
+    // }
+    // delay().then(() => winPrint.print());
 };
 const getOut = (data) => {
     store.dispatch('VisitsModule/finish', {
