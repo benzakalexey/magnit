@@ -35,12 +35,11 @@ const invoice = ref(
 
 const bind_data = () => {
     invoice.value = store.state.InvoiceModule.invoice
-    console.log(store.state.InvoiceModule.invoice)
-    console.log(invoice.value)
 }
 
 onMounted(
-    store.dispatch('InvoiceModule/get', route.query).then(() => bind_data()),
+    store.dispatch('InvoiceModule/get', route.query)
+    .then(() => bind_data()),
 );
 
 </script>
@@ -900,17 +899,17 @@ tfoot {
                                         <td class="underrow bordered" colspan="44">
                                             (реквизиты, позволяющие
                                             идентифицировать Экономического субъекта,
-                                            составляющего первичный учетный документ о факте
-                                            хозяйственной жизни со стороны
+                                        составляющего первичный учетный документ о факте
+                                        хозяйственной жизни со стороны
                                         Грузоотправителя)
                                     </td>
                                 </tr>
-                                <tr style="height: 20px">
+                                    <tr style="height: 20px">
                                     <td class="header bordered" colspan="67">-</td>
-                                        <td class="header bordered" colspan="44">-</td>
+                                    <td class="header bordered" colspan="44">-</td>
                                 </tr>
-                                <tr style="height: 12px">
-                                    <td class="underrow bordered" colspan="67">
+                                    <tr style="height: 12px">
+                                        <td class="underrow bordered" colspan="67">
                                             (основание, по которому
                                             Экономический субъект является составителем <br>
                                             документа о факте хозяйственной жизни)
@@ -1014,13 +1013,13 @@ tfoot {
         </div>
     </div>
     <!-- <div class="doc-container">
-                                                    <div class="row">
-                                                        <div class="col-xl-7">
-                                                        </div>
-                                                    </div>
-                                                </div> -->
-    <!-- <div class="row invoice layout-top-spacing layout-spacing apps-invoice">
-                                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                                        <div class="row">
+                                                            <div class="col-xl-7">
                                                             </div>
+                                                        </div>
                                                     </div> -->
+    <!-- <div class="row invoice layout-top-spacing layout-spacing apps-invoice">
+                                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                                                </div>
+                                                        </div> -->
 </template>
