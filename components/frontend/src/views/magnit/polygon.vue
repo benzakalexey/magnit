@@ -104,7 +104,7 @@ const printInvoice = (visit_id) => {
     var winPrint = window.open(
         '/invoice?visit_id=' + visit_id,
         '',
-        'left=400,top=200,width=1200,height=800,toolbar=0,scrollbars=0,status=0'
+        'fullscreen=yes,toolbar=0,scrollbars=0,status=0'
     );
     winPrint.focus();
     winPrint.onafterprint = winPrint.close;
