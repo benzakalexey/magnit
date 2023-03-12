@@ -1,4 +1,5 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+from random import randint
 
 from typing import List, Dict, Any
 
@@ -7,7 +8,8 @@ from classic.components import component
 
 from pydantic import validate_arguments, conint
 
-from magnit.application import interfaces, entities, errors, dtos_layer
+from magnit.application import interfaces, entities, errors, dtos_layer, \
+    constants
 from magnit.application.constants import UserRole, TruckType
 
 from magnit.application.services.join_point import join_point
@@ -18,15 +20,15 @@ class Visit:
     """
     Класс Визиты на полигон
     """
-    visits_repo: interfaces.VisitRepo
-    users_repo: interfaces.UserRepo
-    staff_repo: interfaces.StaffRepo
-    polygons_repo: interfaces.PolygonRepo
-    permits_repo: interfaces.PermitRepo
-    # copy_visits_repo: interfaces.CopyVisitRepo
-    truck_repo: interfaces.TruckRepo
-    secondary_routes_repo: interfaces.SecondaryRouteRepo
+    contract_repo: interfaces.ContractRepo
+    driver_repo: interfaces.DriverRepo
     permission_repo: interfaces.PermissionRepo
+    permits_repo: interfaces.PermitRepo
+    polygons_repo: interfaces.PolygonRepo
+    staff_repo: interfaces.StaffRepo
+    truck_repo: interfaces.TruckRepo
+    users_repo: interfaces.UserRepo
+    visits_repo: interfaces.VisitRepo
 
     @join_point
     @validate_arguments
@@ -60,16 +62,16 @@ class Visit:
         if staff.polygon is None:
             raise errors.PolygonIDNotExistError()
 
-        # permit = self.permits_repo.get_by_id(visit_info.permit_id)
-
         visit = entities.Visit(
             weight_in=visit_info.weight,
             permission=permission,
             operator_in=staff.user,
             polygon=staff.polygon,
-            invoice_num='GHGHGH'
         )
-        self.visits_repo.add(visit)
+        self.visits_repo.add(visit)  # ЛЕН-МАЙ.2022-23
+
+        visit.generate_invoice()
+
         self.visits_repo.save()
 
     @join_point
@@ -94,36 +96,20 @@ class Visit:
         visit: entities.Visit,
         visit_info: dtos_layer.VisitOutInfo,
     ):
-        # if visit.permit.is_tonar is False:
-        #     return
         if visit.permission.is_tonar is False:
             return
 
-        driver = self.users_repo.get_by_id(visit_info.driver_id)
+        driver = self.driver_repo.get_by_id(visit_info.driver_id)
         if driver is None:
             raise errors.UserIDNotExistError(user_id=visit_info.driver_id)
 
         visit.driver = driver
 
-        destination = self.polygons_repo.get_by_id(
-            visit_info.destination_id
-        )
-        if destination is None:
-            raise errors.PolygonIDNotExistError(
-                polygon_id=visit_info.destination_id)
+        contract = self.contract_repo.get_by_id(visit_info.contract_id)
+        if contract is None:
+            raise errors.ContractIDNotFound(contract_id=visit_info.contract_id)
 
-        visit.destination = destination
-        # copy_visit = entities.CopyVisit(
-        #     visit=visit,
-        #     permit=visit.permit,
-        #     polygon=visit.polygon,
-        #     weight_in=visit.weight_in,
-        #     weight_out=visit.weight_out,
-        #     driver=visit.driver,
-        #     destination=visit.destination,
-        # )
-        # self.copy_visits_repo.add(copy_visit)
-        # self.copy_visits_repo.save() # TODO что у нас с копией Визитов
+        visit.contract = contract
 
     @join_point
     @validate_arguments
@@ -162,32 +148,58 @@ class Visit:
 
     @join_point
     @validate_arguments
-    def get_invoice_by_visit(self, visit_id: int) -> Dict[str, Any]:
+    def get_invoice(self, visit_id: int) -> Dict[str, Any]:
         visit = self.visits_repo.get_by_id(visit_id)
 
         if visit is None:
             raise errors.VisitIDNotExistError(visit_id=visit_id)
 
-        truck = visit.permission.permit.truck
+        if not visit.permission.is_tonar:
+            raise errors.CantCreateNotTonarInvoice()
+
+        cargo_type = 'Остатки сортировки ТКО'
+        receiver = visit.contract.receiver.get_full_name(visit.checked_in)
+        carrier = visit.contract.carrier.get_full_name(visit.checked_in)
+        direction = (
+            visit.contract.destination.get_details(visit.checked_in).address
+        )
+        planned_date = visit.checked_in - timedelta(minutes=randint(20, 30))
 
         return {
-            'invoice_num': visit.invoice_num,
-            'reg_number': truck.reg_number,
-            'truck_model': truck.model.name,
-            'truck_type': truck.truck_type.value,
-            'contragent_name': visit.permission.contragent.name,
-            'tara': visit.tara,
-            'netto': visit.netto,
-            'brutto': visit.brutto,
-            'body_volume': truck.body_volume,
-            'polygon_name': visit.polygon.name,
-            'polygon_address': visit.polygon.address,
-            'date': visit.checked_in,
-            'destination_name': visit.destination.name,
-            # TODO это полигон или владелец
-            'destination_address': visit.destination.address,  # TODO
-            'destination_inn': visit.destination.owner.inn,
-            'driver_name': visit.driver.full_name,
-            'driver_phone': visit.driver.phone,
-            'permit_num': visit.permission.permit.number,
+            'date': visit.checked_out,
+            'planned_date': planned_date,
+            'number': visit.invoice_num,
+            'receiver': receiver,
+            'cargo_type': cargo_type,
+            'direction': direction,
+            'volume': visit.permission.permit.truck.body_volume,
+            'carrier': carrier,
+            'driver': visit.driver.full_name,
+            'driver_licence': visit.driver.details[0].license,
+            'truck': visit.permission.truck_description,
+            'truck_number': visit.permission.truck_number,
+            'truck_volume': visit.permission.permit.truck.body_volume,
+            'truck_weight': visit.permission.permit.truck.tara,
+            'contract': visit.contract.number,
+            'polygon': visit.polygon.get_details(visit.checked_in).address,
+
+            # 'invoice_num': visit.invoice_num,
+            # 'reg_number': truck.reg_number,
+            # 'truck_model': truck.model.name,
+            # 'truck_type': truck.truck_type.value,
+            # 'contragent_name': visit.permission.contragent.name,
+            # 'tara': visit.tara,
+            # 'netto': visit.netto,
+            # 'brutto': visit.brutto,
+            # 'body_volume': truck.body_volume,
+            # 'polygon_name': visit.polygon.name,
+            # 'polygon_address': visit.polygon.address,
+            # 'date': visit.checked_in,
+            # 'destination_name': visit.destination.name,
+            # # TODO это полигон или владелец
+            # 'destination_address': visit.destination.address,  # TODO
+            # 'destination_inn': visit.destination.owner.inn,
+            # 'driver_name': visit.driver.full_name,
+            # 'driver_phone': visit.driver.phone,
+            # 'permit_num': visit.permission.permit.number,
         }

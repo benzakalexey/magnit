@@ -13,6 +13,23 @@ from magnit.application.services.join_point import join_point
 
 
 @component
+class Driver:
+    driver_repo: interfaces.DriverRepo
+
+    @join_point
+    @validate_arguments
+    def get_by_partner_id(
+        self,
+        partner_id: conint(gt=0),
+    ) -> List[entities.Driver]:
+        all_drivers = self.driver_repo.get_all()
+        return [
+            d for d in all_drivers
+            if d.details[0].employer.id == partner_id
+        ]
+
+
+@component
 class User:
     users_repo: interfaces.UserRepo
     contragents_repo: interfaces.PartnerRepo

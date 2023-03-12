@@ -13,7 +13,6 @@ const columns = ref([
         'reg_number',
         'carrier',
         'truck_model',
-        'truck_type',
         'checked_in',
         'tonar',
         'status',
@@ -101,6 +100,31 @@ const deleteItem = (id, reason) => {
     }).catch((error) => new window.Swal('Ошибка!', error.message, 'error'))
 };
 
+const printInvoice = (visit_id) => {
+    var winPrint = window.open(
+        '/invoice?visit_id=' + visit_id,
+        '',
+        'left=0,top=0,width=1000,height=600,toolbar=0,scrollbars=0,status=0'
+    );
+    winPrint.focus();
+    winPrint.onafterprint = winPrint.close;
+    winPrint.print();
+};
+const getOut = (data) => {
+    store.dispatch('VisitsModule/finish', {
+        visit_id: data.visit_id,
+        weight_out: data.out_weight,
+        driver_id: data.driver,
+        contract_id: data.direction,
+    }).then((res) => {
+        if (res.data.success) {
+            new window.Swal('Успешно!', 'Автомобиль выехал.', 'success');
+            store.dispatch('VisitsModule/update');
+        }
+        if (data.tonar) printInvoice(data.visit_id);
+    }).catch((error) => new window.Swal('Ошибка!', error.data, 'error'))
+};
+
 onMounted(
     store.dispatch('VisitsModule/update'),
 );
@@ -151,6 +175,6 @@ onMounted(
     </div>
 
     <addVisit></addVisit>
-    <visitDetails :item="item" :isOpen="isOpen" @closed="closeDetails" @deleted="deleteItem">
+    <visitDetails :item="item" :isOpen="isOpen" @closed="closeDetails" @deleted="deleteItem" @get_out="getOut" @print="printInvoice">
     </visitDetails>
 </template>

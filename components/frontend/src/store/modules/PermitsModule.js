@@ -1,6 +1,11 @@
 import { DefaultAPIInstance } from "@/api";
 import { PermitsAPI } from "@/api/permitsAPI";
 
+const pretty_num = (n) => {
+    let r = n.match(/[а-яА-Я]+|[0-9]+/g);
+    return r.join('\u2009');
+}
+
 export const PermitsModule = {
     namespaced: true,
     state() {
@@ -14,6 +19,7 @@ export const PermitsModule = {
                 reg_number: null,
                 contragent: null,
                 expired_at: null,
+                days_before_exp: null,
                 is_valid: null,
                 tara: null,
                 max_weight: null,
@@ -54,10 +60,12 @@ export const PermitsModule = {
                 permission_id: data.permission_id,
                 truck_model: data.truck_model,
                 truck_type: data.truck_type,
-                reg_number: data.reg_number,
+                reg_number: pretty_num(data.reg_number),
                 contragent: data.contragent_name,
                 expired_at: data.expired_at,
+                days_before_exp: data.days_before_exp,
                 is_valid: data.is_valid,
+                is_tonar: data.is_tonar,
                 tara: data.tara,
                 max_weight: data.max_weight,
             }
@@ -71,6 +79,7 @@ export const PermitsModule = {
             state.check_permit.contragent = null
             state.check_permit.expired_at = null
             state.check_permit.is_valid = null
+            state.check_permit.is_tonar = null
             state.check_permit.tara = null
             state.check_permit.max_weight = null
         },

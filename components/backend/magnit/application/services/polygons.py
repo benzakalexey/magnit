@@ -15,7 +15,8 @@ class Polygon:
     Класс Полигоны
     """
     polygons_repo: interfaces.PolygonRepo
-    contragents_repo: interfaces.PartnerRepo
+    partner_repo: interfaces.PartnerRepo
+    contract_repo: interfaces.ContractRepo
 
     @join_point
     @validate_arguments
@@ -34,15 +35,19 @@ class Polygon:
     def get_receivers_by_source_id(
         self,
         polygon_id: int,
-    ) -> List[entities.Polygon]:
-        return self.polygons_repo.get_receivers_by_source_id(
-            polygon_id
-        )
+    ):
+        contracts = self.contract_repo.get_by_departure_point_id(polygon_id)
+        return [
+            {
+                'id': c.id,
+                'name': c.destination.name,
+            } for c in contracts
+        ]
 
     @join_point
     @validate_with_dto
     def add_polygon(self, polygon_info: PolygonInfo):
-        owner = self.contragents_repo.get_by_id(polygon_info.owner_id)
+        owner = self.partner_repo.get_by_id(polygon_info.owner_id)
         if owner is None:
             raise errors.OwnerIDNotExistError(
                 contragent_id=polygon_info.owner_id)
