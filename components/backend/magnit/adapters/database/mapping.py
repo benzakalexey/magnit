@@ -64,7 +64,10 @@ mapper.map_imperatively(
             entities.User,
             uselist=False,
             lazy='select'
-        )
+        ),
+        'employer': relationship(
+            entities.Partner, uselist=False, lazy='joined',
+        ),
     }
 )
 mapper.map_imperatively(
@@ -99,6 +102,9 @@ mapper.map_imperatively(
     properties={
         'owner': relationship(
             entities.Partner, uselist=False, lazy='joined',
+        ),
+        'trailer': relationship(
+            entities.Trailer, uselist=False, lazy='joined',
         ),
         'added_by': relationship(entities.User, uselist=False, lazy='select')
     }

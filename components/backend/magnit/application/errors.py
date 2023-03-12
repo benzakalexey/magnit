@@ -81,22 +81,22 @@ class SecondaryRouteIDNotExistError(AppError):
     code = 'magnit.polygons.secondary_route_id_not_exist_error'
 
 
-class truckModelNameIsNoneError(AppError):
+class TruckModelNameIsNoneError(AppError):
     msg_template = 'Название модели автомобиля не может быть пустым.'
     code = 'magnit.trucks.truck_model_name_is_none_error'
 
 
-class truckModelIDNotExistError(AppError):
+class TruckModelIDNotExistError(AppError):
     msg_template = 'Модель автомобиля с id = {truck_model_id} не найдена'
     code = 'magnit.trucks.truck_model_id_not_exist_error'
 
 
-class truckNameIsNoneError(AppError):
+class TruckNameIsNoneError(AppError):
     msg_template = 'Название автомобиля не может быть пустым.'
     code = 'magnit.trucks.truck_name_is_none_error'
 
 
-class truckIDNotExistError(AppError):
+class TruckIDNotExistError(AppError):
     msg_template = 'Автомобиль с id = {truck_id} не найден'
     code = 'magnit.trucks.truck_id_not_exist_error'
 
@@ -116,6 +116,11 @@ class PermitLogIDNotExistError(AppError):
     code = 'magnit.permits.permit_log_id_not_exist_error'
 
 
+class ContractIDNotFound(AppError):
+    msg_template = 'Договор с id = {contract_id} не найден'
+    code = 'magnit.contract.contract_id_not_exist_error'
+
+
 class VisitIDNotExistError(AppError):
     msg_template = 'Визит с id = {visit_id} не найден'
     code = 'magnit.visits.visit_id_not_exist_error'
@@ -129,3 +134,8 @@ class VisitDeleteReasonIsNoneError(AppError):
 class DocLogIDNotExistError(AppError):
     msg_template = 'Запись с id = {doc_log_id} не найдена'
     code = 'magnit.doclogs.doc_log_id_not_exist_error'
+
+
+class CantCreateNotTonarInvoice(AppError):
+    msg_template = 'Невозможно создать ТН не для тонара'
+    code = 'magnit.invoice.cant_create_not_tonar_invoice'

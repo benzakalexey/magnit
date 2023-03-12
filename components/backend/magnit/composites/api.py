@@ -26,15 +26,16 @@ class DB:
 
     # repos
     users_repo = repositories.UserRepo(context=context)
+    driver_repo = repositories.DriverRepo(context=context)
     staff_repo = repositories.StaffRepo(context=context)
     partners_repo = repositories.PartnerRepo(context=context)
     polygons_repo = repositories.PolygonRepo(context=context)
-    secondary_routes_repo = repositories.SecondaryRouteRepo(context=context)
     truck_models_repo = repositories.TruckModelRepo(context=context)
     trucks_repo = repositories.TruckRepo(context=context)
     permits_repo = repositories.PermitRepo(context=context)
     permission_repo = repositories.PermissionRepo(context=context)
     visits_repo = repositories.VisitRepo(context=context)
+    contract_repo = repositories.ContractRepo(context=context)
     # docs_log_repo = repositories.DocLogRepo(context=context)
 
 
@@ -45,12 +46,16 @@ class Application:
         contragents_repo=DB.partners_repo,
         polygons_repo=DB.polygons_repo,
     )
+    driver = services.Driver(
+        driver_repo=DB.driver_repo,
+    )
     contragent = services.Partner(
         contragents_repo=DB.partners_repo,
     )
     polygon = services.Polygon(
         polygons_repo=DB.polygons_repo,
-        contragents_repo=DB.partners_repo,
+        partner_repo=DB.partners_repo,
+        contract_repo=DB.contract_repo,
     )
     # secondary_route = services.SecondaryRoute(
     #     secondary_routes_repo=DB.secondary_routes_repo,
@@ -71,14 +76,15 @@ class Application:
         permission_repo=DB.permission_repo,
     )
     visit = services.Visit(
-        visits_repo=DB.visits_repo,
-        permits_repo=DB.permits_repo,
-        users_repo=DB.users_repo,
-        staff_repo=DB.staff_repo,
-        polygons_repo=DB.polygons_repo,
-        truck_repo=DB.trucks_repo,
-        secondary_routes_repo=DB.secondary_routes_repo,
+        contract_repo=DB.contract_repo,
+        driver_repo=DB.driver_repo,
         permission_repo=DB.permission_repo,
+        permits_repo=DB.permits_repo,
+        polygons_repo=DB.polygons_repo,
+        staff_repo=DB.staff_repo,
+        truck_repo=DB.trucks_repo,
+        users_repo=DB.users_repo,
+        visits_repo=DB.visits_repo,
     )
     # doc = services.Doc(
     #     visits_repo=DB.visits_repo,
@@ -111,6 +117,7 @@ app = http_api.create_app(
     polygon=Application.polygon,
     # secondary_route=Application.secondary_route,
     user=Application.user,
+    driver=Application.driver,
     truck=Application.truck,
     truck_model=Application.truck_model,
     visit=Application.visit,

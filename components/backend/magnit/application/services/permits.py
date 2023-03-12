@@ -11,6 +11,7 @@ from magnit.application.services.join_point import join_point
 class PermissionInfo(DTO):
     contragent_name: str
     expired_at: datetime
+    days_before_exp: int
     truck_model: str
     truck_type: constants.TruckType
     tara: int
@@ -20,6 +21,7 @@ class PermissionInfo(DTO):
     permission_id: int
     permit_status: constants.PermitStatus
     is_valid: bool
+    is_tonar: bool
 
 
 @component
@@ -46,15 +48,18 @@ class Permit:
             else constants.PermitStatus.EXPIRED
         )
         is_valid = permit_status == constants.PermitStatus.VALID
+        days_before_exp = (p.expired_at - datetime.utcnow()).days or 0
 
         return PermissionInfo(
             contragent_name=p.owner.short_name,
             expired_at=p.expired_at,
             is_valid=is_valid,
+            is_tonar=p.is_tonar,
             max_weight=truck.max_weight,
             permit_num=p.permit.number,
             permission_id=p.id,
             permit_status=permit_status,
+            days_before_exp=days_before_exp,
             reg_number=truck.reg_number,
             tara=truck.tara,
             truck_model=truck.model.name,

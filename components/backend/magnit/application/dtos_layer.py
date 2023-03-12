@@ -78,7 +78,7 @@ class VisitOutInfo(DTO):
     user_id: int
     visit_id: int
     driver_id: Optional[conint(gt=0)] = None
-    destination_id: Optional[conint(gt=0)] = None
+    contract_id: Optional[conint(gt=0)] = None
 
 
 class DocLogInfo(DTO):

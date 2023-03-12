@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 from classic.components import component
@@ -18,15 +19,12 @@ class PolygonRepo(BaseRepo, interfaces.PolygonRepo):
         query = (
             select(self.dto)
             .join(
-                entities.PartnerDetails,
-                entities.PartnerDetails.receiver_polygon_id == entities.Polygon.id
+                entities.Contract,
+                entities.Contract.destination_id == entities.Polygon.id
             )
-            .where(entities.PartnerDetails.source_polygon_id == source_id)
-
+            .where(
+                entities.Contract.departure_point_id == source_id,
+                entities.Contract.valid_to <= datetime.utcnow(),
+            )
         )
         return self.session.execute(query).scalars().all()
-
-
-@component
-class SecondaryRouteRepo(BaseRepo, interfaces.SecondaryRouteRepo):
-    dto = entities.PartnerDetails
