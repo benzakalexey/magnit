@@ -9,14 +9,14 @@ const store = useStore();
 useMeta({ title: 'Полигон' });
 
 const columns = ref([
-        'permit',
-        'reg_number',
-        'carrier',
-        'truck_model',
-        'checked_in',
-        'tonar',
-        'status',
-        'actions',
+    'permit',
+    'reg_number',
+    'carrier',
+    'truck_model',
+    'checked_in',
+    'tonar',
+    'status',
+    'actions',
 ]);
 const isOpen = ref(null);
 const item = ref(
@@ -108,7 +108,11 @@ const printInvoice = (visit_id) => {
     );
     winPrint.focus();
     winPrint.onafterprint = winPrint.close;
-    winPrint.print();
+
+    function delay(time=1000) {
+        return new Promise(resolve => setTimeout(resolve, time));
+    }
+    delay().then(() => winPrint.print());
 };
 const getOut = (data) => {
     store.dispatch('VisitsModule/finish', {
@@ -153,8 +157,7 @@ onMounted(
             <div class="col-xl-12 col-lg-12 col-sm-12 layout-spacing">
                 <div class="panel br-6 p-0">
                     <div class="custom-table">
-                        <v-client-table :data="store.state.VisitsModule.visits" :columns="columns"
-                            :options="table_option">
+                        <v-client-table :data="store.state.VisitsModule.visits" :columns="columns" :options="table_option">
                             <template #status="props">
                                 <div v-html="statuses[props.row.status]"></div>
                             </template>
@@ -175,6 +178,7 @@ onMounted(
     </div>
 
     <addVisit></addVisit>
-    <visitDetails :item="item" :isOpen="isOpen" @closed="closeDetails" @deleted="deleteItem" @get_out="getOut" @print="printInvoice">
+    <visitDetails :item="item" :isOpen="isOpen" @closed="closeDetails" @deleted="deleteItem" @get_out="getOut"
+        @print="printInvoice">
     </visitDetails>
 </template>
