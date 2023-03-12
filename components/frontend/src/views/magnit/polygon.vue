@@ -108,11 +108,11 @@ const printInvoice = (visit_id) => {
     );
     winPrint.focus();
     winPrint.onafterprint = winPrint.close;
-    winPrint.onloadeddata = winPrint.print();
-    // function delay(time=1500) {
-    //     return new Promise(resolve => setTimeout(resolve, time));
-    // }
-    // delay().then(() => winPrint.print());
+    
+    function delay(time=1500) {
+        return new Promise(resolve => setTimeout(resolve, time));
+    }
+    delay().then(() => winPrint.print());
 };
 const getOut = (data) => {
     store.dispatch('VisitsModule/finish', {
