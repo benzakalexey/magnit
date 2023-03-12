@@ -40,12 +40,15 @@ class Visits:
                 'id': v.id,
                 'permit': v.permission.permit.number,
                 'contragent_id': v.permission.owner.id,
+                'polygon_id': v.polygon.id,
                 'is_deleted': v.is_deleted,
                 'delete_reason': v.delete_reason,
                 'carrier': v.permission.owner.short_name,
                 'invoice_num': v.invoice_num,
                 'tonar': v.permission.is_tonar,
-                'truck_model': v.permission.permit.truck.model.name,
+                'truck_model': (
+                    v.permission.permit.truck.model.name.split(' ')[0]
+                ),
                 'truck_type': v.permission.permit.truck.type.value,
                 'tara': v.tara,
                 'netto': v.netto,
@@ -69,8 +72,7 @@ class Visits:
     @join_point
     @authenticate
     def on_get_get_invoice(self, request, response):
-        visit = self.service.get_invoice_by_visit(**request.params)
-        response.media = visit
+        response.media = self.service.get_invoice(**request.params)
 
     @join_point
     @authenticate
@@ -79,8 +81,9 @@ class Visits:
         response.media = constants.SUCCESS_TRUE
 
     @join_point
+    @authenticate
     def on_post_finish(self, request, response):
-        self.service.finish_visit(**request.media)
+        self.service.finish_visit(user_id=request.uid, **request.media)
         response.media = constants.SUCCESS_TRUE
 
     @join_point

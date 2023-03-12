@@ -1,14 +1,10 @@
 <script setup>
 import '@/assets/sass/visits/visits.scss';
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useVuelidate } from '@vuelidate/core'
 import { minLength, required, numeric, minValue, maxValue } from '@vuelidate/validators';
 import { useStore } from 'vuex';
 import rightSideModal from '@/components/magnit/modals/rightSideModal';
-// import '@/assets/sass/font-icons/fontawesome/css/regular.css';
-// import '@/assets/sass/font-icons/fontawesome/css/fontawesome.css';
-
-import feather from 'feather-icons';
 
 const store = useStore();
 const modalTitle = 'Новый заезд';
@@ -40,8 +36,18 @@ const createVisit = () => {
         permission_id: store.state.PermitsModule.check_permit.permission_id,
         weight: weight.value
     })
-    .then(() => store.dispatch('VisitsModule/update'))
-    .catch();
+        .then(() => {
+            store.dispatch('VisitsModule/update')
+            console.log(store.state.PermitsModule.check_permit.days_before_exp)
+            if (store.state.PermitsModule.check_permit.days_before_exp <= 14) {
+                new window.Swal(
+                    'ВАЖНО!',
+                    `Предупредите водителя что пропуск истечет через ${store.state.PermitsModule.check_permit.days_before_exp} дней!`,
+                    'warning'
+                );
+            }
+        })
+        .catch();
     closeAndClean();
 }
 
@@ -49,8 +55,8 @@ const checkPermit = (x) => {
     store.dispatch('PermitsModule/check', {
         number: permit_num.value
     })
-    .then(() => permit_error.value = false)
-    .catch(() => permit_error.value = true)
+        .then(() => permit_error.value = false)
+        .catch(() => permit_error.value = true)
 }
 const checkWeight = () => {
     let minWeight = store.state.PermitsModule.check_permit.tara || 0
@@ -59,13 +65,9 @@ const checkWeight = () => {
 }
 
 const statuses = {
-    0: `<span class="badge inv-status badge-danger">Просрочен</span>`,
-    1: `<span class="badge inv-status badge-success">Активен</span>`,
+    0: `<span class="ms-4 badge inv-status badge-danger">Просрочен</span>`,
+    1: `<span class="ms-4 badge inv-status badge-success">Активен</span>`,
 };
-
-onMounted(() => {
-    feather.replace();
-});
 
 const closeAndClean = () => {
     store.commit('PermitsModule/clearCheckPermitData');
@@ -97,52 +99,75 @@ const closeAndClean = () => {
                     <div class="invalid-feedback">Недопустимый вес</div>
                 </div>
             </div>
-            <button :disabled="v$.$invalid || Array(null, 0, undefined).includes(store.state.PermitsModule.check_permit.permit_status)"
+            <button
+                :disabled="v$.$invalid || Array(null, 0, undefined).includes(store.state.PermitsModule.check_permit.permit_status)"
                 @click.prevent="createVisit" class="btn btn-primary my-4">
                 Заехать
             </button>
         </form>
 
         <div v-show="store.state.PermitsModule.check_permit.reg_number" class="permit-info-list pt-5">
-            <h5 class="rs-modal-title">Пропуск</h5>
+            <h5 class="rs-modal-title">
+                Пропуск
+                <text v-html="statuses[store.state.PermitsModule.check_permit.permit_status]" />
+            </h5>
 
 
             <ul class="info-block list-inline">
                 <li class="info-block__item">
-                    <i data-feather="check"></i>
-                    <!-- Статус -->
-                    <text v-html="statuses[store.state.PermitsModule.check_permit.permit_status]" />
-                </li>
-                <li class="info-block__item">
-                    <i data-feather="check"></i>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="feather feather-camera" data-v-5522efca="">
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
                     <!-- Регистрационный номер -->
                     {{ store.state.PermitsModule.check_permit.reg_number }}
+                    <span v-show="store.state.PermitsModule.check_permit.is_tonar"
+                        class="mx-3 badge inv-status badge-warning">Tонар</span>
                 </li>
                 <li class="info-block__item">
-                    <i data-feather="truck"></i>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="feather feather-camera" data-v-5522efca="">
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
                     <!-- Марка ТС -->
                     {{ store.state.PermitsModule.check_permit.truck_model }}
                 </li>
                 <li class="info-block__item">
-                    <i data-feather="flag"></i>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="feather feather-camera" data-v-5522efca="">
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
                     <!-- Контрагент -->
                     {{ store.state.PermitsModule.check_permit.contragent }}
                 </li>
                 <li class="info-block__item">
-                    <i data-feather="minus"></i>
-                    <!-- Марка ТС -->
-                    {{ store.state.PermitsModule.check_permit.truck_type }}
-                </li>
-                <li class="info-block__item">
-                    <i data-feather="minus"></i>Тара:
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="feather feather-camera" data-v-5522efca="">
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    Масса пустого:
                     {{ store.state.PermitsModule.check_permit.tara }}
                 </li>
                 <li class="info-block__item">
-                    <i data-feather="minus"></i>Макс. Брутто:
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="feather feather-camera" data-v-5522efca="">
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    Макс. масса:
                     {{ store.state.PermitsModule.check_permit.max_weight }}
                 </li>
                 <li class="info-block__item">
-                    <i data-feather="minus"></i>Истекает:
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="feather feather-camera" data-v-5522efca="">
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    Истекает:
                     {{ new Date(store.state.PermitsModule.check_permit.expired_at).toLocaleDateString('RU') }}
                 </li>
             </ul>

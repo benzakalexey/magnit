@@ -13,6 +13,7 @@ def create_app(
     permit: services.Permit,
     polygon: services.Polygon,
     user: services.User,
+    driver: services.Driver,
     truck: services.Truck,
     truck_model: services.TruckModel,
     visit: services.Visit,
@@ -28,9 +29,10 @@ def create_app(
     app.register(controllers.Auth(service=auth_service))
     app.register(controllers.Partners(service=contragent))
     app.register(controllers.Permits(service=permit))
-    # app.register(controllers.Polygons(service=polygon))
+    app.register(controllers.Polygons(service=polygon))
     # app.register(controllers.SecondaryRoutes(service=secondary_route))
     app.register(controllers.Users(service=user))
+    app.register(controllers.Drivers(service=driver))
     # app.register(controllers.truckModels(service=truck_model))
     # app.register(controllers.Truck(service=truck))
     app.register(controllers.Visits(service=visit))

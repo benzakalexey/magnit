@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from classic.components import component
 from sqlalchemy import select
@@ -17,6 +17,11 @@ class UserRepo(BaseRepo, interfaces.UserRepo):
             .where(self.dto.phone == phone)
         )
         return self.session.execute(query).scalars().one_or_none()
+
+
+@component
+class DriverRepo(BaseRepo, interfaces.DriverRepo):
+    dto = entities.Driver
 
 
 @component

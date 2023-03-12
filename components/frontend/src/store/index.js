@@ -2,6 +2,7 @@ import { createStore } from 'vuex';
 import { AuthModule } from './modules/AuthModule';
 import { VisitsModule } from './modules/VisitsModule';
 import { PermitsModule } from './modules/PermitsModule';
+import { InvoiceModule } from './modules/InvoiceModule';
 import i18n from '../i18n';
 
 export default new createStore({
@@ -102,5 +103,6 @@ export default new createStore({
         AuthModule,
         VisitsModule,
         PermitsModule,
+        InvoiceModule,
     },
 });

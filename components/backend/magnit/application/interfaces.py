@@ -25,6 +25,17 @@ class UserRepo(ABC):
         """
 
 
+class DriverRepo(ABC):
+
+    @abstractmethod
+    def get_by_id(self, id_: int) -> Optional[entities.User]:
+        ...
+
+    @abstractmethod
+    def get_all(self) -> List[entities.Driver]:
+        ...
+
+
 class StaffRepo(ABC):
 
     @abstractmethod
@@ -96,25 +107,25 @@ class PolygonRepo(ABC):
         ...
 
 
-class SecondaryRouteRepo(ABC):
+class ContractRepo(ABC):
 
     @abstractmethod
-    def get_by_id(self, id_: int) -> Optional[entities.PartnerDetails]:
-        ...
-
-    # @abstractmethod
-    # def get_by_source_polygon(
-    #     self,
-    #     source_polygon_id: int,
-    # ) -> List[entities.Polygon]:
-    #     ...
-
-    @abstractmethod
-    def get_all(self) -> List[entities.PartnerDetails]:
+    def get_by_id(self, id_: int) -> Optional[entities.Contract]:
         ...
 
     @abstractmethod
-    def add(self, instance: entities.PartnerDetails):
+    def get_by_departure_point_id(
+        self,
+        departure_point_id: int,
+    ) -> List[entities.Contract]:
+        ...
+
+    @abstractmethod
+    def get_all(self) -> List[entities.Contract]:
+        ...
+
+    @abstractmethod
+    def add(self, instance: entities.Contract):
         ...
 
     @abstractmethod

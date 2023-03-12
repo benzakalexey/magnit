@@ -41,6 +41,14 @@ class Polygon:
     details: List[PolygonDetails] = field(default_factory=list)
     id: Optional[int] = None
 
+    def get_details(self, on_date: datetime) -> Optional[PolygonDetails]:
+        for d in self.details:
+            if on_date >= d.valid_from:
+                if d.valid_to is None or d.valid_to >= on_date:
+                    return d
+
+        return None
+
 
 @dataclass
 class Staff:
@@ -62,15 +70,43 @@ class Driver:
     patronymic: Optional[str] = None
     id: Optional[int] = None
 
+    @property
+    def full_name(self) -> str:
+        if self.patronymic is None:
+            return '%s %s' % (
+                self.surname,
+                self.name,
+            )
+        return '%s %s %s' % (
+            self.surname,
+            self.name,
+            self.patronymic,
+        )
+
 
 @dataclass
 class Partner:
     """Контрагент (организация)"""
     inn: str
+    ogrn: str
     name: str
     short_name: str
     details: List[PartnerDetails] = field(default_factory=list)
     id: Optional[int] = None
+
+    def get_details(self, on_date: datetime) -> Optional[PartnerDetails]:
+        for d in self.details:
+            if on_date >= d.valid_from:
+                if d.valid_to is None or d.valid_to >= on_date:
+                    return d
+
+        return None
+
+    def get_full_name(self, on_date: datetime) -> str:
+        return f'{self.name}, ' \
+               f'ИНН: {self.inn}, ' \
+               f'Адрес: ' \
+               f'{self.get_details(on_date).address}'
 
 
 @dataclass
@@ -170,6 +206,7 @@ class Permission:
     owner: Partner
     expired_at: datetime
     permit: Permit
+    trailer: Optional[Trailer] = None
     is_active: bool = True  # Валидность допуска
     is_tonar: bool = False  # Тип допуска
     added_by: Optional[User] = None
@@ -179,6 +216,37 @@ class Permission:
     @property
     def is_valid(self) -> bool:
         return self.expired_at >= datetime.utcnow()
+
+    @property
+    def truck_description(self) -> str:
+        if self.trailer:
+            max_netto = (
+                            self.permit.truck.max_weight -
+                            self.permit.truck.tara -
+                            self.trailer.tara
+                        ) / 1000
+            return f'{self.permit.truck.type.value.capitalize()} ' \
+                   f'{self.permit.truck.model.name.split()[0]}, ' \
+                   f'Прицеп: {self.trailer.model} ' \
+                   f'{self.permit.truck.body_volume} м³, ' \
+                   f'{max_netto} т.'
+        else:
+            max_netto = (
+                            self.permit.truck.max_weight -
+                            self.permit.truck.tara
+                        ) / 1000
+            return f'{self.permit.truck.type.value.capitalize()} ' \
+                   f'{self.permit.truck.model.name.split()[0]}, ' \
+                   f'{self.permit.truck.body_volume} м³, ' \
+                   f'{max_netto} т.'
+
+    @property
+    def truck_number(self) -> str:
+        if self.trailer:
+            return f'{self.permit.truck.reg_number} ' \
+                   f'Прицеп: {self.trailer.reg_number}'
+        else:
+            return f'{self.permit.truck.reg_number}'
 
 
 @dataclass
@@ -201,16 +269,16 @@ class Permit:
 @dataclass
 class Visit:
     """Визит на полигон"""
-    invoice_num: str
     weight_in: int
     operator_in: User
     permission: Permission
     polygon: Polygon
+    invoice_num: str = None
     checked_in: datetime = field(default_factory=datetime.utcnow)
     checked_out: Optional[datetime] = None
     operator_out: Optional[User] = None
     weight_out: Optional[int] = None
-    driver: Optional[User] = None
+    driver: Optional[Driver] = None
     contract: Optional[Contract] = None
     is_deleted: Optional[bool] = False
     delete_reason: Optional[str] = None
@@ -227,15 +295,13 @@ class Visit:
 
         return constants.VisitStatus.DEL
 
-    # @property
-    # def invoice_num(self):
-    #     """Номер документа о визите"""
-    #     p = self.polygon.name[:3].upper()
-    #     m = constants.months_translator.get(self.checked_in.month)
-    #     y = self.checked_in.year
-    #     num = self.id
-    #     return f'{p}-{m}.{y}-{num}'  # ЛЕН-МАЙ.2022-23
-    # TODO create util for generate invoice_num
+    def generate_invoice(self):
+        """Номер документа о визите"""
+        p = self.polygon.name[:3].upper()
+        m = constants.months_translator.get(self.checked_in.month)
+        y = self.checked_in.year
+        num = self.id
+        self.invoice_num = f'{p}-{m}.{y}-{num}'
 
     @property
     def invoice_date(self) -> str:

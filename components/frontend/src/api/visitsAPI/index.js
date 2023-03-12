@@ -20,6 +20,17 @@ export const VisitsAPI = {
         const data = { visit_id, reason };
         return DefaultAPIInstance.post(url, data);
     },
+    /**Пометить визит как удаленный
+     *      
+     * @param {number} id 
+     * @param {string} reason 
+     * @returns {Promise<AxiosResponse<any>>}
+     */
+    finish(visit_id, weight, driver_id, contract_id) {
+        const url = 'visits/finish'
+        const data = { visit_id, weight, driver_id, contract_id };
+        return DefaultAPIInstance.post(url, data);
+    },
     /**Добавить визит
      *      
      * @param {number} id 
