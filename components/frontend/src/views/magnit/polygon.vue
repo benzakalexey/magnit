@@ -150,7 +150,7 @@ onMounted(
                         <nav class="breadcrumb-one" aria-label="breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item active" aria-current="page">
-                                    <span>{{ store.state.VisitsModule.polygon }} полигон</span>
+                                    <span>{{ store.state.VisitsModule.polygon }}</span>
                                 </li>
                             </ol>
                         </nav>

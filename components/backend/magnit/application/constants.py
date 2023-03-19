@@ -1,5 +1,7 @@
 from enum import Enum
 
+MAX_RATIO = 1.2
+
 
 class UserRole(Enum):
     POLYGON_CHIEF = 'Начальник полигона'
