@@ -122,18 +122,20 @@ watchEffect(() => (isOpen.value = props.isOpen));
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="col-form-label" for="checked_in">Дата въезда</label>
-                        <input v-model="item.checked_in" type="text" readonly="true" class="form-control" id="checked_in" />
+                        <input :value="item.checked_in.toLocaleString('ru')" type="text" readonly="true"
+                            class="form-control" id="checked_in" />
                     </div>
                     <div class="col-md-6">
                         <label class="col-form-label" for="checked_out">Дата выезда</label>
-                        <input v-model="item.checked_out" type="text" readonly="true" class="form-control"
-                            id="checked_out" />
+                        <input :value="item.checked_out ? item.checked_out.toLocaleString('ru') : ''" type="text"
+                            readonly="true" class="form-control" id="checked_out" />
                     </div>
                 </div>
                 <div v-show="item.is_deleted" class="row mb-3">
                     <div class="col-md-12">
                         <label class="col-form-label" for="delete_reason">Причина удаления</label>
-                        <input v-model="item.delete_reason" type="text" readonly="true" class="form-control" id="delete_reason" />
+                        <input v-model="item.delete_reason" type="text" readonly="true" class="form-control"
+                            id="delete_reason" />
                     </div>
                 </div>
             </form>
