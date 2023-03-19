@@ -23,10 +23,11 @@ class Driver:
         partner_id: conint(gt=0),
     ) -> List[entities.Driver]:
         all_drivers = self.driver_repo.get_all()
-        return [
+        partner_drivers = (
             d for d in all_drivers
             if d.details[0].employer.id == partner_id
-        ]
+        )
+        return sorted(partner_drivers, key=lambda x: x.full_name)
 
 
 @component
