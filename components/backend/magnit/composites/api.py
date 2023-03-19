@@ -86,15 +86,6 @@ class Application:
         users_repo=DB.users_repo,
         visits_repo=DB.visits_repo,
     )
-    # doc = services.Doc(
-    #     visits_repo=DB.visits_repo,
-    #     template_dir=Settings.http_api.TEMPLATE_DIR
-    # )
-    # doc_log = services.DocLog(
-    #     docs_log_repo=DB.docs_log_repo,
-    #     visits_repo=DB.visits_repo,
-    #     users_repo=DB.users_repo,
-    # )
 
 
 class Aspects:

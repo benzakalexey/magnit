@@ -38,11 +38,10 @@ const createVisit = () => {
     })
         .then(() => {
             store.dispatch('VisitsModule/update')
-            console.log(store.state.PermitsModule.check_permit.days_before_exp)
-            if (store.state.PermitsModule.check_permit.days_before_exp <= 14) {
+            if (store.state.PermitsModule.check_permit.days_before_exp <= 30) {
                 new window.Swal(
                     'ВАЖНО!',
-                    `Предупредите водителя что пропуск истечет через ${store.state.PermitsModule.check_permit.days_before_exp} дней!`,
+                    `Предупредите водителя!<br>До истечения пропуска, дней: ${store.state.PermitsModule.check_permit.days_before_exp}`,
                     'warning'
                 );
             }
