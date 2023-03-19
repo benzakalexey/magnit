@@ -317,11 +317,11 @@ class Visit:
 
     @property
     def tara(self) -> int:
-        """Масса пустого"""
+        """Масса пустого или масса ТС если автомобиль не выехал"""
         if self.permission.is_tonar:
             return self.weight_in
         else:
-            return self.weight_out
+            return self.weight_out or self.permission.permit.truck.tara
 
     @property
     def brutto(self) -> int:

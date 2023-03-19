@@ -1,11 +1,8 @@
 <script setup>
 import '@/assets/sass/visits/visits.scss';
-import { ref, computed, toRefs, onMounted, watchEffect } from 'vue';
+import { ref, toRefs, watchEffect } from 'vue';
 import largeCenterModal from '@/components/magnit/modals/largeCenterModal';
-import '@/assets/sass/font-icons/fontawesome/css/regular.css';
-import '@/assets/sass/font-icons/fontawesome/css/fontawesome.css';
-import { DriversAPI } from "@/api/driversAPI";
-import { PolygonsAPI } from "@/api/polygonsAPI"
+import finishVisit from '@/components/magnit/forms/finishVisit';
 
 const form = ref({
     name: '',
@@ -22,7 +19,7 @@ const props = defineProps({
 });
 const { item } = toRefs(props);
 const isOpen = ref(false);
-const emit = defineEmits(['closed', 'deleted']);
+const emit = defineEmits(['closed', 'deleted', 'get_out', 'print']);
 const close = () => {
     emit('closed');
 };
@@ -67,91 +64,26 @@ const deleteVisit = async () => {
 
     };
 };
-
-
-const polygonOut = async () => {
-    close();
-    const drivers = await DriversAPI.get(item.value.contragent_id);
-    const directions = await PolygonsAPI.get_directions(item.value.polygon_id);
-    
-    let drivers_options = [`<option disabled selected>Выберите водителя</option>`];
-    for (var d of drivers.data) {
-        drivers_options.push(
-            `<option value="${d.id}">${d.name}</option>`
-        )
-    };
-
-    let directions_options = [`<option disabled selected>Выберите направление</option>`];
-    for (var d of directions.data) {
-        directions_options.push(
-            `<option value="${d.id}">${d.name}</option>`
-        )
-    };
-
-    const outData = {
-        true: `<label class="col-form-label swal2-wide" for="out_weight">Вес при выезде</label>
-            <input type="number" id="out_weight" class="swal2-input swal2-wide my-1">
-            <label class="col-form-label swal2-wide" for="driver">Водитель</label>
-            <select type="number" id="driver" required class="swal2-input swal2-wide my-1">
-                ${drivers_options}
-            </select>
-            <label class="col-form-label swal2-wide" for="direction">Направление</label>
-            <select type="number" id="direction" required class="swal2-input swal2-wide my-1">
-                ${directions_options}
-            </select>`,
-        false: `<label class="col-form-label swal2-wide" for="out_weight">Вес при выезде</label>
-            <input type="number" id="out_weight" class="swal2-input swal2-wide my-1">`,
-    }
-    const outDataQ = window.Swal.mixin({
-        confirmButtonText: 'Далее →',
-        showCancelButton: true,
-        html: outData[item.value.tonar],
-        preConfirm: () => {
-            return {
-                visit_id: item.value.id,
-                tonar: item.value.tonar,
-                out_weight: document.getElementById('out_weight') ? Number(document.getElementById('out_weight').value) : null,
-                driver: document.getElementById('driver') ? Number(document.getElementById('driver').value) : null,
-                direction: document.getElementById('direction') ? Number(document.getElementById('direction').value) : null,
-            }
-        },
-        inputAttributes: {
-            required: true,
-        },
-        validationMessage: 'Обязательно для заполнения!',
-        padding: '2em',
-        customClass: 'swal-wide',
-    });
-
-    const result = await outDataQ.fire({
-        title: 'Выезд автомобиля',
-        showCancelButton: true,
-        cancelButtonText: 'Отменить',
-    });
-    if (result.value) {
-        emit('get_out', result.value)
-    };
+const getOut = (data) => {
+    emit('get_out', data);
 };
-
-
-const print = () => {
-    emit('print', item.value.id)
+const finishModal = ref(false)
+const polygonOut = () => {
     close();
+    finishModal.value = true
+};
+const closeFinish = () => {
+    finishModal.value = false;
+};
+const print = () => {
+    close();
+    emit('print', item.value.id)
 };
 watchEffect(() => (isOpen.value = props.isOpen));
 
 </script>
-<style>
-.swal-wide {
-    width: 850px !important;
-}
-.swal2-wide {
-    width: 640px !important;
-}
-</style>
 <template>
     <largeCenterModal :modalTitle="item.invoice_num" :status="item.status" @closed="close" :isOpen="isOpen">
-
         <template #form>
             <form>
                 <div class="row mb-3">
@@ -198,6 +130,12 @@ watchEffect(() => (isOpen.value = props.isOpen));
                             id="checked_out" />
                     </div>
                 </div>
+                <div v-show="item.is_deleted" class="row mb-3">
+                    <div class="col-md-12">
+                        <label class="col-form-label" for="delete_reason">Причина удаления</label>
+                        <input v-model="item.delete_reason" type="text" readonly="true" class="form-control" id="delete_reason" />
+                    </div>
+                </div>
             </form>
         </template>
 
@@ -228,6 +166,6 @@ watchEffect(() => (isOpen.value = props.isOpen));
                 Печать ТН
             </button>
         </template>
-
     </largeCenterModal>
+    <finishVisit :item="item" :isOpen="finishModal" @closed="closeFinish" @get_out="getOut"></finishVisit>
 </template>
