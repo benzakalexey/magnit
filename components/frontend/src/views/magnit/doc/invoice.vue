@@ -40,8 +40,13 @@ const bind_data = () => {
 onMounted(
     store.dispatch('InvoiceModule/get', route.query)
         .then(() => bind_data())
-        .then(() => { if (route.query.print) window.print() }),
+        .then(() => { if (route.query.print === 'true') window.print() }),
 );
+
+const pretty_num = (n) => {
+    let r = n.match(/[а-яА-Я]+|[0-9]+/g);
+    return r ? r.join('\u2009') : '';
+};
 
 </script>
 
@@ -534,7 +539,7 @@ tfoot {
                                             {{ invoice.truck }}
                                         </td>
                                         <td class="bordered px-2 text-center" colspan="44">
-                                            {{ invoice.truck_number }}
+                                            {{ pretty_num(invoice.truck_number) }}
                                         </td>
                                     </tr>
                                     <tr style="height: 12px">
@@ -894,16 +899,16 @@ tfoot {
                                     <tr style="height: 20px">
                                         <td class="header bordered" colspan="67">-</td>
                                         <td class="header bordered" colspan="44">-</td>
-                                    </tr>
+                                </tr>
                                 <tr style="height: 12px">
                                     <td class="underrow bordered" colspan="67">
                                         (реквизиты, позволяющие
                                         идентифицировать Экономического субъекта,
-                                        составляющего первичный учетный документ о факте
-                                            хозяйственной жизни со стороны Перевозчика)
+                                            составляющего первичный учетный документ о факте
+                                        хозяйственной жизни со стороны Перевозчика)
                                     </td>
                                     <td class="underrow bordered" colspan="44">
-                                        (реквизиты, позволяющие
+                                            (реквизиты, позволяющие
                                             идентифицировать Экономического субъекта,
                                             составляющего первичный учетный документ о факте
                                             хозяйственной жизни со стороны
@@ -1019,13 +1024,13 @@ tfoot {
         </div>
     </div>
     <!-- <div class="doc-container">
-                                                                    <div class="row">
-                                                                        <div class="col-xl-7">
-                                                                        </div>
-                                                                    </div>
-                                                                </div> -->
-    <!-- <div class="row invoice layout-top-spacing layout-spacing apps-invoice">
-                                                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                                                        <div class="row">
+                                                                            <div class="col-xl-7">
                                                                             </div>
+                                                                        </div>
                                                                     </div> -->
+    <!-- <div class="row invoice layout-top-spacing layout-spacing apps-invoice">
+                                                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                                                                </div>
+                                                                        </div> -->
 </template>
