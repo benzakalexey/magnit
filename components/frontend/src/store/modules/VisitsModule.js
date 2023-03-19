@@ -46,7 +46,7 @@ export const VisitsModule = {
                         weight_in: v['weight_in'],
                         checked_in: new Date(v['checked_in']),
                         weight_out: v['weight_out'],
-                        checked_out: v['checked_out'] ? new Date(v['checked_out']).toLocaleString('ru') : '',
+                        checked_out: v['checked_out'] ? new Date(v['checked_out']) : v['checked_out'],
                         driver_name: v['driver_name'],
                         destination: v['destination'],
                         status: v['status']
