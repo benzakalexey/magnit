@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 from classic.app import validate_with_dto
@@ -37,11 +38,13 @@ class Polygon:
         polygon_id: int,
     ):
         contracts = self.contract_repo.get_by_departure_point_id(polygon_id)
+        now = datetime.utcnow()
         return [
             {
                 'id': c.id,
                 'name': c.destination.name,
             } for c in contracts
+            if c.valid_to >= now >= c.valid_from
         ]
 
     @join_point

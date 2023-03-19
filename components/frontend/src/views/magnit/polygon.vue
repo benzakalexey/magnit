@@ -14,6 +14,7 @@ const columns = ref([
     'carrier',
     'truck_model',
     'checked_in',
+    'weight_in',
     'tonar',
     'status',
     'actions',
@@ -56,11 +57,24 @@ const table_option = ref({
         truck_model: 'Марка ТС',
         truck_type: 'Тип ТС',
         checked_in: 'Въезд',
+        weight_in: 'Вес, кг',
         status: 'Статус',
         actions: '',
     },
     columnsClasses: { actions: 'actions text-center' },
-    sortable: true,
+    sortable: [
+        'permit',
+        'reg_number',
+        'carrier',
+        'truck_model',
+        'checked_in',
+        'weight_in',
+    ],
+    sortIcon: {
+        base: 'sort-icon-none',
+        up: 'sort-icon-asc',
+        down: 'sort-icon-desc',
+    },
     pagination: { nav: 'scroll', chunk: 5 },
     texts: {
         count: 'С {from} по {to} из {count}',
@@ -77,16 +91,15 @@ const statuses = {
 };
 
 const tonar = {
-    true: `<span class="badge inv-status badge-warning">Tонар</span>`,
+    true: `<span class="badge inv-status outline-badge-warning">Tонар</span>`,
     false: '',
 };
-
 const openDetails = (i) => {
     item.value = i;
-    isOpen.value = !isOpen.value;
+    isOpen.value = true;
 };
 const closeDetails = () => {
-    isOpen.value = !isOpen.value;
+    isOpen.value = false;
 };
 const deleteItem = (id, reason) => {
     store.dispatch('VisitsModule/delete', {
@@ -99,20 +112,14 @@ const deleteItem = (id, reason) => {
         }
     }).catch((error) => new window.Swal('Ошибка!', error.message, 'error'))
 };
-
 const printInvoice = (visit_id) => {
     var winPrint = window.open(
-        '/invoice?visit_id=' + visit_id,
+        '/invoice?print=true&visit_id=' + visit_id,
         '',
         'fullscreen=yes,toolbar=0,scrollbars=0,status=0'
     );
     winPrint.focus();
     winPrint.onafterprint = winPrint.close;
-    
-    function delay(time=1500) {
-        return new Promise(resolve => setTimeout(resolve, time));
-    }
-    delay().then(() => winPrint.print());
 };
 const getOut = (data) => {
     store.dispatch('VisitsModule/finish', {
@@ -144,7 +151,7 @@ onMounted(
                         <nav class="breadcrumb-one" aria-label="breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item active" aria-current="page">
-                                    <span>Кировский полигон</span>
+                                    <span>{{ store.state.VisitsModule.polygon }} полигон</span>
                                 </li>
                             </ol>
                         </nav>
@@ -158,6 +165,9 @@ onMounted(
                 <div class="panel br-6 p-0">
                     <div class="custom-table">
                         <v-client-table :data="store.state.VisitsModule.visits" :columns="columns" :options="table_option">
+                            <template #checked_in="props">
+                                <div :data_sort="props.row.checked_in">{{ props.row.checked_in.toLocaleString('ru') }}</div>
+                            </template>
                             <template #status="props">
                                 <div v-html="statuses[props.row.status]"></div>
                             </template>

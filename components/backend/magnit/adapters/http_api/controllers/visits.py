@@ -40,6 +40,7 @@ class Visits:
                 'id': v.id,
                 'permit': v.permission.permit.number,
                 'contragent_id': v.permission.owner.id,
+                'polygon': v.polygon.name,
                 'polygon_id': v.polygon.id,
                 'is_deleted': v.is_deleted,
                 'delete_reason': v.delete_reason,

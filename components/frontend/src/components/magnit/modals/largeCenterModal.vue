@@ -1,14 +1,17 @@
 <script setup>
 
-import { onMounted, watch } from 'vue'
+import { onMounted, watch, ref } from 'vue'
+import { Modal } from 'bootstrap';
 
-let modal = null
+const modalElement = ref(null)
+let modal = null;
 onMounted(
     () => initPopup(),
 );
 
 const initPopup = () => {
-    modal = new window.bootstrap.Modal(document.getElementById('itemDetailModal'));
+    modal = new Modal(modalElement.value)
+    modalElement.value.addEventListener("hidden.bs.modal", onHidden)
 };
 
 const props = defineProps({
@@ -16,7 +19,7 @@ const props = defineProps({
     isOpen: false,
     status: false,
 })
-
+const onHidden = () => emit('closed');
 const emit = defineEmits(['closed'])
 const close = () => {
     modal.hide();
@@ -29,8 +32,8 @@ watch(() => props.isOpen, (n, _) => {
 </script>
 
 <template>
-    <div class="modal fade" id="itemDetailModal" tabindex="-1" role="dialog" ref="details-modal"
-        aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" tabindex="-1" role="dialog" ref="modalElement" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -53,5 +56,4 @@ watch(() => props.isOpen, (n, _) => {
             </div>
         </div>
     </div>
-
 </template>

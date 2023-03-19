@@ -13,6 +13,7 @@ export const AuthModule = {
                 first_name: localStorage.getItem('first_name') || null,
                 last_name: localStorage.getItem('last_name') || null,
                 phone_number: localStorage.getItem('phone_number') || null,
+                polygon: localStorage.getItem('polygon') || null,
             }
         }
     },
