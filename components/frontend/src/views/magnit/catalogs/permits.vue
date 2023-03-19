@@ -1,57 +1,66 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { useMeta } from '@/composables/use-meta';
-import addVisit from '@/components/magnit/forms/addVisit'
 import { useStore } from 'vuex';
-import AddVehicle from '@/components/magnit/forms/addVehicle';
-
-useMeta({ title: 'Пропуска' });
+import addVisit from '@/components/magnit/forms/addVisit';
+import visitDetails from '@/components/magnit/forms/visitDetails';
 
 const store = useStore();
+useMeta({ title: 'Полигон' });
+
+const columns = ref([
+    'permit',
+    'reg_number',
+    'carrier',
+    'truck_model',
+    'checked_in',
+    'tonar',
+    'status',
+    'actions',
+]);
 const isOpen = ref(null);
-const item = ref(null);
-const columns = ref(
-    [
-        'permit_num',
-        'vehicle_num',
-        'vehicle_type',
-        'vehicle_mark',
-        'contragent',
-        'expired_at',
-        'days_before_exp',
-        'actions',
-    ]
+const item = ref(
+    {
+        id: '',
+        permit: '',
+        contragent_id: '',
+        tonar: '',
+        carrier: '',
+        invoice_num: '',
+        truck_model: '',
+        truck_type: '',
+        tara: '',
+        netto: '',
+        brutto: '',
+        max_weight: '',
+        reg_number: '',
+        weighing_in: '',
+        checked_in: '',
+        weighing_out: '',
+        checked_out: '',
+        driver_name: '',
+        destination: '',
+        status: ''
+    }
 );
-
-// permit_num
-// vehicle_num
-// vehicle_type
-// vehicle_mark
-// contragent
-// expired_at
-// is_active
-// days_before_exp
-// vehicle_mark
-// vehicle_mark
-// min_weight
-// max_weight
-
+const items = ref([]);
 const table_option = ref({
-    perPage: 20,
-    perPageValues: [5, 10, 20, 50],
+    perPage: 15,
+    perPageValues: [15, 50, 100],
     skin: 'table table-hover',
     headings: {
-        'permit_num': 'Пропуск',
-        'vehicle_num': 'Рег. номер ТС',
-        'vehicle_type': 'Тип ТС',
-        'vehicle_mark': 'Мартка ТС',
-        'contragent': 'Контрагент',
-        'expired_at': 'Истекает',
-        'days_before_exp': 'До истечения, дней',
-        'actions': '',
+        tonar: '',
+        permit: 'Пропуск',
+        reg_number: 'Номер',
+        carrier: 'Контрагент',
+        truck_model: 'Марка ТС',
+        truck_type: 'Тип ТС',
+        checked_in: 'Въезд',
+        status: 'Статус',
+        actions: '',
     },
     columnsClasses: { actions: 'actions text-center' },
-    sortable: [],
+    sortable: true,
     pagination: { nav: 'scroll', chunk: 5 },
     texts: {
         count: 'С {from} по {to} из {count}',
@@ -61,15 +70,60 @@ const table_option = ref({
     },
     resizableColumns: false,
 });
+const statuses = {
+    0: `<span class="badge inv-status badge-warning">На полигоне</span>`,
+    1: `<span class="badge inv-status badge-success">Выехал</span>`,
+    2: `<span class="badge inv-status badge-dark">Удален</span>`,
+};
 
-onMounted(
-    store.dispatch('PermitsModule/get_all'),
-);
-
+const tonar = {
+    true: `<span class="badge inv-status outline-badge-warning">Tонар</span>`,
+    false: '',
+};
 const openDetails = (i) => {
     item.value = i;
-    isOpen.value = !isOpen.value;
+    isOpen.value = true;
 };
+const closeDetails = () => {
+    isOpen.value = false;
+};
+const deleteItem = (id, reason) => {
+    store.dispatch('VisitsModule/delete', {
+        visit_id: id,
+        reason: reason,
+    }).then((res) => {
+        if (res.data.success) {
+            new window.Swal('Удалено!', 'Данные помечены как удаленные.', 'success');
+            store.dispatch('VisitsModule/update');
+        }
+    }).catch((error) => new window.Swal('Ошибка!', error.message, 'error'))
+};
+const printInvoice = (visit_id) => {
+    var winPrint = window.open(
+        '/invoice?print=true&visit_id=' + visit_id,
+        'fullscreen=yes,toolbar=0,scrollbars=0,status=0'
+    );
+    winPrint.focus();
+    winPrint.onafterprint = winPrint.close;
+};
+const getOut = (data) => {
+    store.dispatch('VisitsModule/finish', {
+        visit_id: data.visit_id,
+        weight_out: data.out_weight,
+        driver_id: data.driver,
+        contract_id: data.direction,
+    }).then((res) => {
+        if (res.data.success) {
+            new window.Swal('Успешно!', 'Автомобиль выехал.', 'success');
+            store.dispatch('VisitsModule/update');
+        }
+        if (data.tonar) printInvoice(data.visit_id);
+    }).catch((error) => new window.Swal('Ошибка!', error.data, 'error'))
+};
+
+onMounted(
+    store.dispatch('VisitsModule/update'),
+);
 
 </script>
 
@@ -81,8 +135,8 @@ const openDetails = (i) => {
                     <div class="page-header">
                         <nav class="breadcrumb-one" aria-label="breadcrumb">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item">{{ $t('catalog') }}</li>
-                                <li class="breadcrumb-item active" aria-current="page"><span>{{ $t('permits') }}</span>
+                                <li class="breadcrumb-item active" aria-current="page">
+                                    <span>Кировский полигон</span>
                                 </li>
                             </ol>
                         </nav>
@@ -95,15 +149,19 @@ const openDetails = (i) => {
             <div class="col-xl-12 col-lg-12 col-sm-12 layout-spacing">
                 <div class="panel br-6 p-0">
                     <div class="custom-table">
-                        <v-client-table :data="store.state.PermitsModule.permits" :columns="columns"
-                            :options="table_option">
+                        <v-client-table :data="store.state.VisitsModule.visits" :columns="columns" :options="table_option">
+                            <template #status="props">
+                                <div v-html="statuses[props.row.status]"></div>
+                            </template>
+                            <template #tonar="props">
+                                <div v-html="tonar[props.row.tonar]"></div>
+                            </template>
                             <template #actions="props">
                                 <div class="actions text-center">
                                     <a href="javascript:;" class="btn btn-primary btn-sm"
                                         @click="openDetails(props.row)">Открыть</a>
                                 </div>
                             </template>
-                            <template #salary="props"> ${{ props.row.salary }} </template>
                         </v-client-table>
                     </div>
                 </div>
@@ -111,8 +169,8 @@ const openDetails = (i) => {
         </div>
     </div>
 
-
-    <addVehicle></addVehicle>
-
-
+    <addVisit></addVisit>
+    <visitDetails :item="item" :isOpen="isOpen" @closed="closeDetails" @deleted="deleteItem" @get_out="getOut"
+        @print="printInvoice">
+    </visitDetails>
 </template>
