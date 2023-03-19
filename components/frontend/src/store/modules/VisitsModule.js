@@ -21,7 +21,7 @@ export const VisitsModule = {
                 let r = n.match(/[а-яА-Я]+|[0-9]+/g);
                 return r.join('\u2009');
             }
-            state.polygon = data[0].polygon
+            state.polygon = data[0].polygon + ' полигон'
 
             for (var v of data) {
 

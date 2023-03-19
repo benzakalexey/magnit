@@ -31,7 +31,7 @@ class Permit:
     permits_repo: interfaces.PermitRepo
     users_repo: interfaces.UserRepo
     trucks_repo: interfaces.TruckRepo
-    contragents_repo: interfaces.PartnerRepo
+    partner_repo: interfaces.PartnerRepo
     permission_repo: interfaces.PermissionRepo
 
     @join_point
@@ -55,7 +55,7 @@ class Permit:
             expired_at=p.expired_at,
             is_valid=is_valid,
             is_tonar=p.is_tonar,
-            max_weight=truck.max_weight,
+            max_weight=truck.max_weight * constants.MAX_RATIO,
             permit_num=p.permit.number,
             permission_id=p.id,
             permit_status=permit_status,

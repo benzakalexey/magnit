@@ -60,7 +60,7 @@ const checkPermit = (x) => {
 }
 const checkWeight = () => {
     let minWeight = store.state.PermitsModule.check_permit.tara || 0
-    let maxWeight = store.state.PermitsModule.check_permit.max_weight * 1.2
+    let maxWeight = store.state.PermitsModule.check_permit.max_weight
     weight_error.value = !(minWeight <= weight.value && weight.value <= maxWeight)
 }
 

@@ -3,10 +3,11 @@ from typing import List
 
 from classic.components import component
 
-from magnit.adapters.http_api import constants
 from magnit.adapters.http_api.auth import authenticate
+from magnit.adapters.http_api.constants import SUCCESS_TRUE
 from magnit.adapters.http_api.join_points import join_point
 from magnit.application import services, entities
+from magnit.application.constants import MAX_RATIO
 
 
 @component
@@ -54,7 +55,7 @@ class Visits:
                 'tara': v.tara,
                 'netto': v.netto,
                 'brutto': v.brutto,
-                'max_weight': v.permission.permit.truck.max_weight,
+                'max_weight': v.permission.permit.truck.max_weight * MAX_RATIO,
                 'reg_number': v.permission.permit.truck.reg_number,
                 'weight_in': v.weight_in,
                 'checked_in': v.checked_in,
@@ -79,16 +80,16 @@ class Visits:
     @authenticate
     def on_post_add(self, request, response):
         self.service.create_visit(user_id=request.uid, **request.media)
-        response.media = constants.SUCCESS_TRUE
+        response.media = SUCCESS_TRUE
 
     @join_point
     @authenticate
     def on_post_finish(self, request, response):
         self.service.finish_visit(user_id=request.uid, **request.media)
-        response.media = constants.SUCCESS_TRUE
+        response.media = SUCCESS_TRUE
 
     @join_point
     @authenticate
     def on_post_delete(self, request, response):
         self.service.delete_visit(**request.media)
-        response.media = constants.SUCCESS_TRUE
+        response.media = SUCCESS_TRUE
