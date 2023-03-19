@@ -36,7 +36,7 @@ const rules = computed(() => ({
         required,
         numeric,
         minValueRef: minValue(item.value.tonar ? item.value.weight_in : item.value.tara),
-        maxValueRef: maxValue(item.value.tonar ? item.value.max_weight * 1.2 : item.value.weight_in),
+        maxValueRef: maxValue(item.value.tonar ? item.value.max_weight : item.value.weight_in),
     },
     driver: {
         requiredIfFuction: requiredIf(() => item.value.tonar)
@@ -80,7 +80,7 @@ watch(() => props.isOpen, (n, _) => {
 
 const checkWeight = () => {
     const minWeight = item.value.tonar ? item.value.weight_in : item.value.tara;
-    const maxWeight = item.value.tonar ? item.value.max_weight * 1.2 : item.value.weight_in;
+    const maxWeight = item.value.tonar ? item.value.max_weight : item.value.weight_in;
     weight_error.value = !(minWeight <= weight.value && weight.value <= maxWeight);
 };
 

@@ -71,7 +71,7 @@ class Application:
     permit = services.Permit(
         permits_repo=DB.permits_repo,
         users_repo=DB.users_repo,
-        contragents_repo=DB.partners_repo,
+        partner_repo=DB.partners_repo,
         trucks_repo=DB.trucks_repo,
         permission_repo=DB.permission_repo,
     )
