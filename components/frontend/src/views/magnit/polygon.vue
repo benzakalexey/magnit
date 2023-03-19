@@ -115,7 +115,6 @@ const deleteItem = (id, reason) => {
 const printInvoice = (visit_id) => {
     var winPrint = window.open(
         '/invoice?print=true&visit_id=' + visit_id,
-        '',
         'fullscreen=yes,toolbar=0,scrollbars=0,status=0'
     );
     winPrint.focus();

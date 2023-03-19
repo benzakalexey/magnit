@@ -39,10 +39,8 @@ const bind_data = () => {
 
 onMounted(
     store.dispatch('InvoiceModule/get', route.query)
-        .then(() => {
-            bind_data();
-            if (route.query.print) window.print()
-        }),
+        .then(() => bind_data())
+        .then(() => { if (route.query.print) window.print() }),
 );
 
 </script>
@@ -897,17 +895,17 @@ tfoot {
                                         <td class="header bordered" colspan="67">-</td>
                                         <td class="header bordered" colspan="44">-</td>
                                     </tr>
-                                    <tr style="height: 12px">
-                                        <td class="underrow bordered" colspan="67">
+                                <tr style="height: 12px">
+                                    <td class="underrow bordered" colspan="67">
                                         (реквизиты, позволяющие
                                         идентифицировать Экономического субъекта,
                                         составляющего первичный учетный документ о факте
-                                        хозяйственной жизни со стороны Перевозчика)
+                                            хозяйственной жизни со стороны Перевозчика)
                                     </td>
-                                        <td class="underrow bordered" colspan="44">
+                                    <td class="underrow bordered" colspan="44">
                                         (реквизиты, позволяющие
-                                        идентифицировать Экономического субъекта,
-                                        составляющего первичный учетный документ о факте
+                                            идентифицировать Экономического субъекта,
+                                            составляющего первичный учетный документ о факте
                                             хозяйственной жизни со стороны
                                             Грузоотправителя)
                                         </td>
@@ -1021,13 +1019,13 @@ tfoot {
         </div>
     </div>
     <!-- <div class="doc-container">
-                                                                <div class="row">
-                                                                    <div class="col-xl-7">
-                                                                    </div>
-                                                                </div>
-                                                            </div> -->
-    <!-- <div class="row invoice layout-top-spacing layout-spacing apps-invoice">
-                                                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                                                    <div class="row">
+                                                                        <div class="col-xl-7">
                                                                         </div>
+                                                                    </div>
                                                                 </div> -->
+    <!-- <div class="row invoice layout-top-spacing layout-spacing apps-invoice">
+                                                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                                                            </div>
+                                                                    </div> -->
 </template>
