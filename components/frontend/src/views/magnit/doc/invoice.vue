@@ -516,7 +516,7 @@ tfoot {
                                             {{ invoice.carrier }}
                                         </td>
                                         <td class="bordered px-2 text-center" colspan="44">
-                                            {{ invoice.driver }} ВУ - {{ invoice.driver_licence }}
+                                            {{ invoice.driver }}<br>ВУ - {{ invoice.driver_licence }}
                                         </td>
                                     </tr>
                                     <tr style="height: 12px">
