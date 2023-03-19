@@ -158,7 +158,7 @@ class Visit:
         direction = (
             visit.contract.destination.get_details(visit.checked_in).address
         )
-        planned_date = visit.checked_in - timedelta(minutes=randint(20, 30))
+        planned_date = visit.checked_out - timedelta(minutes=randint(20, 30))
 
         return {
             'date': visit.checked_out,
