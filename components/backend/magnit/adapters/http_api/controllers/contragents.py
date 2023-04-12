@@ -16,8 +16,17 @@ class Partners:
 
     @join_point
     def on_get_get_all(self, request, response):
-        contragents = self.service.get_all(**request.params)
-        response.media = contragents
+        partners = self.service.get_all(**request.params)
+        response.media = [{
+            'id': p.id,
+            'inn': p.inn,
+            'ogrn': p.ogrn,
+            'name': p.name,
+            'short_name': p.short_name,
+            'kpp': p.details[0].kpp,
+            'address': p.details[0].address,
+            'phone': p.details[0].phone,
+        } for p in partners]
 
     @join_point
     def on_post_add(self, request, response):

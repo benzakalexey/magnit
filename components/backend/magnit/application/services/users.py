@@ -7,7 +7,7 @@ from typing import List
 
 from magnit.application import interfaces, entities, errors, constants
 
-from magnit.application.dtos_layer import UserAddInfo
+from magnit.application.dto import UserAddInfo
 from magnit.application.services.auth import hash_it
 from magnit.application.services.join_point import join_point
 

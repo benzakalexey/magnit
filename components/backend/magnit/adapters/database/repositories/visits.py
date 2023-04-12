@@ -12,7 +12,7 @@ from magnit.application import interfaces, entities
 class VisitRepo(BaseRepo, interfaces.VisitRepo):
     dto = entities.Visit
 
-    def get_last_200(
+    def get_last_50(
         self,
         polygon_id: int,
     ) -> List[entities.Visit]:
@@ -22,7 +22,7 @@ class VisitRepo(BaseRepo, interfaces.VisitRepo):
             .where(self.dto.polygon_id == polygon_id)
             # .where(self.dto.checked_in > time_limit)
             .order_by(desc(self.dto.checked_in))
-            .limit(100)
+            .limit(50)
         )
 
         return self.session.execute(query).scalars().all()

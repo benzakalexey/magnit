@@ -3,5 +3,5 @@ from .contragents import PartnerRepo, ContractRepo
 from .permits import PermitRepo, PermissionRepo
 from .polygons import PolygonRepo
 from .users import UserRepo, StaffRepo, DriverRepo
-from .vehicles import TruckRepo, TruckModelRepo
+from .vehicles import TruckRepo, TruckModelRepo, TrailerRepo
 from .visits import VisitRepo
