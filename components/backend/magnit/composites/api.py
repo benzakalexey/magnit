@@ -32,6 +32,7 @@ class DB:
     polygons_repo = repositories.PolygonRepo(context=context)
     truck_models_repo = repositories.TruckModelRepo(context=context)
     trucks_repo = repositories.TruckRepo(context=context)
+    trailer_repo = repositories.TrailerRepo(context=context)
     permits_repo = repositories.PermitRepo(context=context)
     permission_repo = repositories.PermissionRepo(context=context)
     visits_repo = repositories.VisitRepo(context=context)
@@ -61,18 +62,23 @@ class Application:
     #     secondary_routes_repo=DB.secondary_routes_repo,
     #     polygons_repo=DB.polygons_repo,
     # )
-    truck_model = services.TruckModel(
-        truck_models_repo=DB.truck_models_repo,
-    )
+    # truck_model = services.TruckModel(
+    #     truck_models_repo=DB.truck_models_repo,
+    # )
     truck = services.Truck(
         trucks_repo=DB.trucks_repo,
         truck_models_repo=DB.truck_models_repo,
+        trailer_repo=DB.trailer_repo,
+        permit_repo=DB.permits_repo,
+        partner_repo=DB.partners_repo,
+        user_repo=DB.users_repo,
     )
     permit = services.Permit(
         permits_repo=DB.permits_repo,
         users_repo=DB.users_repo,
         partner_repo=DB.partners_repo,
         trucks_repo=DB.trucks_repo,
+        trailer_repo=DB.trailer_repo,
         permission_repo=DB.permission_repo,
     )
     visit = services.Visit(
@@ -110,6 +116,6 @@ app = http_api.create_app(
     user=Application.user,
     driver=Application.driver,
     truck=Application.truck,
-    truck_model=Application.truck_model,
+    # truck_model=Application.truck_model,
     visit=Application.visit,
 )

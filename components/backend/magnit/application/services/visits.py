@@ -8,7 +8,7 @@ from classic.components import component
 
 from pydantic import validate_arguments, conint
 
-from magnit.application import interfaces, entities, errors, dtos_layer, \
+from magnit.application import interfaces, entities, errors, dto, \
     constants
 from magnit.application.constants import UserRole, TruckType
 
@@ -47,7 +47,7 @@ class Visit:
 
     @join_point
     @validate_with_dto
-    def create_visit(self, visit_info: dtos_layer.VisitInInfo):
+    def create_visit(self, visit_info: dto.VisitInInfo):
         permission = self.permission_repo.get_by_id(visit_info.permission_id)
         if permission is None:
             raise errors.PermitIDNotExistError(
@@ -76,7 +76,7 @@ class Visit:
 
     @join_point
     @validate_with_dto
-    def finish_visit(self, visit_info: dtos_layer.VisitOutInfo):
+    def finish_visit(self, visit_info: dto.VisitOutInfo):
         visit = self.visits_repo.get_by_id(visit_info.visit_id)
         if visit is None:
             raise errors.VisitIDNotExistError(visit_id=visit_info.visit_id)
@@ -94,7 +94,7 @@ class Visit:
     def _update_if_tonar(
         self,
         visit: entities.Visit,
-        visit_info: dtos_layer.VisitOutInfo,
+        visit_info: dto.VisitOutInfo,
     ):
         if visit.permission.is_tonar is False:
             return
@@ -139,7 +139,7 @@ class Visit:
                 polygon_id=staff.polygon.id
             )
 
-        return self.visits_repo.get_last_200(polygon.id)
+        return self.visits_repo.get_last_50(polygon.id)
 
     @join_point
     @validate_arguments

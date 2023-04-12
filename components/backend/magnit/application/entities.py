@@ -180,6 +180,7 @@ class TruckModel:
 class Truck:
     """Транспортное средство"""
     model: TruckModel
+    permit: Optional[Permit]
     reg_number: str
     passport: str
     type: constants.TruckType

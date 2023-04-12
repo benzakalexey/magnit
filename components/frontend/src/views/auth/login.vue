@@ -97,12 +97,7 @@ const password = ref('')
 //     }
 
 const submit = async (a) => {
-    console.log(login.value.value)
-
     await new Promise(r => setTimeout(r, 2000));
-    
-    console.log(password)
-
 }
 
 </script>

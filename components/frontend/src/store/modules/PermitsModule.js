@@ -84,15 +84,22 @@ export const PermitsModule = {
             state.check_permit.max_weight = null
         },
         setPermitHistory(state, data) {
-            for (var i in data) {
-                state.permit_histoty.push(
+            var histoty = []
+            for (var i of data) {
+                histoty.push(
                     {
-                        added_at: i.added_at,
-                        expired_at: i.expired_at,
-                        contragent: i.contragent,
+                        contragent_name: i.contragent_name,
+                        expired_at: new Date(i.expired_at),
+                        added_at: new Date(i.added_at),
+                        days_before_exp: i.days_before_exp,
+                        permission_id: i.permission_id,
+                        permit_status: i.permit_status,
+                        is_valid: i.is_valid,
+                        is_tonar: i.is_tonar,
                     }
                 )
-            }
+            };
+            state.permit_histoty = histoty;
         },
         clearPermitHistory(state) {
             state.permit_histoty = []
@@ -110,22 +117,36 @@ export const PermitsModule = {
             }
         },
         async get_history({ commit }, { num }) {
-            try {
-                const res = await PermitsAPI.get_history(num);
-                commit('setPermitHistory', res.data);
-            } catch (err) {
-                commit('clearPermitHistory')
-                throw err;
-            }
-
+            return await PermitsAPI.get_history(num)
+                .then((res) => commit('setPermitHistory', res.data))
+                .catch((err) => {
+                    commit('clearPermitHistory')
+                    throw err;
+                });
         },
         async check({ commit }, { number }) {
             return await PermitsAPI.check(number)
-            .then((res) => commit('setCheckPermitData', res.data))
-            .catch((err) => {
-                commit('clearCheckPermitData');
-                throw err;
-            });
+                .then((res) => commit('setCheckPermitData', res.data))
+                .catch((err) => {
+                    commit('clearCheckPermitData');
+                    throw err;
+                });
         },
+        async add_permission({ commit }, {
+            permit,
+            permit_exp,
+            carrier,
+            trailer,
+            is_tonar,
+        }) {
+            return await PermitsAPI.add_permission(
+                permit,
+                permit_exp,
+                carrier,
+                trailer,
+                is_tonar,
+            );
+            // commit('deleteItem', id, reason);
+        }
     }
 }

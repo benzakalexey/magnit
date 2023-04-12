@@ -175,6 +175,25 @@ class TruckRepo(ABC):
         ...
 
 
+class TrailerRepo(ABC):
+
+    @abstractmethod
+    def get_by_id(self, id_: int) -> Optional[entities.Trailer]:
+        ...
+
+    @abstractmethod
+    def get_all(self) -> List[entities.Trailer]:
+        ...
+
+    @abstractmethod
+    def add(self, instance: entities.Trailer):
+        ...
+
+    @abstractmethod
+    def save(self):
+        ...
+
+
 class PermitRepo(ABC):
 
     @abstractmethod
@@ -197,6 +216,10 @@ class PermitRepo(ABC):
     def save(self):
         ...
 
+    @abstractmethod
+    def get_max_num(self) -> Optional[int]:
+        ...
+
 
 class PermissionRepo(ABC):
 
@@ -206,6 +229,13 @@ class PermissionRepo(ABC):
         number: int,
     ) -> Optional[entities.Permission]:
         """Возвращает последний Допуск по номеру пропуска"""
+
+    @abstractmethod
+    def get_by_permit(
+        self,
+        number: int,
+    ) -> List[entities.Permission]:
+        """Возвращает Допуски по номеру пропуска"""
 
     @abstractmethod
     def get_by_id(self, id_: int) -> Optional[entities.Permission]:
@@ -243,7 +273,7 @@ class VisitRepo(ABC):
         ...
 
     @abstractmethod
-    def get_last_200(
+    def get_last_50(
         self,
         polygon_id: int,
     ) -> List[entities.Visit]:

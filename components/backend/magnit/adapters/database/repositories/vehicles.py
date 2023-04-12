@@ -8,6 +8,12 @@ from magnit.application import interfaces, entities
 class TruckModelRepo(BaseRepo, interfaces.TruckModelRepo):
     dto = entities.TruckModel
 
+
 @component
 class TruckRepo(BaseRepo, interfaces.TruckRepo):
     dto = entities.Truck
+
+
+@component
+class TrailerRepo(BaseRepo, interfaces.TrailerRepo):
+    dto = entities.Trailer
