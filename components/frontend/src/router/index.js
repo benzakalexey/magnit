@@ -26,6 +26,13 @@ const setAuthLayout = function (to, from, next) {
 }
 
 const routes = [
+
+    {
+        path: '/',
+        name: 'home',
+        component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/polygon.vue'),
+        beforeEnter: authGuard,
+    },
     //magnit
     {
         path: '/polygon',
@@ -34,15 +41,15 @@ const routes = [
         beforeEnter: authGuard
     },
     {
-        path: '/permits',
-        name: 'permits',
-        component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/catalogs/permits.vue'),
-        // beforeEnter: authGuard
-    },
-    {
         path: '/trucks',
         name: 'trucks',
         component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/catalogs/trucks.vue'),
+        beforeEnter: authGuard
+    },
+    {
+        path: '/permits',
+        name: 'permits',
+        component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/catalogs/permits.vue'),
         // beforeEnter: authGuard
     },
     {
@@ -134,7 +141,6 @@ const routes = [
 
 
     //dashboard
-    { path: '/', name: 'Home', component: Home },
 
     {
         path: '/index2',
