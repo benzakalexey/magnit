@@ -1,10 +1,12 @@
 from datetime import datetime
+from typing import List, Optional
 
 from classic.app import validate_with_dto, DTO
 from classic.components import component
 from pydantic import validate_arguments, conint
+
 from magnit.application import interfaces, entities, errors, constants
-from magnit.application.dtos_layer import PermitInfo, PermitLogInfo
+from magnit.application.dto import PermitInfo, PermitLogInfo
 from magnit.application.services.join_point import join_point
 
 
@@ -24,6 +26,26 @@ class PermissionInfo(DTO):
     is_tonar: bool
 
 
+class PermissionHistoryData(DTO):
+    contragent_name: str
+    expired_at: datetime
+    added_at: datetime
+    days_before_exp: int
+    permission_id: int
+    permit_status: constants.PermitStatus
+    is_valid: bool
+    is_tonar: bool
+
+
+class PermissionUpdateInfo(DTO):
+    permit: int
+    carrier: int
+    trailer: Optional[int]
+    user_id: int
+    permit_exp: datetime
+    is_tonar: bool
+
+
 @component
 class Permit:
     """Класс Пропуск
@@ -31,6 +53,7 @@ class Permit:
     permits_repo: interfaces.PermitRepo
     users_repo: interfaces.UserRepo
     trucks_repo: interfaces.TruckRepo
+    trailer_repo: interfaces.TrailerRepo
     partner_repo: interfaces.PartnerRepo
     permission_repo: interfaces.PermissionRepo
 
@@ -68,10 +91,73 @@ class Permit:
 
     @join_point
     @validate_arguments
+    def get_history(self, num: int) -> List[PermissionHistoryData]:
+        permissions = self.permission_repo.get_by_permit(num)
+        history = []
+        for p in permissions:
+            permit_status = (
+                constants.PermitStatus.VALID
+                if p.expired_at > datetime.utcnow()
+                else constants.PermitStatus.EXPIRED
+            )
+            is_valid = permit_status == constants.PermitStatus.VALID
+            days_before_exp = (p.expired_at - datetime.utcnow()).days or 0
+
+            history.append(
+                PermissionHistoryData(
+                    contragent_name=p.owner.short_name,
+                    expired_at=p.expired_at,
+                    added_at=p.added_at,
+                    days_before_exp=days_before_exp,
+                    permission_id=p.id,
+                    permit_status=permit_status,
+                    is_valid=is_valid,
+                    is_tonar=p.is_tonar,
+                )
+            )
+
+        return history
+
+    @join_point
+    @validate_arguments
     def get_by_id(self, permit_id: conint(gt=0)) -> entities.Permit:
         permit = self.permits_repo.get_by_id(permit_id)
         if permit is None:
             raise errors.PermitIDNotExistError(permit_id=permit_id)
+
+        return permit
+
+    @join_point
+    @validate_with_dto
+    def add_permission(
+        self,
+        permission_info: PermissionUpdateInfo,
+    ) -> entities.Permit:
+        permit = self.permits_repo.get_by_number(permission_info.permit)
+        if permit is None:
+            raise errors.PermitIDNotExistError(
+                permit_id=permission_info.permit
+            )
+
+        partner = self.partner_repo.get_by_id(permission_info.carrier)
+        if partner is None:
+            raise errors.PartnerIDNotExistError(
+                partner_id=permission_info.carrier
+            )
+
+        trailer = self.trailer_repo.get_by_id(permission_info.trailer)
+
+        operator = self.users_repo.get_by_id(permission_info.user_id)
+        permission = entities.Permission(
+            owner=partner,
+            expired_at=permission_info.permit_exp,
+            trailer=trailer,
+            permit=permit,
+            is_tonar=permission_info.is_tonar,
+            added_by=operator
+        )
+        permit.permissions.append(permission)
+        self.permits_repo.save()
 
         return permit
 

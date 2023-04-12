@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional
 
 from classic.app import DTO
-from pydantic import conint, Field
+from pydantic import conint, validator
 
 from magnit.application import constants
 
@@ -32,21 +32,24 @@ class PolygonInfo(DTO):
     address: Optional[str] = None
 
 
-class truckModelInfo(DTO):
+class TruckModelInfo(DTO):
     name: str
 
 
-class truckInfo(DTO):
-    model_id: conint(gt=0)
-    reg_number: str
-    sts_number: str
-    production_year: Optional[conint(gt=0)]
-    truck_type: constants.TruckType
-    tara: conint(gt=0)
-    max_weight: conint(gt=0)
+class TruckInfo(DTO):
+    user_id: conint(gt=0)
+    is_tonar: bool
     body_volume: Optional[conint(gt=0)]
+    carrier: conint(gt=0)
     compress_ratio: Optional[conint(gt=0)]
-    permit: int
+    max_weight: conint(gt=0)
+    model: conint(gt=0)
+    permit_exp: datetime
+    production_year: Optional[conint(gt=0)]
+    reg_number: str
+    tara: conint(gt=0)
+    trailer: conint(gt=0)
+    type: constants.TruckType
 
 
 class SecondaryRouteInfo(DTO):

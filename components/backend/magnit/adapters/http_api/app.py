@@ -15,7 +15,7 @@ def create_app(
     user: services.User,
     driver: services.Driver,
     truck: services.Truck,
-    truck_model: services.TruckModel,
+    # truck_model: services.TruckModel,
     visit: services.Visit,
 ) -> App:
     app = App(
@@ -34,7 +34,7 @@ def create_app(
     app.register(controllers.Users(service=user))
     app.register(controllers.Drivers(service=driver))
     # app.register(controllers.truckModels(service=truck_model))
-    # app.register(controllers.Truck(service=truck))
+    app.register(controllers.Trucks(service=truck))
     app.register(controllers.Visits(service=visit))
 
     def handler_serialize(obj):

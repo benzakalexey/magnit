@@ -37,17 +37,18 @@ const createVisit = () => {
         weight: weight.value
     })
         .then(() => {
-            store.dispatch('VisitsModule/update')
-            if (store.state.PermitsModule.check_permit.days_before_exp <= 30) {
+            console.log(store.state.PermitsModule.check_permit.days_before_exp)
+            if (store.state.PermitsModule.check_permit.days_before_exp <= 3) {
                 new window.Swal(
                     'ВАЖНО!',
                     `Предупредите водителя!<br>До истечения пропуска, дней: ${store.state.PermitsModule.check_permit.days_before_exp}`,
                     'warning'
                 );
-            }
+            };
+            closeAndClean();
+            store.dispatch('VisitsModule/update')
         })
         .catch();
-    closeAndClean();
 }
 
 const checkPermit = (x) => {

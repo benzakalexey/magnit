@@ -2,7 +2,7 @@ from classic.app import validate_with_dto
 from classic.components import component
 from pydantic import validate_arguments, conint
 
-from magnit.application import interfaces, entities, errors, dtos_layer
+from magnit.application import interfaces, entities, errors, dto
 from magnit.application.services.join_point import join_point
 
 #
@@ -30,7 +30,7 @@ from magnit.application.services.join_point import join_point
 #
 #     @join_point
 #     @validate_with_dto
-#     def add_doc_log(self, docs_log_info: dtos_layer.DocLogInfo):
+#     def add_doc_log(self, docs_log_info: dto.DocLogInfo):
 #         user = self.users_repo.get_by_id(docs_log_info.user_id)
 #         if user is None:
 #             raise errors.UserIDNotExistError(user_id=docs_log_info.user_id)

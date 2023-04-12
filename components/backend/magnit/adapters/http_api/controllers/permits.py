@@ -1,6 +1,7 @@
 from classic.components import component
 
 from magnit.adapters.http_api import constants
+from magnit.adapters.http_api.auth import authenticate
 from magnit.adapters.http_api.join_points import join_point
 from magnit.application import services, entities
 
@@ -10,8 +11,14 @@ class Permits:
     service: services.Permit
 
     @join_point
+    @authenticate
     def on_get_check(self, request, response):
         response.media = self.service.check_by_number(**request.params)
+
+    @join_point
+    @authenticate
+    def on_get_history(self, request, response):
+        response.media = self.service.get_history(**request.params)
 
     @join_point
     def on_get_get_by_id(self, request, response):
@@ -22,6 +29,12 @@ class Permits:
     def on_get_get_all(self, request, response):
         permits = self.service.get_all(**request.params)
         response.media = permits
+
+    @join_point
+    @authenticate
+    def on_post_add_permission(self, request, response):
+        self.service.add_permission(user_id=request.uid, **request.media)
+        response.media = constants.SUCCESS_TRUE
 
     @join_point
     def on_post_add(self, request, response):

@@ -117,12 +117,12 @@ mapper.map_imperatively(
             entities.Permission,
             lazy='subquery',
             backref=backref('permit'),
-            order_by='desc(entities.Permission.expired_at)'
+            order_by='desc(entities.Permission.added_at)'
         ),
         'truck': relationship(
             entities.Truck,
-            uselist=False,
             lazy='joined',
+            backref=backref("permit", uselist=False),
         )
     },
 )

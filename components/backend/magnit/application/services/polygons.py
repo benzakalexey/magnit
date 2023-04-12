@@ -6,7 +6,7 @@ from classic.components import component
 from pydantic import validate_arguments, conint
 from magnit.application import interfaces, entities, errors
 
-from magnit.application.dtos_layer import PolygonInfo, SecondaryRouteInfo
+from magnit.application.dto import PolygonInfo, SecondaryRouteInfo
 from magnit.application.services.join_point import join_point
 
 

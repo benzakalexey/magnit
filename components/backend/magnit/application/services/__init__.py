@@ -5,4 +5,4 @@ from .permits import Permit, PermitLog
 from .users import User, Driver
 from .visits import Visit
 from .polygons import Polygon
-from .trucks import TruckModel, Truck
+from .trucks import Truck, TruckModel

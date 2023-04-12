@@ -4,7 +4,7 @@ from pydantic import validate_arguments, conint
 
 from magnit.application import interfaces, entities, errors
 
-from magnit.application.dtos_layer import PartnerInfo
+from magnit.application.dto import PartnerInfo
 from magnit.application.services.join_point import join_point
 
 @component

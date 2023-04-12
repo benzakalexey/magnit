@@ -9,12 +9,12 @@ const store = useStore();
 useMeta({ title: 'Полигон' });
 
 const columns = ref([
+    // 'invoice_num',
     'permit',
     'reg_number',
     'carrier',
     'truck_model',
     'checked_in',
-    'weight_in',
     'tonar',
     'status',
     'actions',
@@ -51,13 +51,14 @@ const table_option = ref({
     skin: 'table table-hover',
     headings: {
         tonar: '',
+        invoice_num: 'Номер накладной',
         permit: 'Пропуск',
         reg_number: 'Номер',
         carrier: 'Контрагент',
         truck_model: 'Марка ТС',
         truck_type: 'Тип ТС',
         checked_in: 'Въезд',
-        weight_in: 'Вес, кг',
+        weight_in: 'Вес въезда, кг',
         status: 'Статус',
         actions: '',
     },
@@ -135,8 +136,15 @@ const getOut = (data) => {
     }).catch((error) => new window.Swal('Ошибка!', error.data, 'error'))
 };
 
+const bind_data = async() => {
+    while (true) {
+        store.dispatch('VisitsModule/update');
+        await new Promise(r => setTimeout(r, 120_000));
+    }  
+};
+
 onMounted(
-    store.dispatch('VisitsModule/update'),
+    bind_data(),
 );
 
 </script>

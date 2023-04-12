@@ -1,8 +1,11 @@
+from typing import List
+
 from classic.app import validate_with_dto
 from classic.components import component
 from pydantic import validate_arguments, conint
-from magnit.application import interfaces, entities, errors
-from magnit.application.dtos_layer import truckModelInfo, truckInfo
+
+from magnit.application import interfaces, entities, errors, constants
+from magnit.application.dto import TruckModelInfo, TruckInfo
 from magnit.application.services.join_point import join_point
 
 
@@ -19,19 +22,15 @@ class TruckModel:
                   truck_model_id: conint(gt=0)) -> entities.TruckModel:
         truck_model = self.truck_models_repo.get_by_id(truck_model_id)
         if truck_model is None:
-            raise errors.truckModelIDNotExistError(
+            raise errors.TruckModelIDNotExistError(
                 truck_model_id=truck_model_id
             )
 
         return truck_model
 
     @join_point
-    def get_all(self):
-        return self.truck_models_repo.get_all()
-
-    @join_point
     @validate_with_dto
-    def add_model(self, truck_models_info: truckModelInfo):
+    def add_model(self, truck_models_info: TruckModelInfo):
         truck_model = entities.TruckModel(
             name=truck_models_info.name,
         )
@@ -46,43 +45,79 @@ class Truck:
     """
     trucks_repo: interfaces.TruckRepo
     truck_models_repo: interfaces.TruckModelRepo
+    trailer_repo: interfaces.TrailerRepo
+    permit_repo: interfaces.PermitRepo
+    partner_repo: interfaces.PartnerRepo
+    user_repo: interfaces.UserRepo
 
     @join_point
     @validate_arguments
     def get_by_id(self, truck_id: conint(gt=0)) -> entities.Truck:
         t = self.trucks_repo.get_by_id(truck_id)
         if t is None:
-            raise errors.truckIDNotExistError(truck_id=truck_id)
+            raise errors.TruckIDNotExistError(truck_id=truck_id)
 
         return t
 
     @join_point
-    def get_all(self):
-        return self.trucks_repo.get_all()
+    def get_all_models(self) -> List[entities.TruckModel]:
+        return self.truck_models_repo.get_all()
+
+    @join_point
+    def get_types(self):
+        return constants.TruckType
+
+    @join_point
+    def get_trailers(self):
+        return self.trailer_repo.get_all()
+
+    @join_point
+    def get_all(self) -> List[entities.Truck]:
+        trucks = self.trucks_repo.get_all()
+        return trucks
 
     @join_point
     @validate_with_dto
-    def add_truck(self, truck_info: truckInfo):
-        model = self.truck_models_repo.get_by_id(truck_info.model_id)
+    def add_truck(self, truck_info: TruckInfo):
+        model = self.truck_models_repo.get_by_id(truck_info.model)
         if model is None:
-            raise errors.truckModelIDNotExistError(
-                truck_model_id=truck_info.model_id
+            raise errors.TruckModelIDNotExistError(
+                truck_model_id=truck_info.model
             )
 
         truck = entities.Truck(
             reg_number=truck_info.reg_number,
             model=model,
-            truck_type=truck_info.truck_type,
-            sts_number=truck_info.sts_number,
+            type=truck_info.type,
+            passport='',
             tara=truck_info.tara,
             max_weight=truck_info.max_weight,
             production_year=truck_info.production_year,
+            permit=None
         )
         self.trucks_repo.add(truck)
         self.trucks_repo.save()
 
-        # permit = entities.Permit(
-        #     number=permit_info.number,
-        #     truck=truck
-        #
-        # )
+        permit_number = self.permit_repo.get_max_num() + 1
+
+        permit = entities.Permit(
+            number=permit_number,
+            truck=truck,
+        )
+        partner = self.partner_repo.get_by_id(truck_info.carrier)
+        if partner is None:
+            raise errors.PartnerIDNotExistError(partner_id=truck_info.carrier)
+
+        trailer = self.trailer_repo.get_by_id(truck_info.trailer)
+
+        operator = self.user_repo.get_by_id(truck_info.user_id)
+        permission = entities.Permission(
+            owner=partner,
+            expired_at=truck_info.permit_exp,
+            trailer=trailer,
+            permit=permit,
+            is_tonar=truck_info.is_tonar,
+            added_by=operator
+        )
+        permit.permissions.append(permission)
+        self.permit_repo.save()

@@ -12,7 +12,7 @@ from magnit.application import interfaces, errors
 from magnit.application.services.join_point import join_point
 
 APP_ISSUER = 'https://magnit.tw1.ru'
-TOKEN_LIVE_HOURS = 12
+TOKEN_LIVE_HOURS = 1200
 
 
 def hash_it(i: str):
