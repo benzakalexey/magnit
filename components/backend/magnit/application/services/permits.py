@@ -165,14 +165,11 @@ class Permit:
             permit.permission.trailer != trailer,
             permit.permission.owner != partner,
             permit.permission.is_tonar != permission_info.is_tonar,
-            (
-                (
-                    permit.permission.expired_at.replace(tzinfo=None) -
-                    permission_info.permit_exp.replace(tzinfo=None)
-                ).total_seconds() != 0
-            ),
+            permit.permission.expired_at.day != permission_info.permit_exp.day,
+            permit.permission.expired_at.month != permission_info.permit_exp.month,
+            permit.permission.expired_at.year != permission_info.permit_exp.year,
         )
-        self.logger.info(permission_info)
+        self.logger.info(permission_info.permit_exp)
         self.logger.info(permit.permission.expired_at)
         self.logger.info(criterias)
         if any(criterias):
