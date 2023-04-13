@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 from typing import List, Optional
 
@@ -61,6 +62,9 @@ class Permit:
     trailer_repo: interfaces.TrailerRepo
     partner_repo: interfaces.PartnerRepo
     permission_repo: interfaces.PermissionRepo
+
+    def __attrs_post_init__(self):
+        self.logger = logging.getLogger(self.__class__.__name__)
 
     @join_point
     @validate_arguments
@@ -161,13 +165,16 @@ class Permit:
             permit.permission.trailer != trailer,
             permit.permission.owner != partner,
             permit.permission.is_tonar != permission_info.is_tonar,
-            # (
-            #     (
-            #         permit.permission.expired_at.replace(tzinfo=None) -
-            #         permission_info.permit_exp.replace(tzinfo=None)
-            #     ).total_seconds() != 0
-            # ),
+            (
+                (
+                    permit.permission.expired_at.replace(tzinfo=None) -
+                    permission_info.permit_exp.replace(tzinfo=None)
+                ).total_seconds() != 0
+            ),
         )
+        self.logger.info(permission_info)
+        self.logger.info(permit.permission)
+        self.logger.info(criterias)
         if any(criterias):
             operator = self.users_repo.get_by_id(permission_info.user_id)
             permission = entities.Permission(
