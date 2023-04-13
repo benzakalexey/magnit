@@ -173,7 +173,7 @@ class Permit:
             ),
         )
         self.logger.info(permission_info)
-        self.logger.info(permit.permission)
+        self.logger.info(permit.permission.expired_at)
         self.logger.info(criterias)
         if any(criterias):
             operator = self.users_repo.get_by_id(permission_info.user_id)
