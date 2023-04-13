@@ -45,6 +45,11 @@ class PermissionUpdateInfo(DTO):
     permit_exp: datetime
     is_tonar: bool
 
+    truck_type: constants.TruckType
+    tara: conint(gt=0)
+    max_weight: conint(gt=0)
+    body_volume: Optional[conint(gt=0)]
+
 
 @component
 class Permit:
@@ -145,19 +150,32 @@ class Permit:
                 partner_id=permission_info.carrier
             )
 
+        permit.truck.tara = permission_info.tara
+        permit.truck.max_weight = permission_info.max_weight
+        permit.truck.type = permission_info.truck_type
+        permit.truck.body_volume = permission_info.body_volume
+
         trailer = self.trailer_repo.get_by_id(permission_info.trailer)
 
-        operator = self.users_repo.get_by_id(permission_info.user_id)
-        permission = entities.Permission(
-            owner=partner,
-            expired_at=permission_info.permit_exp,
-            trailer=trailer,
-            permit=permit,
-            is_tonar=permission_info.is_tonar,
-            added_by=operator
+        criterias = (
+            permit.permission.trailer != trailer,
+            permit.permission.owner != partner,
+            permit.permission.is_tonar != permission_info.is_tonar,
+            permit.permission.expired_at != permission_info.permit_exp.replace(
+                tzinfo=None),
         )
-        permit.permissions.append(permission)
-        self.permits_repo.save()
+        if any(criterias):
+            operator = self.users_repo.get_by_id(permission_info.user_id)
+            permission = entities.Permission(
+                owner=partner,
+                expired_at=permission_info.permit_exp,
+                trailer=trailer,
+                permit=permit,
+                is_tonar=permission_info.is_tonar,
+                added_by=operator
+            )
+            permit.permissions.append(permission)
+            self.permits_repo.save()
 
         return permit
 

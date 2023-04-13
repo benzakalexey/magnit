@@ -138,6 +138,10 @@ export const PermitsModule = {
             carrier,
             trailer,
             is_tonar,
+            truck_type,
+            tara,
+            max_weight,
+            body_volume,
         }) {
             return await PermitsAPI.add_permission(
                 permit,
@@ -145,6 +149,10 @@ export const PermitsModule = {
                 carrier,
                 trailer,
                 is_tonar,
+                truck_type,
+                tara,
+                max_weight,
+                body_volume,
             );
             // commit('deleteItem', id, reason);
         }

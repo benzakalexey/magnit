@@ -70,6 +70,10 @@ export const PermitsAPI = {
         carrier,
         trailer,
         is_tonar,
+        truck_type,
+        tara,
+        max_weight,
+        body_volume,
     ) {
         const url = 'permits/add_permission'
         const data = {
@@ -78,6 +82,10 @@ export const PermitsAPI = {
             carrier,
             trailer,
             is_tonar,
+            truck_type,
+            tara,
+            max_weight,
+            body_volume,
         };
         return DefaultAPIInstance.post(url, data);
     }
