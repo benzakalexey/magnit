@@ -161,8 +161,12 @@ class Permit:
             permit.permission.trailer != trailer,
             permit.permission.owner != partner,
             permit.permission.is_tonar != permission_info.is_tonar,
-            permit.permission.expired_at != permission_info.permit_exp.replace(
-                tzinfo=None),
+            (
+                (
+                    permit.permission.expired_at -
+                    permission_info.permit_exp.replace(tzinfo=None)
+                ).total_seconds() != 0
+            ),
         )
         if any(criterias):
             operator = self.users_repo.get_by_id(permission_info.user_id)
