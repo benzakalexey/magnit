@@ -48,7 +48,7 @@ class TruckInfo(DTO):
     production_year: Optional[conint(gt=0)]
     reg_number: str
     tara: conint(gt=0)
-    trailer: conint(gt=0)
+    trailer: Optional[conint(gt=0)]
     type: constants.TruckType
 
 

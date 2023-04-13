@@ -37,17 +37,6 @@ const columns = ref([
     'actions',
 ]);
 const isOpen = ref(null);
-const item = ref(
-    {
-        reg_number: '',
-        passport: '',
-        manufactured_at: '',
-        truck_type: '',
-        tara: '',
-        max_weight: '',
-        body_volume: '',
-    }
-);
 const items = ref([]);
 const table_option = ref({
     perPage: 15,
@@ -116,6 +105,24 @@ const permit_exp = ref(null);
 const carrier = ref(null);
 const trailer = ref(null);
 const is_tonar = ref(false);
+const closeNewForm = () => {
+    isOpen.value = false;
+    clearNewForm();
+}
+const clearNewForm = () => {
+    model.value = null
+    reg_number.value = null
+    type.value = null
+    tara.value = null
+    max_weight.value = null
+    production_year.value = null
+    body_volume.value = null
+    compress_ratio.value = null
+    permit_exp.value = null
+    carrier.value = null
+    trailer.value = null
+    is_tonar.value = false
+}
 
 const createTruck = () => {
     const data = {
@@ -136,6 +143,7 @@ const createTruck = () => {
         .then((res) => {
             if (res.data.success) {
                 new window.Swal('Успешно!', 'Автомобиль создан.', 'success');
+                closeNewForm();
                 store.dispatch('TrucksModule/update');
             }
         })
@@ -272,12 +280,12 @@ const updatePermit = () => {
 onMounted(
     () => {
         // Update Data
-        store.dispatch('TrucksModule/update');
-        store.dispatch('TrucksModule/update_trailers');
-        store.dispatch('PartnersModule/update');
-        store.dispatch('TrucksModule/update_models');
-        store.dispatch('TrucksModule/update_types');
-
+        store.dispatch('TrucksModule/update').then(() => {
+            store.dispatch('TrucksModule/update_trailers');
+            store.dispatch('PartnersModule/update');
+            store.dispatch('TrucksModule/update_models');
+            store.dispatch('TrucksModule/update_types');
+        })
         // Init modal
         initDetailsModal();
     }
@@ -329,7 +337,7 @@ onMounted(
 
         <div class="right-side-modal" :class="{ active: isOpen }">
             <div class="sidbarchat p-3" tag="div">
-                <a class="btn-close" href="javascript:;" @click="isOpen = !isOpen"> </a>
+                <a class="btn-close" href="javascript:;" @click="closeNewForm()"> </a>
                 <h5 class="rs-modal-title mb-5">Новый автомобиль</h5>
 
                 <form novalidate>
@@ -557,7 +565,8 @@ onMounted(
                     <div class="modal-footer">
                         <button type="button" class="btn" data-dismiss="modal" data-bs-dismiss="modal"><i
                                 class="flaticon-cancel-12"></i>Отмена</button>
-                        <button type="button" class="btn btn-primary" @click.prevent="updatePermit">Сохранить данные пропуска</button>
+                        <button type="button" class="btn btn-primary" @click.prevent="updatePermit">Сохранить данные
+                            пропуска</button>
                     </div>
                 </div>
             </div>
