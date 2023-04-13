@@ -163,12 +163,11 @@ class Permit:
             permit.permission.is_tonar != permission_info.is_tonar,
             (
                 (
-                    permit.permission.expired_at -
+                    permit.permission.expired_at.replace(tzinfo=None) -
                     permission_info.permit_exp.replace(tzinfo=None)
                 ).total_seconds() != 0
             ),
         )
-        print(criterias)
         if any(criterias):
             operator = self.users_repo.get_by_id(permission_info.user_id)
             permission = entities.Permission(
