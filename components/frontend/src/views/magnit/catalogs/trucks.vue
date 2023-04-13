@@ -22,22 +22,20 @@ useMeta({ title: 'Автомобили' });
 
 const columns = ref([
     'permit',
-    'reg_number',
-    // 'passport',
-    // 'manufactured_at',
-    'truck_type',
-    'truck_model',
+    'permission_owner',
     'started_at',
     'expired_at',
-    'permission_owner',
     'days_before_exp',
-    // 'tara',
-    // 'max_weight',
-    // 'body_volume',
+    'reg_number',
+    'truck_model',
+    'tonar',
     'actions',
 ]);
 const isOpen = ref(null);
-const items = ref([]);
+const tonar = {
+    true: `<span class="badge inv-status outline-badge-warning">Tонар</span>`,
+    false: '',
+};
 const table_option = ref({
     perPage: 15,
     perPageValues: [15, 50, 100],
@@ -49,20 +47,20 @@ const table_option = ref({
         truck_model: 'Марка',
         truck_type: 'Тип ТС',
         tara: 'Масса пустого',
+        tonar: '',
         max_weight: 'Макс. масса',
         body_volume: 'Объем кузова',
         permit: 'Пропуск',
         permission_owner: 'Контрагент',
-        started_at: 'Действует с',
-        expired_at: 'Действует до',
-        days_before_exp: 'До окончания, дней',
+        started_at: 'Выдан',
+        expired_at: 'Истекает',
+        days_before_exp: 'Осталось, дн.',
         actions: '',
     },
     columnsClasses: { actions: 'actions text-center' },
     sortable: [
         'permit',
         'permission_owner',
-        'reg_number',
         'manufactured_at',
         'truck_type',
         'tara',
@@ -100,7 +98,6 @@ const tara = ref(null);
 const max_weight = ref(null);
 const production_year = ref(null);
 const body_volume = ref(null);
-const compress_ratio = ref(null);
 const permit_exp = ref(null);
 const carrier = ref(null);
 const trailer = ref(null);
@@ -117,7 +114,6 @@ const clearNewForm = () => {
     max_weight.value = null
     production_year.value = null
     body_volume.value = null
-    compress_ratio.value = null
     permit_exp.value = null
     carrier.value = null
     trailer.value = null
@@ -133,7 +129,6 @@ const createTruck = () => {
         max_weight: max_weight.value,
         production_year: production_year.value,
         body_volume: body_volume.value,
-        compress_ratio: compress_ratio.value,
         permit_exp: strToDate(permit_exp.value),
         carrier: carrier.value,
         trailer: trailer.value,
@@ -196,13 +191,6 @@ const rules = computed(() => ({
         $lazy: true,
         $autoDirty: true
     },
-    compress_ratio: {
-        required,
-        numeric,
-        minValue: minValue(0),
-        $lazy: true,
-        $autoDirty: true
-    },
     permit_exp: {
         required,
         $lazy: true,
@@ -216,7 +204,6 @@ const v$ = useVuelidate(rules, {
     max_weight,
     production_year,
     body_volume,
-    compress_ratio,
     permit_exp,
 });
 
@@ -245,8 +232,27 @@ const initDetailsModal = () => {
     detailModal = new Modal(truckDetailsModal.value)
     truckDetailsModal.value.addEventListener("hidden.bs.modal", onHidden)
 };
+const partnerIdByName = (name) => {
+    return store.state.PartnersModule.partners[
+        store.state.PartnersModule.partners.findIndex((i) => i['short_name'] == name)
+    ].id
+};
+const trailerIdByNum = (name) => {
+    var index = store.state.TrucksModule.trailers.findIndex((i) => i['reg_number'] == name)
+    if (index !== -1) {
+        return store.state.TrucksModule.trailers[index].id
+    }
+
+};
 const openDetails = (i) => {
     truckDetails.value = i;
+
+    carrier.value = partnerIdByName(i.permission_owner)
+    trailer.value = trailerIdByNum(i.trailer)
+    is_tonar.value = i.tonar
+    permit_exp.value = i.expired_at
+
+
     store.dispatch(
         'PermitsModule/get_history', { num: truckDetails.value.permit }
     ).then(() => detailModal.show())
@@ -265,7 +271,11 @@ const updatePermit = () => {
         carrier: carrier.value,
         trailer: trailer.value,
         is_tonar: is_tonar.value,
-    }
+        truck_type: truckDetails.value.truck_type,
+        tara: truckDetails.value.tara,
+        max_weight: truckDetails.value.max_weight,
+        body_volume: truckDetails.value.body_volume,
+    };
     store.dispatch('PermitsModule/add_permission', data)
         .then((res) => {
             if (res.data.success) {
@@ -275,7 +285,7 @@ const updatePermit = () => {
             };
         })
         .catch((error) => new window.Swal('Ошибка!', error.data, 'error'))
-}
+};
 
 onMounted(
     () => {
@@ -295,6 +305,17 @@ onMounted(
 <template>
     <div class="layout-px-spacing">
         <teleport to="#breadcrumb">
+            <ul class="navbar-nav flex-row">
+                <li>
+                    <div class="page-header">
+                        <nav class="breadcrumb-one" aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item active" aria-current="page"><span>{{ $t('trucks') }}</span></li>
+                            </ol>
+                        </nav>
+                    </div>
+                </li>
+            </ul>
             <div class="navbar-nav flex-row ms-auto">
                 <button type="button" class="btn btn-primary me-4" @click="isOpen = !isOpen">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -322,6 +343,16 @@ onMounted(
                                 <div :data_sort="props.row.expired_at">
                                     {{ props.row.expired_at ? props.row.expired_at.toLocaleDateString('ru') : '-' }}
                                 </div>
+                            </template>
+                            <template #days_before_exp="props">
+                                <span v-show="props.row.days_before_exp <= 0"
+                                    class="badge inv-status outline-badge-danger">Просрочен</span>
+                                <div v-show="props.row.days_before_exp > 0">
+                                    {{ props.row.days_before_exp }}
+                                </div>
+                            </template>
+                            <template #tonar="props">
+                                <div v-html="tonar[props.row.tonar]"></div>
                             </template>
                             <template #actions="props">
                                 <div class="actions text-center">
@@ -399,14 +430,6 @@ onMounted(
                             <div class="invalid-feedback" v-if="v$.body_volume.$error">Недопустимый значение</div>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="production_year" class="col-form-label">Коэффициент сжатия</label>
-                        <div>
-                            <input v-model="compress_ratio" id="compress_ratio" type="number" class="form-control"
-                                placeholder="" :class="[v$.compress_ratio.$invalid ? 'is-invalid' : '']" />
-                            <div class="invalid-feedback" v-if="v$.compress_ratio.$error">Недопустимое значение</div>
-                        </div>
-                    </div>
                     <h5 class="rs-modal-title mt-5">Пропуск</h5>
                     <div class="my-3">
                         <label for="permit_exp" class="col-form-label">Действует до</label>
@@ -467,26 +490,30 @@ onMounted(
                                             class="form-control" id="permit" />
                                     </div>
                                     <div class="mb-3">
-                                        <label class="col-form-label" for="contragent_name">Модель ТС</label>
+                                        <label class="col-form-label" for="truck_model">Модель ТС</label>
                                         <input v-model="truckDetails.truck_model" type="text" readonly="true"
-                                            class="form-control" id="carrier" />
+                                            class="form-control" id="truck_model" />
                                     </div>
                                     <div class="mb-3">
-                                        <label class="col-form-label" for="contragent_name">Тип ТС</label>
-                                        <input v-model="truckDetails.truck_type" type="text" readonly="true"
-                                            class="form-control" id="carrier" />
+                                        <label class="col-form-label" for="truck_type">Тип ТС</label>
+                                        <select class="form-select form-select" v-model="truckDetails.truck_type">
+                                            <option selected disabled>Выберите значение</option>
+                                            <option v-for="t in store.state.TrucksModule.types">{{ t }}</option>
+                                        </select>
                                     </div>
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label class="col-form-label" for="checked_in">Вес пустого</label>
-                                            <input v-model="truckDetails.tara" type="text" readonly="true"
-                                                class="form-control" id="carrier" />
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="col-form-label" for="checked_out">Макс. масса</label>
-                                            <input v-model="truckDetails.max_weight" type="text" readonly="true"
-                                                class="form-control" id="carrier" />
-                                        </div>
+                                    <div class="mb-3">
+                                        <label class="col-form-label" for="tara">Вес пустого</label>
+                                        <input v-model="truckDetails.tara" type="number" class="form-control" id="tara" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="col-form-label" for="max_weight">Макс. масса</label>
+                                        <input v-model="truckDetails.max_weight" type="number" class="form-control"
+                                            id="max_weight" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="col-form-label" for="body_volume">Объем кузова</label>
+                                        <input v-model="truckDetails.body_volume" type="number" class="form-control"
+                                            id="body_volume" />
                                     </div>
                                 </form>
                             </div>

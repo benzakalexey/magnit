@@ -693,7 +693,7 @@ tfoot {
                                     </tr>
                                     <tr style="height: 37px">
                                         <td class="bordered sign" colspan="67">
-                                            Приказ ООО &quot;Магнит&quot; №168 от 31.12.20
+                                            Приказ ООО &quot;Магнит&quot; №168 от 31.12.20 г.
                                         </td>
                                         <td class="bordered sign" colspan="44">
                                             {{ invoice.driver }}
