@@ -168,6 +168,7 @@ class Permit:
                 ).total_seconds() != 0
             ),
         )
+        print(criterias)
         if any(criterias):
             operator = self.users_repo.get_by_id(permission_info.user_id)
             permission = entities.Permission(
