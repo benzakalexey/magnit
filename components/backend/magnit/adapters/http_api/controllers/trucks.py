@@ -66,11 +66,16 @@ class Trucks:
             started_at = None
             expired_at = None
             days_before_exp = None
+            tonar = None
+            trailer = None
             if t.permit is not None:
                 permit = t.permit.number
                 permission_owner = t.permit.permission.owner.short_name
                 started_at = t.permit.permission.added_at
                 expired_at = t.permit.permission.expired_at
+                tonar = t.permit.permission.is_tonar
+                if t.permit.permission.trailer is not None:
+                    trailer = t.permit.permission.trailer.reg_number
                 if t.permit.permission.expired_at < datetime.utcnow():
                     days_before_exp = 0
                 else:
@@ -88,6 +93,8 @@ class Trucks:
                 'tara': t.tara,
                 'max_weight': t.max_weight,
                 'permit': permit,
+                'tonar': tonar,
+                'trailer': trailer,
                 'permission_owner': permission_owner,
                 'started_at': started_at,
                 'expired_at': expired_at,

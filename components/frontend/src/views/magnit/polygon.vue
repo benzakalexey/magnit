@@ -90,7 +90,6 @@ const statuses = {
     1: `<span class="badge inv-status badge-success">Выехал</span>`,
     2: `<span class="badge inv-status badge-dark">Удален</span>`,
 };
-
 const tonar = {
     true: `<span class="badge inv-status outline-badge-warning">Tонар</span>`,
     false: '',

@@ -31,6 +31,8 @@ export const TrucksModule = {
                     reg_number: pretty_num(t.reg_number),
                     truck_type: t.truck_type,
                     tara: t.tara,
+                    trailer: t.trailer,
+                    tonar: t.tonar,
                     max_weight: t.max_weight,
                     permit: t.permit,
                     permission_owner: t.permission_owner,
@@ -111,7 +113,6 @@ export const TrucksModule = {
             max_weight,
             production_year,
             body_volume,
-            compress_ratio,
             permit_exp,
             carrier,
             trailer,
@@ -125,13 +126,11 @@ export const TrucksModule = {
                 max_weight,
                 production_year,
                 body_volume,
-                compress_ratio,
                 permit_exp,
                 carrier,
                 trailer,
                 is_tonar,
             );
-            // commit('deleteItem', id, reason);
         }
     }
 }
