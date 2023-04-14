@@ -176,7 +176,7 @@ class Permit:
             operator = self.users_repo.get_by_id(permission_info.user_id)
             permission = entities.Permission(
                 owner=partner,
-                expired_at=permission_info.permit_exp,
+                expired_at=permission_info.permit_exp.replace(tzinfo=None),
                 trailer=trailer,
                 permit=permit,
                 is_tonar=permission_info.is_tonar,
