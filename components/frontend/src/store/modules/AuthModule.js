@@ -68,7 +68,7 @@ export const AuthModule = {
                 .then((res) => {
                     commit('setToken', res.data.token);
                     commit('setUserRole', res.data.user_role);
-                    commit('setUserData', res.data.first_name, res.data.last_name, res.data.phone_number);
+                    commit('setUserData', res.data.surname, res.data.name, res.data.phone_number);
                     DefaultAPIInstance.defaults.headers['Authorization'] = `Bearer ${res.data.token}`;
                 })
                 .catch(
