@@ -614,7 +614,7 @@
   {
     "number": 77,
     "valid_from": "28.08.2019 15:56:08",
-    "valid_to": "",
+    "valid_to": "28.08.2019 15:56:08",
     "partner": "ООО «Чистый Сервис»",
     "truck_number": "С737РК199",
     "is_tonar": false,
@@ -2732,15 +2732,6 @@
     "valid_to": "26.01.2020 23:59:58",
     "partner": "ЗАО «ЭКОС» - П",
     "truck_number": "Н005КМ55",
-    "is_tonar": false,
-    "trailer_number": null
-  },
-  {
-    "number": 316,
-    "valid_from": "24.10.2019 14:36:34",
-    "valid_to": "24.10.2019 14:36:34",
-    "partner": "ООО «ТрансСервис»",
-    "truck_number": "Е948ТТ196",
     "is_tonar": false,
     "trailer_number": null
   },
@@ -8494,5 +8485,851 @@
     "truck_number": "А742ХК186",
     "is_tonar": false,
     "trailer_number": null
+  },
+  {
+    "number": 963,
+    "valid_from": "22.02.2023 17:41:49",
+    "valid_to": "22.02.2024 23:59:59",
+    "partner": "ЗАО «ЭКОС»",
+    "truck_number": "У083КР55",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 964,
+    "valid_from": "27.02.2023 8:21:29",
+    "valid_to": "27.02.2024 23:59:59",
+    "partner": "ООО «Комфорт Сервис»",
+    "truck_number": "К610СХ186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 965,
+    "valid_from": "28.02.2023 18:13:30",
+    "valid_to": "28.02.2023 23:59:58",
+    "partner": "ООО «Стройсервис»",
+    "truck_number": "К090КЕ186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 966,
+    "valid_from": "28.02.2023 18:16:58",
+    "valid_to": "28.02.2023 23:59:58",
+    "partner": "ООО «Стройсервис»",
+    "truck_number": "В919КР186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 967,
+    "valid_from": "28.02.2023 18:19:23",
+    "valid_to": "28.02.2024 23:59:59",
+    "partner": "ООО «Стройсервис»",
+    "truck_number": "К170ОУ186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 968,
+    "valid_from": "28.02.2023 18:20:45",
+    "valid_to": "28.02.2023 23:59:58",
+    "partner": "ООО «Стройсервис»",
+    "truck_number": "А748ХК186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 969,
+    "valid_from": "28.02.2023 18:22:11",
+    "valid_to": "28.02.2023 23:59:58",
+    "partner": "ООО «Стройсервис»",
+    "truck_number": "А698ХК186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 970,
+    "valid_from": "28.02.2023 18:23:27",
+    "valid_to": "28.02.2023 23:59:58",
+    "partner": "ООО «Стройсервис»",
+    "truck_number": "А753ХК186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 971,
+    "valid_from": "28.02.2023 18:25:04",
+    "valid_to": "28.02.2023 23:59:58",
+    "partner": "ООО «Стройсервис»",
+    "truck_number": "А697ХК186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 972,
+    "valid_from": "28.02.2023 18:26:10",
+    "valid_to": "28.02.2023 23:59:58",
+    "partner": "ООО «Стройсервис»",
+    "truck_number": "А691ХК186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 973,
+    "valid_from": "28.02.2023 18:27:36",
+    "valid_to": "28.02.2023 23:59:58",
+    "partner": "ООО «Стройсервис»",
+    "truck_number": "А696ХК186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 974,
+    "valid_from": "28.02.2023 18:29:07",
+    "valid_to": "28.02.2024 23:59:58",
+    "partner": "ООО «Стройсервис»",
+    "truck_number": "О419ЕЕ196",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 975,
+    "valid_from": "28.02.2023 18:30:58",
+    "valid_to": "28.02.2024 23:59:58",
+    "partner": "ООО «Стройсервис»",
+    "truck_number": "Х162ЕУ55",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 976,
+    "valid_from": "28.02.2023 18:32:43",
+    "valid_to": "28.02.2024 23:59:59",
+    "partner": "ООО «Стройсервис»",
+    "truck_number": "К239РМ186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 977,
+    "valid_from": "01.03.2023 8:26:22",
+    "valid_to": "01.03.2023 8:26:22",
+    "partner": "ООО «Альфатранс»",
+    "truck_number": "В906КР186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 978,
+    "valid_from": "01.03.2023 8:28:41",
+    "valid_to": "01.03.2023 8:26:22",
+    "partner": "ООО «Альфатранс»",
+    "truck_number": "У592КР55",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 979,
+    "valid_from": "01.03.2023 8:30:52",
+    "valid_to": "01.03.2023 8:26:22",
+    "partner": "ООО «Альфатранс»",
+    "truck_number": "А379СТ186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 980,
+    "valid_from": "01.03.2023 8:32:01",
+    "valid_to": "01.03.2023 8:26:22",
+    "partner": "ООО «Альфатранс»",
+    "truck_number": "А055СТ186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 981,
+    "valid_from": "01.03.2023 8:34:14",
+    "valid_to": "01.03.2023 8:26:22",
+    "partner": "ООО «Альфатранс»",
+    "truck_number": "У317ВЕ186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 982,
+    "valid_from": "01.03.2023 9:44:18",
+    "valid_to": "01.03.2024 23:59:58",
+    "partner": "ООО «НПК»Экоинжиниринг»",
+    "truck_number": "К089ЕС186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 983,
+    "valid_from": "01.03.2023 9:46:12",
+    "valid_to": "01.03.2024 23:59:59",
+    "partner": "ООО «НПК»Экоинжиниринг»",
+    "truck_number": "В566ВВ186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 984,
+    "valid_from": "28.02.2023 9:50:56",
+    "valid_to": "28.02.2023 9:50:56",
+    "partner": "ООО «Промстандарт»",
+    "truck_number": "К093КВ186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 985,
+    "valid_from": "01.03.2023 9:53:49",
+    "valid_to": "01.03.2024 23:59:59",
+    "partner": "ООО «НПК»Экоинжиниринг»",
+    "truck_number": "А741ХК186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 986,
+    "valid_from": "01.03.2023 9:55:56",
+    "valid_to": "01.03.2024 23:59:59",
+    "partner": "ООО «НПК»Экоинжиниринг»",
+    "truck_number": "А742ХК186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 987,
+    "valid_from": "01.03.2023 9:58:15",
+    "valid_to": "01.03.2024 23:59:58",
+    "partner": "ООО «НПК»Экоинжиниринг»",
+    "truck_number": "В565УК86",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 988,
+    "valid_from": "01.03.2023 10:00:07",
+    "valid_to": "01.03.2024 23:59:59",
+    "partner": "ООО «НПК»Экоинжиниринг»",
+    "truck_number": "А869УУ186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 989,
+    "valid_from": "01.03.2023 10:02:32",
+    "valid_to": "01.03.2024 23:59:59",
+    "partner": "ООО «НПК»Экоинжиниринг»",
+    "truck_number": "А870УУ186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 990,
+    "valid_from": "01.03.2023 10:06:49",
+    "valid_to": "01.03.2024 23:59:59",
+    "partner": "ООО «НПК»Экоинжиниринг»",
+    "truck_number": "Т765УС55",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 991,
+    "valid_from": "01.03.2023 10:13:23",
+    "valid_to": "02.03.2023 23:59:58",
+    "partner": "ООО «Промстандарт»",
+    "truck_number": "А750ХК186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 992,
+    "valid_from": "01.03.2023 10:20:14",
+    "valid_to": "02.03.2023 23:59:58",
+    "partner": "ООО «Промстандарт»",
+    "truck_number": "А752ХК186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 993,
+    "valid_from": "01.03.2023 10:21:27",
+    "valid_to": "02.03.2023 23:59:58",
+    "partner": "ООО «Промстандарт»",
+    "truck_number": "А802ХК186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 994,
+    "valid_from": "01.03.2023 10:22:50",
+    "valid_to": "02.03.2023 23:59:58",
+    "partner": "ООО «Промстандарт»",
+    "truck_number": "А739ХК186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 995,
+    "valid_from": "01.03.2023 10:25:32",
+    "valid_to": "02.03.2023 23:59:58",
+    "partner": "ООО «Промстандарт»",
+    "truck_number": "А871УУ186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 996,
+    "valid_from": "01.03.2023 10:27:39",
+    "valid_to": "01.03.2024 23:59:58",
+    "partner": "ООО «Промстандарт»",
+    "truck_number": "У698МН55",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 997,
+    "valid_from": "01.03.2023 10:29:21",
+    "valid_to": "01.03.2024 23:59:58",
+    "partner": "ООО «Промстандарт»",
+    "truck_number": "В908КР186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 998,
+    "valid_from": "01.03.2023 10:51:45",
+    "valid_to": "01.03.2024 23:59:58",
+    "partner": "ООО «Промстандарт»",
+    "truck_number": "С019УС72",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 999,
+    "valid_from": "01.03.2023 13:55:38",
+    "valid_to": "01.03.2024 23:59:59",
+    "partner": "ООО «Управдом»",
+    "truck_number": "Т621РТ193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1000,
+    "valid_from": "01.03.2023 13:58:35",
+    "valid_to": "01.03.2024 23:59:59",
+    "partner": "ООО «Управдом»",
+    "truck_number": "М196РТ193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1001,
+    "valid_from": "01.03.2023 14:01:18",
+    "valid_to": "01.03.2024 23:59:58",
+    "partner": "ООО «Управдом»",
+    "truck_number": "Т628РТ193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1002,
+    "valid_from": "01.03.2023 14:03:33",
+    "valid_to": "01.03.2024 23:59:59",
+    "partner": "ООО «Управдом»",
+    "truck_number": "У153РТ193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1003,
+    "valid_from": "28.02.2023 14:06:17",
+    "valid_to": "28.02.2023 14:06:17",
+    "partner": "ООО «Управдом»",
+    "truck_number": "В917КР186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1004,
+    "valid_from": "01.03.2023 14:16:39",
+    "valid_to": "01.03.2024 23:59:59",
+    "partner": "ООО «Управдом»",
+    "truck_number": "М179РТ193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1005,
+    "valid_from": "01.03.2023 14:33:23",
+    "valid_to": "01.03.2024 23:59:58",
+    "partner": "ООО «НПК»Экоинжиниринг»",
+    "truck_number": "К300УР186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1006,
+    "valid_from": "01.03.2023 15:53:39",
+    "valid_to": "02.03.2023 23:59:58",
+    "partner": "ООО «Промстандарт»",
+    "truck_number": "К093КО186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1007,
+    "valid_from": "01.03.2023 17:55:09",
+    "valid_to": "01.03.2023 23:59:59",
+    "partner": "ООО «Одисей»",
+    "truck_number": "У721КХ55",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1008,
+    "valid_from": "01.03.2023 18:02:42",
+    "valid_to": "01.03.2023 23:59:59",
+    "partner": "ООО «Одисей»",
+    "truck_number": "А071РА186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1009,
+    "valid_from": "01.03.2023 18:04:35",
+    "valid_to": "01.03.2023 23:59:59",
+    "partner": "ООО «Одисей»",
+    "truck_number": "У881МЕ55",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1010,
+    "valid_from": "01.03.2023 18:05:48",
+    "valid_to": "01.03.2023 23:59:59",
+    "partner": "ООО «Одисей»",
+    "truck_number": "В920КР186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1011,
+    "valid_from": "01.03.2023 18:06:58",
+    "valid_to": "01.03.2024 23:59:58",
+    "partner": "ООО «Одисей»",
+    "truck_number": "К187ОУ186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1012,
+    "valid_from": "01.03.2023 18:08:30",
+    "valid_to": "01.03.2023 23:59:59",
+    "partner": "ООО «Одисей»",
+    "truck_number": "А699ХК186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1013,
+    "valid_from": "01.03.2023 18:09:59",
+    "valid_to": "01.03.2024 23:59:58",
+    "partner": "ООО «Одисей»",
+    "truck_number": "У366ХВ72",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1014,
+    "valid_from": "01.03.2023 18:12:03",
+    "valid_to": "01.03.2024 23:59:59",
+    "partner": "ООО «Одисей»",
+    "truck_number": "А344ЕТ155",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1015,
+    "valid_from": "01.03.2023 18:13:22",
+    "valid_to": "01.03.2024 23:59:59",
+    "partner": "ООО «Одисей»",
+    "truck_number": "В008МЕ186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1016,
+    "valid_from": "01.03.2023 18:42:08",
+    "valid_to": "01.04.2023 23:59:59",
+    "partner": "ООО «Стройсервис»",
+    "truck_number": "Т602РТ193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1017,
+    "valid_from": "01.03.2023 18:44:03",
+    "valid_to": "01.03.2024 23:59:59",
+    "partner": "ООО «Стройсервис»",
+    "truck_number": "М173РТ193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1018,
+    "valid_from": "01.03.2023 18:45:39",
+    "valid_to": "01.03.2024 23:59:58",
+    "partner": "ООО «Стройсервис»",
+    "truck_number": "Т604РТ193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1019,
+    "valid_from": "01.03.2023 18:49:23",
+    "valid_to": "01.03.2024 23:59:58",
+    "partner": "ООО «Стройсервис»",
+    "truck_number": "М199РУ193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1020,
+    "valid_from": "01.03.2023 18:51:00",
+    "valid_to": "01.03.2024 23:59:59",
+    "partner": "ООО «Стройсервис»",
+    "truck_number": "Т609РТ193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1021,
+    "valid_from": "01.03.2023 18:53:06",
+    "valid_to": "01.03.2024 23:59:59",
+    "partner": "ООО «Стройсервис»",
+    "truck_number": "М180РУ193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1022,
+    "valid_from": "01.03.2023 18:54:34",
+    "valid_to": "01.03.2024 23:59:59",
+    "partner": "ООО «Стройсервис»",
+    "truck_number": "Т563РТ193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1023,
+    "valid_from": "01.03.2023 18:56:21",
+    "valid_to": "01.03.2024 23:59:58",
+    "partner": "ООО «Стройсервис»",
+    "truck_number": "Т580РТ193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1024,
+    "valid_from": "01.03.2023 18:56:21",
+    "valid_to": "01.03.2023 18:56:21",
+    "partner": "ООО «Альфатранс»",
+    "truck_number": "Т644РС193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1025,
+    "valid_from": "01.03.2023 18:56:21",
+    "valid_to": "01.03.2023 18:56:21",
+    "partner": "ООО «Альфатранс»",
+    "truck_number": "М330РТ193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1026,
+    "valid_from": "01.03.2023 18:56:21",
+    "valid_to": "01.03.2023 18:56:21",
+    "partner": "ООО «Альфатранс»",
+    "truck_number": "У153РС193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1027,
+    "valid_from": "02.03.2023 13:52:17",
+    "valid_to": "02.03.2024 23:59:58",
+    "partner": "ООО «Альфатранс»",
+    "truck_number": "М331РТ193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1028,
+    "valid_from": "01.03.2023 18:56:21",
+    "valid_to": "01.03.2023 18:56:21",
+    "partner": "ООО «Альфатранс»",
+    "truck_number": "У592КР55",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1029,
+    "valid_from": "02.03.2023 14:05:16",
+    "valid_to": "02.03.2024 23:59:59",
+    "partner": "ООО «Альфатранс»",
+    "truck_number": "Т644РС193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1030,
+    "valid_from": "02.03.2023 14:09:14",
+    "valid_to": "02.03.2024 23:59:58",
+    "partner": "ООО «Альфатранс»",
+    "truck_number": "М330РТ193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1031,
+    "valid_from": "01.03.2023 18:56:21",
+    "valid_to": "01.03.2023 18:56:21",
+    "partner": "ООО «Альфатранс»",
+    "truck_number": "У153РС193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1032,
+    "valid_from": "02.03.2023 14:29:02",
+    "valid_to": "02.03.2024 23:59:59",
+    "partner": "ООО «Альфатранс»",
+    "truck_number": "Т143РУ193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1033,
+    "valid_from": "02.03.2023 14:32:42",
+    "valid_to": "02.03.2024 23:59:58",
+    "partner": "ООО «Альфатранс»",
+    "truck_number": "У153РС193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1034,
+    "valid_from": "02.03.2023 15:12:54",
+    "valid_to": "02.03.2024 23:59:59",
+    "partner": "ООО «НПК»Экоинжиниринг»",
+    "truck_number": "К365УМ186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1035,
+    "valid_from": "02.03.2023 17:22:47",
+    "valid_to": "02.03.2024 23:59:59",
+    "partner": "ООО «Экоспецпром»",
+    "truck_number": "К284УР186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1036,
+    "valid_from": "02.03.2023 17:30:23",
+    "valid_to": "02.03.2024 23:59:59",
+    "partner": "ООО «Экоспецпром»",
+    "truck_number": "А875УУ186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1037,
+    "valid_from": "02.03.2023 17:34:06",
+    "valid_to": "02.03.2024 23:59:59",
+    "partner": "ООО «Экоспецпром»",
+    "truck_number": "В855КР186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1038,
+    "valid_from": "02.03.2023 17:39:29",
+    "valid_to": "02.03.2024 23:59:58",
+    "partner": "ООО «Экоспецпром»",
+    "truck_number": "В857КР186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1039,
+    "valid_from": "02.03.2023 17:44:59",
+    "valid_to": "02.03.2024 23:59:58",
+    "partner": "ООО «Экоспецпром»",
+    "truck_number": "К036УН186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1040,
+    "valid_from": "02.03.2023 18:27:03",
+    "valid_to": "02.03.2024 23:59:58",
+    "partner": "ООО «Одисей»",
+    "truck_number": "Т141РУ193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1041,
+    "valid_from": "02.03.2023 18:29:36",
+    "valid_to": "02.03.2024 23:59:58",
+    "partner": "ООО «Одисей»",
+    "truck_number": "У106РС193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1042,
+    "valid_from": "02.03.2023 18:33:38",
+    "valid_to": "02.03.2024 23:59:58",
+    "partner": "ООО «Одисей»",
+    "truck_number": "Т155РУ193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1043,
+    "valid_from": "02.03.2023 18:36:31",
+    "valid_to": "02.03.2024 23:59:58",
+    "partner": "ООО «Одисей»",
+    "truck_number": "М324РУ193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1044,
+    "valid_from": "02.03.2023 18:42:02",
+    "valid_to": "02.03.2024 23:59:58",
+    "partner": "ООО «Одисей»",
+    "truck_number": "Т136РУ193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1045,
+    "valid_from": "03.03.2023 9:39:55",
+    "valid_to": "03.03.2024 23:59:59",
+    "partner": "ООО «Промстандарт»",
+    "truck_number": "В897СВ193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1046,
+    "valid_from": "03.03.2023 10:07:08",
+    "valid_to": "03.03.2024 23:59:59",
+    "partner": "ООО «Промстандарт»",
+    "truck_number": "В890СВ193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1047,
+    "valid_from": "03.03.2023 10:10:40",
+    "valid_to": "03.03.2024 23:59:58",
+    "partner": "ООО «Промстандарт»",
+    "truck_number": "Х521ЕР193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1048,
+    "valid_from": "03.03.2023 10:13:25",
+    "valid_to": "03.03.2024 23:59:58",
+    "partner": "ООО «Промстандарт»",
+    "truck_number": "Е452СВ193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1049,
+    "valid_from": "03.03.2023 10:17:00",
+    "valid_to": "03.03.2024 23:59:58",
+    "partner": "ООО «Промстандарт»",
+    "truck_number": "А069СВ193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1050,
+    "valid_from": "03.03.2023 10:26:16",
+    "valid_to": "03.03.2024 23:59:58",
+    "partner": "ООО «Промстандарт»",
+    "truck_number": "Е410СВ193",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1051,
+    "valid_from": "07.03.2023 10:42:56",
+    "valid_to": "07.03.2024 23:59:58",
+    "partner": "ООО «Экоспецпром»",
+    "truck_number": "У054АМ55",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1052,
+    "valid_from": "09.03.2023 8:17:43",
+    "valid_to": "09.03.2024 23:59:59",
+    "partner": "ООО «Экогруз»",
+    "truck_number": "К710РР186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1053,
+    "valid_from": "09.03.2023 14:14:56",
+    "valid_to": "09.03.2024 23:59:59",
+    "partner": "ООО «Стройсервис»",
+    "truck_number": "А674ХК186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1054,
+    "valid_from": "09.03.2023 14:24:44",
+    "valid_to": "09.03.2024 23:59:58",
+    "partner": "ООО «Стройсервис»",
+    "truck_number": "О168АВ186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1055,
+    "valid_from": "09.03.2023 14:52:30",
+    "valid_to": "09.03.2024 23:59:58",
+    "partner": "ООО «Промстандарт»",
+    "truck_number": "А747ХК186",
+    "is_tonar": false,
+    "trailer_number": ""
+  },
+  {
+    "number": 1056,
+    "valid_from": "03.04.2023 8:40:13",
+    "valid_to": "03.04.2024 23:59:58",
+    "partner": "ООО «Стройсервис»",
+    "truck_number": "Т602РТ193",
+    "is_tonar": false,
+    "trailer_number": ""
   }
 ]

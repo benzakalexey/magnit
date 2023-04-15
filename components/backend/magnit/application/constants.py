@@ -24,13 +24,9 @@ class TruckType(Enum):
     BUNKER_CARRIER = "БУНКЕРОВОЗ"
     CAR = "ЛЕГКОВОЙ АВТОМОБИЛЬ"
     CARGO = "ГРУЗОВОЙ"
-    CARGO_OTHER = "ГРУЗОВОЙ ПРОЧИЕ"
-    DUMP_TRUCK = "ГРУЗОВОЙ САМОСВАЛ"
     GARBAGE_TRUCK = "МУСОРОВОЗ"
     MULTILIFT = "МУЛЬТИЛИФТ"
     SCRAP_TRUCK = "ЛОМОВОЗ"
-    SPECIALIZED = "СПЕЦИАЛИЗИРОВАННЫЙ АВТОМОБИЛЬ"
-    SPECIALIZED_OTHER = "ПРОЧИЕ СПЕЦИАЛИЗИРОВАННЫЕ"
     TIPPER = "САМОСВАЛ"
     TRACTOR = "ТЯГАЧ"
 

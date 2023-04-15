@@ -79,7 +79,7 @@ watch(() => props.isOpen, (n, _) => {
 });
 
 const checkWeight = () => {
-    const minWeight = item.value.tonar ? item.value.weight_in : item.value.tara;
+    const minWeight = item.value.tonar ? item.value.weight_in : item.value.tara - 1000;
     const maxWeight = item.value.tonar ? item.value.max_weight : item.value.weight_in;
     weight_error.value = !(minWeight <= weight.value && weight.value <= maxWeight);
 };
