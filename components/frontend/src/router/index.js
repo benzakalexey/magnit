@@ -77,6 +77,13 @@ const routes = [
         meta: { layout: 'auth' },
         beforeEnter: setAuthLayout,
     },
+    {
+        path: '/akt',
+        name: 'akt',
+        component: () => import(/* webpackChunkName: "components-tabs" */ '../views/magnit/doc/akt.vue'),
+        meta: { layout: 'auth' },
+        beforeEnter: setAuthLayout,
+    },
 
 
     //auth

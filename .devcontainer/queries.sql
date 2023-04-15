@@ -28,3 +28,5 @@ from app.visits v
 order by v.checked_in desc
 limit 100;
 
+DROP TYPE "trucktype";
+DROP TYPE "userrole";
