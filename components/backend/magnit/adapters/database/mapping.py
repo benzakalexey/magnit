@@ -76,7 +76,8 @@ mapper.map_imperatively(
     properties={
         'user': relationship(
             entities.User, lazy='joined',
-            foreign_keys=[tables.staff.c.user_id]
+            foreign_keys=[tables.staff.c.user_id],
+            backref=backref("staff", uselist=False),
         ),
         'polygon': relationship(
             entities.Polygon, lazy='select',
