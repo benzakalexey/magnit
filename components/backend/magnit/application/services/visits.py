@@ -210,7 +210,7 @@ class Visit:
         if not visit.permission.is_tonar:
             raise errors.CantCreateNotTonarInvoice()
 
-        carrier = visit.contract.carrier.get_full_name(visit.checked_in)
+        carrier = visit.contract.carrier.short_name
 
         return {
             'date': visit.checked_out,
