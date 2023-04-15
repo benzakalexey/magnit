@@ -198,3 +198,30 @@ class Visit:
             # 'driver_phone': visit.driver.phone,
             # 'permit_num': visit.permission.permit.number,
         }
+
+    @join_point
+    @validate_arguments
+    def get_akt(self, visit_id: int) -> Dict[str, Any]:
+        visit = self.visits_repo.get_by_id(visit_id)
+
+        if visit is None:
+            raise errors.VisitIDNotExistError(visit_id=visit_id)
+
+        if not visit.permission.is_tonar:
+            raise errors.CantCreateNotTonarInvoice()
+
+        carrier = visit.contract.carrier.get_full_name(visit.checked_in)
+
+        return {
+            'date': visit.checked_out,
+            'polygon': visit.polygon.name,
+            'number': visit.invoice_num,
+            'carrier': carrier,
+            'truck_mark': visit.permission.permit.truck.model.name,
+            'truck_number': visit.permission.truck_number,
+            'permit_number': visit.permission.permit.number,
+            'service_type': 'Транспортирование ТКО (IV-V)',
+            'netto': visit.netto,
+            'tara': visit.tara,
+            'brutto': visit.brutto,
+        }
