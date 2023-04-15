@@ -56,13 +56,6 @@ table {
     border-collapse: collapse;
 }
 
-.table-invoice>tbody>tr>td {
-    font-size: 10px;
-    padding: 0rem 0rem;
-    border: 0px;
-    letter-spacing: 0px;
-}
-
 .table .bordered {
     border: 1px solid;
 }
@@ -85,6 +78,13 @@ table {
     text-align: right;
     padding-inline: 2em;
     vertical-align: bottom;
+}
+
+.table>tbody>tr>td {
+    font-size: 10px;
+    padding: 0rem 0rem;
+    border: 0px;
+    letter-spacing: 0px;
 }
 
 tr {
@@ -135,7 +135,7 @@ tfoot {
                     <div class="content-section">
 
                         <div class="table-responsive">
-                            <table class="table table-invoice mb-0" cellspacing="0" cellpadding="0">
+                            <table class="table mb-0" cellspacing="0" cellpadding="0">
                                 <tbody>
                                     <tr>
                                         <td style="width:2px"></td>
