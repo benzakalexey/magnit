@@ -6,13 +6,9 @@ Create Date: 2023-02-21 06:21:04.908683+00:00
 
 """
 import hashlib
-import uuid
 from datetime import datetime, timezone, timedelta
-from itertools import chain
 
 from alembic import op
-import sqlalchemy as sa
-from magnit.adapters.database.migrations import data
 from sqlalchemy import (
     BigInteger,
     Boolean,
@@ -24,9 +20,10 @@ from sqlalchemy import (
     LargeBinary,
     MetaData,
     String,
-    Table, delete, select, cast, and_, orm, desc, text,
+    Table, delete, select, and_, orm, desc, text,
 )
 
+from magnit.adapters.database.migrations import data
 from magnit.application.constants import (
     TruckType,
     UserRole,
@@ -76,7 +73,7 @@ staff = Table(
         ForeignKey('polygons.id'),
         nullable=True,
     ),
-    Column('added_by', ForeignKey(users.c.id), nullable=True),
+    Column('added_by_id', ForeignKey(users.c.id), nullable=True),
     Column('added_at', DateTime, nullable=False),
 )
 
@@ -481,18 +478,333 @@ def upgrade():
         users.insert().values(
             [
                 {
+                    "phone": 9136001600,
+                    "password_hash": default_pass,
                     "surname": "Василевич",
                     "name": "Денис",
                     "patronymic": "Геннадьевич",
-                    "password_hash": default_pass,
-                    "phone": 9136001600
+                    "is_staff": True,
+                    "is_active": True
                 },
                 {
+                    "phone": 9136000600,
+                    "password_hash": default_pass,
                     "surname": "Бензак",
                     "name": "Алексей",
                     "patronymic": "Николаевич",
+                    "is_staff": True,
+                    "is_active": True
+                },
+                {
+                    "phone": 9045893632,
                     "password_hash": default_pass,
-                    "phone": 9136000600
+                    "surname": "Эбергард",
+                    "name": "Александр",
+                    "patronymic": "Викторович",
+                    "is_staff": True,
+                    "is_active": True
+                },
+                {
+                    "phone": 9139799844,
+                    "password_hash": default_pass,
+                    "surname": "Госпаревич",
+                    "name": "Виктор",
+                    "patronymic": "Валерьевич",
+                    "is_staff": True,
+                    "is_active": True
+                },
+                {
+                    "phone": 9081130397,
+                    "password_hash": default_pass,
+                    "surname": "Жигалов",
+                    "name": "Владимир",
+                    "patronymic": "Иванович",
+                    "is_staff": True,
+                    "is_active": True
+                },
+                {
+                    "phone": 9006792602,
+                    "password_hash": default_pass,
+                    "surname": "Митин",
+                    "name": "Андрей",
+                    "patronymic": "Иванович",
+                    "is_staff": True,
+                    "is_active": True
+                },
+                {
+                    "phone": 9620437415,
+                    "password_hash": default_pass,
+                    "surname": "Обыскалов",
+                    "name": "Сергей",
+                    "patronymic": "Михайлович",
+                    "is_staff": True,
+                    "is_active": True
+                },
+                {
+                    "phone": 9502145665,
+                    "password_hash": default_pass,
+                    "surname": "Калемина",
+                    "name": "Татьяна",
+                    "patronymic": "Васильевна",
+                    "is_staff": True,
+                    "is_active": True
+                },
+                {
+                    "phone": 9514181694,
+                    "password_hash": default_pass,
+                    "surname": "Неупокоева",
+                    "name": "Юлия",
+                    "patronymic": "Владимировна",
+                    "is_staff": True,
+                    "is_active": True
+                },
+                {
+                    "phone": 9507846635,
+                    "password_hash": default_pass,
+                    "surname": "Акимов",
+                    "name": "Евгений",
+                    "patronymic": "Петрович",
+                    "is_staff": True,
+                    "is_active": True
+                },
+                {
+                    "phone": 9237695835,
+                    "password_hash": default_pass,
+                    "surname": "Быструшкина",
+                    "name": "Татьяна",
+                    "patronymic": "Юрьевна",
+                    "is_staff": True,
+                    "is_active": True
+                },
+                {
+                    "phone": 9236968534,
+                    "password_hash": default_pass,
+                    "surname": "Кутенёв",
+                    "name": "Константин",
+                    "patronymic": "Викторович",
+                    "is_staff": True,
+                    "is_active": True
+                },
+                {
+                    "phone": 9045848761,
+                    "password_hash": default_pass,
+                    "surname": "Фурцева",
+                    "name": "Наталья",
+                    "patronymic": "Викторовна",
+                    "is_staff": True,
+                    "is_active": True
+                },
+                {
+                    "phone": 9659707859,
+                    "password_hash": default_pass,
+                    "surname": "Кудрявцева",
+                    "name": "Евгения",
+                    "patronymic": "Николаевна",
+                    "is_staff": True,
+                    "is_active": True
+                },
+                {
+                    "phone": 9043200389,
+                    "password_hash": default_pass,
+                    "surname": "Давыдов",
+                    "name": "Иван",
+                    "patronymic": "Николаевич",
+                    "is_staff": True,
+                    "is_active": True
+                },
+                {
+                    "phone": 9043207732,
+                    "password_hash": default_pass,
+                    "surname": "Лущий",
+                    "name": "Максим",
+                    "patronymic": "Леонидович",
+                    "is_staff": True,
+                    "is_active": True
+                },
+                {
+                    "phone": 9136568003,
+                    "password_hash": default_pass,
+                    "surname": "Тараненко",
+                    "name": "Ксения",
+                    "patronymic": "Николаевна",
+                    "is_staff": True,
+                    "is_active": True
+                }
+            ]
+        )
+    )
+    op.execute(
+        staff.insert().values(
+            [
+                {
+                    "user_id": select(users.c.id).where(
+                        users.c.phone == 9136001600),
+                    "role": "SUPERVISOR",
+                    "polygon_id": select(polygons.c.id).where(
+                        polygons.c.name == 'Кировский'),
+                    "added_by_id": select(users.c.id).where(
+                        users.c.phone == 9136001600),
+                    "added_at": "2023-02-23 14:32:30.000000"
+                },
+                {
+                    "user_id": select(users.c.id).where(
+                        users.c.phone == 9136000600),
+                    "role": "SUPERVISOR",
+                    "polygon_id": select(polygons.c.id).where(
+                        polygons.c.name == 'Кировский'),
+                    "added_by_id": select(users.c.id).where(
+                        users.c.phone == 9136001600),
+                    "added_at": "2023-02-23 14:32:30.000000"
+                },
+                {
+                    "user_id": select(users.c.id).where(
+                        users.c.phone == 9045893632),
+                    "role": "CONTROLLER",
+                    "polygon_id": select(polygons.c.id).where(
+                        polygons.c.name == 'Кировский'),
+                    "added_by_id": select(users.c.id).where(
+                        users.c.phone == 9136001600),
+                    "added_at": "2023-02-23 14:32:30.000000"
+                },
+                {
+                    "user_id": select(users.c.id).where(
+                        users.c.phone == 9139799844),
+                    "role": "CONTROLLER",
+                    "polygon_id": select(polygons.c.id).where(
+                        polygons.c.name == 'Кировский'),
+                    "added_by_id": select(users.c.id).where(
+                        users.c.phone == 9136001600),
+                    "added_at": "2023-02-23 14:32:30.000000"
+                },
+                {
+                    "user_id": select(users.c.id).where(
+                        users.c.phone == 9081130397),
+                    "role": "CONTROLLER",
+                    "polygon_id": select(polygons.c.id).where(
+                        polygons.c.name == 'Кировский'),
+                    "added_by_id": select(users.c.id).where(
+                        users.c.phone == 9136001600),
+                    "added_at": "2023-02-23 14:32:30.000000"
+                },
+                {
+                    "user_id": select(users.c.id).where(
+                        users.c.phone == 9006792602),
+                    "role": "CONTROLLER",
+                    "polygon_id": select(polygons.c.id).where(
+                        polygons.c.name == 'Кировский'),
+                    "added_by_id": select(users.c.id).where(
+                        users.c.phone == 9136001600),
+                    "added_at": "2023-02-23 14:32:30.000000"
+                },
+                {
+                    "user_id": select(users.c.id).where(
+                        users.c.phone == 9620437415),
+                    "role": "CONTROLLER",
+                    "polygon_id": select(polygons.c.id).where(
+                        polygons.c.name == 'Кировский'),
+                    "added_by_id": select(users.c.id).where(
+                        users.c.phone == 9136001600),
+                    "added_at": "2023-02-23 14:32:30.000000"
+                },
+                {
+                    "user_id": select(users.c.id).where(
+                        users.c.phone == 9502145665),
+                    "role": "CONTROLLER",
+                    "polygon_id": select(polygons.c.id).where(
+                        polygons.c.name == 'Кировский'),
+                    "added_by_id": select(users.c.id).where(
+                        users.c.phone == 9136001600),
+                    "added_at": "2023-02-23 14:32:30.000000"
+                },
+                {
+                    "user_id": select(users.c.id).where(
+                        users.c.phone == 9514181694),
+                    "role": "CONTROLLER",
+                    "polygon_id": select(polygons.c.id).where(
+                        polygons.c.name == 'Кировский'),
+                    "added_by_id": select(users.c.id).where(
+                        users.c.phone == 9136001600),
+                    "added_at": "2023-02-23 14:32:30.000000"
+                },
+                {
+                    "user_id": select(users.c.id).where(
+                        users.c.phone == 9507846635),
+                    "role": "CONTROLLER",
+                    "polygon_id": select(polygons.c.id).where(
+                        polygons.c.name == 'Ленинский'),
+                    "added_by_id": select(users.c.id).where(
+                        users.c.phone == 9136001600),
+                    "added_at": "2023-02-23 14:32:30.000000"
+                },
+                {
+                    "user_id": select(users.c.id).where(
+                        users.c.phone == 9237695835),
+                    "role": "CONTROLLER",
+                    "polygon_id": select(polygons.c.id).where(
+                        polygons.c.name == 'Ленинский'),
+                    "added_by_id": select(users.c.id).where(
+                        users.c.phone == 9136001600),
+                    "added_at": "2023-02-23 14:32:30.000000"
+                },
+                {
+                    "user_id": select(users.c.id).where(
+                        users.c.phone == 9236968534),
+                    "role": "CONTROLLER",
+                    "polygon_id": select(polygons.c.id).where(
+                        polygons.c.name == 'Ленинский'),
+                    "added_by_id": select(users.c.id).where(
+                        users.c.phone == 9136001600),
+                    "added_at": "2023-02-23 14:32:30.000000"
+                },
+                {
+                    "user_id": select(users.c.id).where(
+                        users.c.phone == 9045848761),
+                    "role": "CONTROLLER",
+                    "polygon_id": select(polygons.c.id).where(
+                        polygons.c.name == 'Ленинский'),
+                    "added_by_id": select(users.c.id).where(
+                        users.c.phone == 9136001600),
+                    "added_at": "2023-02-23 14:32:30.000000"
+                },
+                {
+                    "user_id": select(users.c.id).where(
+                        users.c.phone == 9659707859),
+                    "role": "CONTROLLER",
+                    "polygon_id": select(polygons.c.id).where(
+                        polygons.c.name == 'Ленинский'),
+                    "added_by_id": select(users.c.id).where(
+                        users.c.phone == 9136001600),
+                    "added_at": "2023-02-23 14:32:30.000000"
+                },
+                {
+                    "user_id": select(users.c.id).where(
+                        users.c.phone == 9043200389),
+                    "role": "CONTROLLER",
+                    "polygon_id": select(polygons.c.id).where(
+                        polygons.c.name == 'Калачинский'),
+                    "added_by_id": select(users.c.id).where(
+                        users.c.phone == 9136001600),
+                    "added_at": "2023-02-23 14:32:30.000000"
+                },
+                {
+                    "user_id": select(users.c.id).where(
+                        users.c.phone == 9043207732),
+                    "role": "CONTROLLER",
+                    "polygon_id": select(polygons.c.id).where(
+                        polygons.c.name == 'Калачинский'),
+                    "added_by_id": select(users.c.id).where(
+                        users.c.phone == 9136001600),
+                    "added_at": "2023-02-23 14:32:30.000000"
+                },
+                {
+                    "user_id": select(users.c.id).where(
+                        users.c.phone == 9136568003),
+                    "role": "CONTROLLER",
+                    "polygon_id": select(polygons.c.id).where(
+                        polygons.c.name == 'Калачинский'),
+                    "added_by_id": select(users.c.id).where(
+                        users.c.phone == 9136001600),
+                    "added_at": "2023-02-23 14:32:30.000000"
                 }
             ]
         )

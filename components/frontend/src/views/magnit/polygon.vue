@@ -15,6 +15,7 @@ const columns = ref([
     'carrier',
     'truck_model',
     'checked_in',
+    'weight_in',
     'tonar',
     'status',
     'actions',
