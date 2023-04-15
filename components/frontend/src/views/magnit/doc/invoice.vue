@@ -56,7 +56,7 @@ table {
     border-collapse: collapse;
 }
 
-.table>tbody>tr>td {
+.table-invoice>tbody>tr>td {
     font-size: 10px;
     padding: 0rem 0rem;
     border: 0px;
@@ -75,6 +75,7 @@ table {
 }
 
 .table .header {
+    font-size: 12px;
     font-weight: bold;
     text-align: center;
 }
@@ -134,7 +135,7 @@ tfoot {
                     <div class="content-section">
 
                         <div class="table-responsive">
-                            <table class="table mb-0" cellspacing="0" cellpadding="0">
+                            <table class="table table-invoice mb-0" cellspacing="0" cellpadding="0">
                                 <tbody>
                                     <tr>
                                         <td style="width:2px"></td>
