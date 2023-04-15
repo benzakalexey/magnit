@@ -190,9 +190,21 @@ tfoot {
                                     </tr>
                                     <tr style="height: 40px"></tr>
                                     <tr style="height: 20px">
-                                        <td colspan="7"></td>
-                                        <td class="header text-left" colspan="6">
-                                            Акт взвешивания №
+                                        <td colspan="4"></td>
+                                        <td class="text-start" colspan="6">
+                                            Перевозчик
+                                        </td>
+                                    </tr>
+                                    <tr style="height: 20px">
+                                        <td colspan="4"></td>
+                                        <td class="text-start" colspan="6">
+                                            Марка машины
+                                        </td>
+                                    </tr>
+                                    <tr style="height: 20px">
+                                        <td colspan="4"></td>
+                                        <td class="text-start" colspan="6">
+                                            Гос. номер
                                         </td>
                                     </tr>
                                 </tbody>
