@@ -10,4 +10,13 @@ export const InvoiceAPI = {
         const data = { visit_id };
         return DefaultAPIInstance.get(url + '?visit_id=' + visit_id);
     },
+    /**
+     * 
+     * @returns {Promise<AxiosResponse<any>>}
+     */
+    get_akt(visit_id) {
+        const url = 'visits/get_akt';
+        const data = { visit_id };
+        return DefaultAPIInstance.get(url + '?visit_id=' + visit_id);
+    },
 }

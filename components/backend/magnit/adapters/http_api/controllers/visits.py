@@ -78,6 +78,11 @@ class Visits:
 
     @join_point
     @authenticate
+    def on_get_get_akt(self, request, response):
+        response.media = self.service.get_akt(**request.params)
+
+    @join_point
+    @authenticate
     def on_post_add(self, request, response):
         self.service.create_visit(user_id=request.uid, **request.media)
         response.media = SUCCESS_TRUE

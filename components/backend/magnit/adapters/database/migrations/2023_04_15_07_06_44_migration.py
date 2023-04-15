@@ -1113,7 +1113,7 @@ def upgrade():
                             drivers.c.patronymic == i.get('patronymic'),
                         )
                     )
-                ) if i.get('driver') else None,
+                ) if i.get('destination') else None,
                 'is_deleted': i.get('is_deleted'),
                 'delete_reason': i.get('delete_reason'),
                 'operator_in_id': (

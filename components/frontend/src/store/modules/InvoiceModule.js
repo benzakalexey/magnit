@@ -4,7 +4,8 @@ export const InvoiceModule = {
     namespaced: true,
     state() {
         return {
-            invoice: null
+            invoice: null,
+            akt: null
         }
     },
 
@@ -38,6 +39,25 @@ export const InvoiceModule = {
         deleteInvoice(state) {
             state.invoice = null
         },
+        setAkt(state, data) {
+            state.akt = {
+                date: new Date(data.date),
+                polygon: data.polygon,
+                number: data.number,
+                carrier: data.carrier,
+                truck_mark: data.truck_mark,
+                truck_number: data.truck_number,
+                permit_number: data.permit_number,
+                service_type: data.service_type,
+                netto: data.netto,
+                tara: data.tara,
+                brutto: data.brutto
+            }
+        },
+
+        deleteAkt(state) {
+            state.akt = null
+        },
     },
 
     actions: {
@@ -45,6 +65,14 @@ export const InvoiceModule = {
             try {
                 const res = await InvoiceAPI.get(visit_id);
                 commit('setInvoice', res.data);
+            } catch (err) {
+                throw err;
+            }
+        },
+        async get_akt({ commit }, { visit_id }) {
+            try {
+                const res = await InvoiceAPI.get_akt(visit_id);
+                commit('setAkt', res.data);
             } catch (err) {
                 throw err;
             }
