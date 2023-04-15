@@ -35,8 +35,8 @@ const rules = computed(() => ({
     weight: {
         required,
         numeric,
-        minValueRef: minValue(item.value.tonar ? item.value.weight_in : item.value.tara),
-        maxValueRef: maxValue(item.value.tonar ? item.value.max_weight : item.value.weight_in),
+        minValueRef: minValue(item.value.tonar ? item.value.weight_in : item.value.tara - 1000),
+        maxValueRef: maxValue(item.value.tonar ? 60000 : item.value.weight_in),
     },
     driver: {
         requiredIfFuction: requiredIf(() => item.value.tonar)
@@ -45,6 +45,12 @@ const rules = computed(() => ({
         requiredIfFuction: requiredIf(() => item.value.tonar)
     },
 }));
+
+const checkWeight = () => {
+    const minWeight = item.value.tonar ? item.value.weight_in : item.value.tara - 1000;
+    const maxWeight = item.value.tonar ? 60000 : item.value.weight_in;
+    weight_error.value = !(minWeight <= weight.value && weight.value <= maxWeight);
+};
 
 const v$ = useVuelidate(rules, {
     weight,
@@ -77,12 +83,6 @@ watch(() => props.isOpen, (n, _) => {
         modal.hide()
     };
 });
-
-const checkWeight = () => {
-    const minWeight = item.value.tonar ? item.value.weight_in : item.value.tara - 1000;
-    const maxWeight = item.value.tonar ? 60000 : item.value.weight_in;
-    weight_error.value = !(minWeight <= weight.value && weight.value <= maxWeight);
-};
 
 const getOut = () => {
     const data = {
