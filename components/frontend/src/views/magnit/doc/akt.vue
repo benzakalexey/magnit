@@ -133,38 +133,38 @@ tfoot {
                             <table class="table mb-0" cellspacing="0" cellpadding="0">
                                 <tbody>
                                     <tr>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
-                                        <td style="width:24px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
+                                        <td style="width:8px"></td>
                                     </tr>
                                     <tr style="height: 20px">
                                         <td class="header" colspan="32">
@@ -190,6 +190,10 @@ tfoot {
                                     </tr>
                                     <tr style="height: 40px"></tr>
                                     <tr style="height: 20px">
+                                        <td colspan="7"></td>
+                                        <td class="header text-left" colspan="6">
+                                            Акт взвешивания №
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
