@@ -42,225 +42,142 @@ const pretty_num = (n) => {
 
 </script>
 
-<style type="text/css">
-table {
-    page-break-inside: auto;
-    border-collapse: collapse;
-}
-
-.table>tbody>tr>td {
-    font-size: 12px;
-    padding: 0rem 0rem;
-    border: 0px;
-    letter-spacing: 0px;
-}
-
-.table .bordered {
-    border: 1px solid;
-}
-
-.table .underrow {
-    font-size: 6px;
-    text-align: center;
-    vertical-align: text-top;
-    padding-inline: 2em;
-}
-
-.table .header {
-    font-weight: bold;
-    text-align: center;
-}
-
-.table .sign {
-    font-weight: 600;
-    text-align: right;
-    padding-inline: 2em;
-    vertical-align: bottom;
-}
-
-tr {
-    page-break-inside: avoid;
-    page-break-after: auto;
-}
-
-thead {
-    display: table-header-group
-}
-
-tfoot {
-    display: table-footer-group
-}
-
-.invoice-container {
-    max-width: 192mm;
-}
-
-@page {
-    size: A4 portrait;
-    margin: 24px 24px;
-}
-
-@media print {
-    .table .bordered {
-        border: solid #000 !important;
-        border-width: 1pt !important;
-        border-collapse: collapse;
-        color: #000
-    }
-
-    .table>tbody>tr>td {
-        color: #000
-    }
-
-    .dark .table>tbody>tr>td {
-        color: #000
-    }
-    .pagebreak {
-        clear: both;
-        page-break-after: always;
-    }
-}
-</style>
-
 <template>
     <div class="invoice-container">
         <div class="invoice-inbox">
             <div id="ct" class="">
-                <div class="invoice-00001">
-                    <div class="content-section">
-
-                        <div class="table-responsive">
-                            <table class="table mb-0" cellspacing="0" cellpadding="0">
-                                <tbody>
-                                    <tr>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                        <td style="width:6px"></td>
-                                    </tr>
-                                    <tr style="height: 20px">
-                                        <td class="header" colspan="32">
-                                            {{ akt.polygon }} полигон ООО «Магнит»
-                                        </td>
-                                    </tr>
-                                    <tr style="height: 20px"></tr>
-                                    <tr style="height: 20px">
-                                        <td colspan="2"></td>
-                                        <td class="header" colspan="28">
-                                            Акт взвешивания № {{ akt.number }} от {{ akt.date.toLocaleDateString('ru') }} г.
-                                        </td>
-                                        <td colspan="2"></td>
-                                    </tr>
-                                    <tr style="height: 32px"></tr>
-                                    <tr style="height: 20px">
-                                        <td colspan="4"></td>
-                                        <td class="text-start" colspan="6">
-                                            Перевозчик
-                                        </td>
-                                        <td class="header text-start" colspan="4">
-                                            {{ akt.carrier }}
-                                        </td>
-                                        <td colspan="18"></td>
-                                    </tr>
-                                    <tr style="height: 20px">
-                                        <td colspan="4"></td>
-                                        <td class="text-start" colspan="6">
-                                            Марка машины
-                                        </td>
-                                        <td class="header text-start" colspan="4">
-                                            {{ akt.truck_mark }}
-                                        </td>
-                                        <td colspan="18"></td>
-                                    </tr>
-                                    <tr style="height: 20px">
-                                        <td colspan="4"></td>
-                                        <td class="text-start" colspan="6">
-                                            Гос. номер
-                                        </td>
-                                        <td class="header text-start" colspan="4">
-                                            {{ akt.truck_number }}
-                                        </td>
-                                        <td colspan="18"></td>
-                                    </tr>
-                                    <tr style="height: 32px"></tr>
-                                    <tr style="height: 32px">
-                                        <td colspan="2"></td>
-                                        <td class="bordered header" colspan="2">
-                                            Номер<br>пропуска
-                                        </td>
-                                        <td class="bordered header" colspan="10">
-                                            Вид услуги
-                                        </td>
-                                        <td class="bordered header" colspan="5">
-                                            ТАРА
-                                        </td>
-                                        <td class="bordered header" colspan="5">
-                                            БРУТТО
-                                        </td>
-                                        <td class="bordered header" colspan="5">
-                                            НЕТТО
-                                        </td>
-                                        <td colspan="2"></td>
-                                    </tr>
-                                    <tr style="height: 32px">
-                                        <td colspan="2"></td>
-                                        <td class="bordered text-center px-2" colspan="2">
-                                            {{ akt.permit_number }}
-                                        </td>
-                                        <td class="bordered text-center px-2" colspan="10">
-                                            {{ akt.service_type }}
-                                        </td>
-                                        <td class="bordered text-center px-2" colspan="5">
-                                            {{ akt.tara / 1000 }} тонн.
-                                        </td>
-                                        <td class="bordered text-center px-2" colspan="5">
-                                            {{ akt.brutto / 1000 }} тонн.
-                                        </td>
-                                        <td class="bordered text-center px-2" colspan="5">
-                                            {{ akt.netto / 1000 }} тонн.
-                                        </td>
-                                        <td colspan="2"></td>
-                                    </tr>
-                                    <tr style="height: 32px"></tr>
-                                    <tr style="height: 32px">
-                                        <td class="text-start px-2" colspan="16">
-                                            Представитель<br>ООО «Магнит»
-                                        </td>
-                                        <td class="text-start px-2" colspan="16">
-                                            Представитель<br>{{ akt.carrier }}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                <div class="content-section">
+                    <div class="table-responsive">
+                        <table class="table mb-0" cellspacing="0" cellpadding="0">
+                            <tbody>
+                                <tr>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                    <td style="width:6px"></td>
+                                </tr>
+                                <tr style="height: 20px">
+                                    <td class="header" colspan="32">
+                                        {{ akt.polygon }} полигон ООО «Магнит»
+                                    </td>
+                                </tr>
+                                <tr style="height: 20px"></tr>
+                                <tr style="height: 20px">
+                                    <td colspan="2"></td>
+                                    <td class="header" colspan="28">
+                                        Акт взвешивания № {{ akt.number }} от {{ akt.date.toLocaleDateString('ru') }} г.
+                                    </td>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr style="height: 32px"></tr>
+                                <tr style="height: 20px">
+                                    <td colspan="4"></td>
+                                    <td class="text-start" colspan="6">
+                                        Перевозчик
+                                    </td>
+                                    <td class="header text-start" colspan="4">
+                                        {{ akt.carrier }}
+                                    </td>
+                                    <td colspan="18"></td>
+                                </tr>
+                                <tr style="height: 20px">
+                                    <td colspan="4"></td>
+                                    <td class="text-start" colspan="6">
+                                        Марка машины
+                                    </td>
+                                    <td class="header text-start" colspan="4">
+                                        {{ akt.truck_mark }}
+                                    </td>
+                                    <td colspan="18"></td>
+                                </tr>
+                                <tr style="height: 20px">
+                                    <td colspan="4"></td>
+                                    <td class="text-start" colspan="6">
+                                        Гос. номер
+                                    </td>
+                                    <td class="header text-start" colspan="4">
+                                        {{ akt.truck_number }}
+                                    </td>
+                                    <td colspan="18"></td>
+                                </tr>
+                                <tr style="height: 32px"></tr>
+                                <tr style="height: 32px">
+                                    <td colspan="2"></td>
+                                    <td class="bordered header" colspan="2">
+                                        Номер<br>пропуска
+                                    </td>
+                                    <td class="bordered header" colspan="10">
+                                        Вид услуги
+                                    </td>
+                                    <td class="bordered header" colspan="5">
+                                        ТАРА
+                                    </td>
+                                    <td class="bordered header" colspan="5">
+                                        БРУТТО
+                                    </td>
+                                    <td class="bordered header" colspan="5">
+                                        НЕТТО
+                                    </td>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr style="height: 32px">
+                                    <td colspan="2"></td>
+                                    <td class="bordered text-center px-2" colspan="2">
+                                        {{ akt.permit_number }}
+                                    </td>
+                                    <td class="bordered text-center px-2" colspan="10">
+                                        {{ akt.service_type }}
+                                    </td>
+                                    <td class="bordered text-center px-2" colspan="5">
+                                        {{ akt.tara / 1000 }} тонн.
+                                    </td>
+                                    <td class="bordered text-center px-2" colspan="5">
+                                        {{ akt.brutto / 1000 }} тонн.
+                                    </td>
+                                    <td class="bordered text-center px-2" colspan="5">
+                                        {{ akt.netto / 1000 }} тонн.
+                                    </td>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr style="height: 32px"></tr>
+                                <tr style="height: 32px">
+                                    <td class="text-start px-2" colspan="16">
+                                        Представитель<br>ООО «Магнит»
+                                    </td>
+                                    <td class="text-start px-2" colspan="16">
+                                        Представитель<br>{{ akt.carrier }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
