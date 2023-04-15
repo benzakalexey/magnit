@@ -111,7 +111,7 @@ tfoot {
 @media print {
     .table .bordered {
         border: solid #000 !important;
-        border-width: 1pt !important;
+        border-width: .5px !important;
         border-collapse: collapse;
         color: #000
     }
@@ -137,130 +137,130 @@ tfoot {
                             <table class="table mb-0" cellspacing="0" cellpadding="0">
                                 <tbody>
                                     <tr>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
-                                        <td style="width:7px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
+                                        <td style="width:2px"></td>
                                     </tr>
-                                    <tr style="height: 20px">
-                                        <td colspan="67"></td>
-                                        <td class="ps-2 text-center" colspan="44">Приложение № 4</td>
+                                    <tr style="height: 18px">
+                                        <td colspan="57"></td>
+                                        <td class="ps-2 text-center" colspan="54">Приложение № 4</td>
                                     </tr>
-                                    <tr style="height: 20px">
-                                        <td colspan="67"></td>
-                                        <td class="ps-2 text-center" colspan="44">к Правилам перевозок грузов<br>
+                                    <tr style="height: 18px">
+                                        <td colspan="57"></td>
+                                        <td class="ps-2 text-center" colspan="54">к Правилам перевозок грузов
                                             автомобильным транспортом</td>
                                     </tr>
-                                    <tr style="height: 20px">
-                                        <td colspan="67"></td>
-                                        <td class="ps-2 text-center" colspan="44">
-                                            (в ред. Постановления Правительства РФ<br>от 30.11.2021 №
+                                    <tr style="height: 18px">
+                                        <td colspan="57"></td>
+                                        <td class="ps-2 text-center" colspan="54">
+                                            (в ред. Постановления Правительства РФ от 30.11.2021 №
                                             2116)
                                         </td>
                                     </tr>
@@ -273,8 +273,8 @@ tfoot {
                                         <td class="header bordered" colspan="44">Заказ (заявка)</td>
                                     </tr>
                                     <tr class="bordered" style="height: 20px">
-                                        <td class="ps-2" colspan="12">Дата</td>
-                                        <td class="bordered ps-2" colspan="22">{{ invoice.date }}</td>
+                                        <td class="ps-2" colspan="14">Дата</td>
+                                        <td class="bordered ps-2" colspan="20">{{ invoice.date }}</td>
                                         <td class="ps-2" colspan="10">№</td>
                                         <td class="ps-2" colspan="23">{{ invoice.number }}</td>
                                         <td class="bordered ps-2" colspan="10">Дата</td>
@@ -283,15 +283,15 @@ tfoot {
                                         <td class="ps-2" colspan="12">-</td>
                                     </tr>
                                     <tr class="bordered" style="height: 20px">
-                                        <td class="ps-2" colspan="12">Экземпляр №</td>
-                                        <td class="bordered ps-2" colspan="55"></td>
+                                        <td class="ps-2" colspan="14">Экземпляр №</td>
+                                        <td class="bordered ps-2" colspan="53"></td>
                                         <td class="bordered header ps-2" colspan="44">-</td>
                                     </tr>
                                     <tr class="bordered" style="height: 20px">
                                         <td class="header bordered" colspan="67">1. Грузоотправитель</td>
                                         <td class="header bordered" colspan="44" rowspan="2">
                                             1а. Заказчик услуг по организации
-                                            перевозки груза<br>(при наличии)
+                                            перевозки груза (при наличии)
                                         </td>
                                     </tr>
                                     <tr class="bordered" style="height: 20px">
