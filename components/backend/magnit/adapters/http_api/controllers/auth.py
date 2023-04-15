@@ -14,7 +14,7 @@ class Auth:
         response.media = {
             'token': token,
             'phone': user.phone,
-            # 'role': user.role,
+            'user_role': user.staff.role,
             'surname': user.surname,
             'name': user.name,
         }
