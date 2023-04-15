@@ -118,7 +118,8 @@ tfoot {
     }
 
     .table>tbody>tr>td {
-        color: #000
+        color: #000;
+        font-size: 10px;
     }
 
     .dark .table>tbody>tr>td {
