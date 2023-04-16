@@ -44,7 +44,8 @@ const links = {
 
             <perfect-scrollbar class="list-unstyled menu-categories" tag="ul"
                 :options="{ wheelSpeed: 0.5, swipeEasing: !0, minScrollbarLength: 40, maxScrollbarLength: 300, suppressScrollX: true }">
-                <li v-show="links.trucks.includes(store.state.AuthModule.credentials.user_role)" class="menu">
+                
+                <li v-show="links.polygon.includes(store.state.AuthModule.credentials.user_role)" class="menu">
                     <router-link to="/polygon" class="dropdown-toggle" @click="toggleMobileMenu">
                         <div class="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -74,7 +75,7 @@ const links = {
                     </router-link>
                 </li>
 
-                <li v-show="links.trucks.includes(store.state.AuthModule.credentials.user_role)" class="menu">
+                <li v-show="links.tonars.includes(store.state.AuthModule.credentials.user_role)" class="menu">
                     <router-link to="/tonars" class="dropdown-toggle" @click="toggleMobileMenu">
                         <div class="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
