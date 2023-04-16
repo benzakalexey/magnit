@@ -84,6 +84,13 @@ const routes = [
         meta: { layout: 'auth' },
         beforeEnter: setAuthLayout,
     },
+    {
+        path: '/doc/tonar_pack',
+        name: 'tonar_pack',
+        component: () => import(/* webpackChunkName: "components-tabs" */ '../views/magnit/doc/tonar_pack.vue'),
+        meta: { layout: 'auth' },
+        beforeEnter: setAuthLayout,
+    },
 
 
     //auth
