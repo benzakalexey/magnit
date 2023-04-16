@@ -7,6 +7,7 @@ class UserRole(Enum):
     POLYGON_CHIEF = 'Начальник полигона'
     CONTROLLER = 'Контролер'
     SUPERVISOR = 'Супервайзер'
+    LOGISTIC = 'Логист'
 
 
 class PartnerType(Enum):
