@@ -19,7 +19,7 @@ const props = defineProps({
 });
 const { item } = toRefs(props);
 const isOpen = ref(false);
-const emit = defineEmits(['closed', 'deleted', 'get_out', 'print']);
+const emit = defineEmits(['closed', 'deleted', 'get_out', 'print_invoice', 'print_akt', 'print_pack']);
 const close = () => {
     emit('closed');
 };
@@ -114,8 +114,8 @@ watchEffect(() => (isOpen.value = props.isOpen));
                         <label class="col-form-label" for="vehicle_mark">Марка ТС</label>
                         <input v-model="item.truck_model" type="text" readonly="true" class="form-control"
                             id="vehicle_mark" />
-                    </div>
                 </div>
+            </div>
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label class="col-form-label" for="contragent_name">Контрагент</label>
@@ -124,8 +124,8 @@ watchEffect(() => (isOpen.value = props.isOpen));
                 <div class="col-md-6">
                     <label class="col-form-label" for="invoice_num">Номер накладной</label>
                     <input v-model="item.invoice_num" type="text" readonly="true" class="form-control"
-                        id="invoice_num" />
-                </div>
+                            id="invoice_num" />
+                    </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-6">
@@ -166,8 +166,8 @@ watchEffect(() => (isOpen.value = props.isOpen));
             </button>
 
             <div v-else :disabled="!(item.status == 1 && item.tonar)" class="btn-group custom-dropdown" role="group">
-                <button id="btndefault" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false">
+                <button type="button" class="btn btn-primary dropdown-toggle" :disabled="!(item.status == 1 && item.tonar)"
+                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                         class="feather feather-printer me-3">
@@ -184,17 +184,20 @@ watchEffect(() => (isOpen.value = props.isOpen));
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="btndefault">
                     <li>
-                        <a @click="print_pack()" href="javascript:void(0);" class="dropdown-item"><i class="flaticon-home-fill-1 me-1"></i>
+                        <a @click="print_pack()" href="javascript:void(0);" class="dropdown-item"><i
+                                class="flaticon-home-fill-1 me-1"></i>
                             Пакет документов
                         </a>
                     </li>
                     <li>
-                        <a @click="print_akt()" href="javascript:void(0);" class="dropdown-item"><i class="flaticon-gear-fill me-1"></i>
+                        <a @click="print_akt()" href="javascript:void(0);" class="dropdown-item"><i
+                                class="flaticon-gear-fill me-1"></i>
                             Акт взвешивания
                         </a>
                     </li>
                     <li>
-                        <a @click="print_invoice()" href="javascript:void(0);" class="dropdown-item"><i class="flaticon-bell-fill-2 me-1"></i>
+                        <a @click="print_invoice()" href="javascript:void(0);" class="dropdown-item"><i
+                                class="flaticon-bell-fill-2 me-1"></i>
                             Транспортная накладная
                         </a>
                     </li>
@@ -203,16 +206,16 @@ watchEffect(() => (isOpen.value = props.isOpen));
 
 
             <!-- <button v-else :disabled="!(item.status == 1 && item.tonar)" type="button" class="btn btn-primary"
-                    @click="print()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="feather feather-printer me-3">
-                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                        <rect x="6" y="14" width="12" height="8"></rect>
-                    </svg>
-                    Печать ТН
-                </button> -->
+                            @click="print()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="feather feather-printer me-3">
+                                <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                                <rect x="6" y="14" width="12" height="8"></rect>
+                            </svg>
+                            Печать ТН
+                        </button> -->
         </template>
     </largeCenterModal>
     <finishVisit :item="item" :isOpen="finishModal" @closed="closeFinish" @get_out="getOut"></finishVisit>
