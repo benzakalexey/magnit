@@ -29,8 +29,8 @@ const toggleMobileMenu = () => {
     }
 };
 const links = {
-    trucks: ['Супервайзер', 'Логист'],
     polygon: ['Супервайзер', 'Контролер'],
+    trucks: ['Супервайзер', 'Логист'],
     tonars: ['Супервайзер', 'Аналитик тонаров'],
 };
 
@@ -44,7 +44,7 @@ const links = {
 
             <perfect-scrollbar class="list-unstyled menu-categories" tag="ul"
                 :options="{ wheelSpeed: 0.5, swipeEasing: !0, minScrollbarLength: 40, maxScrollbarLength: 300, suppressScrollX: true }">
-                
+                <div class="pt-4"></div>
                 <li v-show="links.polygon.includes(store.state.AuthModule.credentials.user_role)" class="menu">
                     <router-link to="/polygon" class="dropdown-toggle" @click="toggleMobileMenu">
                         <div class="">
