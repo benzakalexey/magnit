@@ -45,7 +45,6 @@ const item = ref(
         status: ''
     }
 );
-const items = ref([]);
 const table_option = ref({
     perPage: 15,
     perPageValues: [15, 50, 100],
@@ -113,9 +112,25 @@ const deleteItem = (id, reason) => {
         }
     }).catch((error) => new window.Swal('Ошибка!', error.message, 'error'))
 };
+const printTonarPack = (visit_id) => {
+    let winPrint = window.open(
+        '/doc/tonar_pack?print=true&visit_id=' + visit_id,
+        'fullscreen=yes,toolbar=0,scrollbars=0,status=0'
+    );
+    winPrint.focus();
+    winPrint.onafterprint = winPrint.close;
+};
 const printInvoice = (visit_id) => {
-    var winPrint = window.open(
+    let winPrint = window.open(
         '/invoice?print=true&visit_id=' + visit_id,
+        'fullscreen=yes,toolbar=0,scrollbars=0,status=0'
+    );
+    winPrint.focus();
+    winPrint.onafterprint = winPrint.close;
+};
+const printAkt = (visit_id) => {
+    let winPrint = window.open(
+        '/akt?print=true&visit_id=' + visit_id,
         'fullscreen=yes,toolbar=0,scrollbars=0,status=0'
     );
     winPrint.focus();
@@ -132,8 +147,11 @@ const getOut = (data) => {
             new window.Swal('Успешно!', 'Автомобиль выехал.', 'success');
             store.dispatch('VisitsModule/update');
         }
-        if (data.tonar) printInvoice(data.visit_id);
-    }).catch((error) => new window.Swal('Ошибка!', error.data, 'error'))
+        if (data.tonar) {
+            printTonarPack(data.visit_id);
+        }
+    })
+    .catch((error) => new window.Swal('Ошибка!', error.data, 'error'))
 };
 
 const bind_data = async() => {
@@ -196,6 +214,6 @@ onMounted(
 
     <addVisit></addVisit>
     <visitDetails :item="item" :isOpen="isOpen" @closed="closeDetails" @deleted="deleteItem" @get_out="getOut"
-        @print="printInvoice">
+        @print_invoice="printInvoice" @print_akt="printAkt" @print_pack="printTonarPack">
     </visitDetails>
 </template>

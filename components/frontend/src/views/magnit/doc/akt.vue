@@ -11,7 +11,7 @@ const route = useRoute()
 const store = useStore();
 const akt = ref(
     {
-        date: null,
+        date: new Date(),
         polygon: null,
         number: null,
         carrier: null,
@@ -48,7 +48,7 @@ const pretty_num = (n) => {
             <div id="ct" class="">
                 <div class="content-section">
                     <div class="table-responsive">
-                        <table class="table mb-0" cellspacing="0" cellpadding="0">
+                        <table class="table table-invoice mb-0" cellspacing="0" cellpadding="0">
                             <tbody>
                                 <tr>
                                     <td style="width:6px"></td>
@@ -97,84 +97,305 @@ const pretty_num = (n) => {
                                     </td>
                                     <td colspan="2"></td>
                                 </tr>
-                                <tr style="height: 32px"></tr>
+                                <tr style="height: 24px"></tr>
                                 <tr style="height: 20px">
                                     <td colspan="4"></td>
                                     <td class="text-start" colspan="6">
                                         Перевозчик
                                     </td>
-                                    <td class="header text-start" colspan="4">
+                                    <td class="header text-start" colspan="12">
                                         {{ akt.carrier }}
                                     </td>
-                                    <td colspan="18"></td>
+                                    <td colspan="10"></td>
                                 </tr>
                                 <tr style="height: 20px">
                                     <td colspan="4"></td>
                                     <td class="text-start" colspan="6">
                                         Марка машины
                                     </td>
-                                    <td class="header text-start" colspan="4">
+                                    <td class="header text-start" colspan="12">
                                         {{ akt.truck_mark }}
                                     </td>
-                                    <td colspan="18"></td>
+                                    <td colspan="10"></td>
                                 </tr>
                                 <tr style="height: 20px">
                                     <td colspan="4"></td>
                                     <td class="text-start" colspan="6">
                                         Гос. номер
                                     </td>
-                                    <td class="header text-start" colspan="4">
+                                    <td class="header text-start" colspan="12">
                                         {{ akt.truck_number }}
                                     </td>
-                                    <td colspan="18"></td>
+                                    <td colspan="10"></td>
                                 </tr>
-                                <tr style="height: 32px"></tr>
-                                <tr style="height: 32px">
+                                <tr style="height: 24px"></tr>
+                                <tr style="height: 24px">
                                     <td colspan="2"></td>
-                                    <td class="bordered header" colspan="2">
-                                        Номер<br>пропуска
-                                    </td>
+                                    <td class="bordered header" colspan="6">Пропуск</td>
                                     <td class="bordered header" colspan="10">
                                         Вид услуги
                                     </td>
-                                    <td class="bordered header" colspan="5">
+                                    <td class="bordered header" colspan="4">
                                         ТАРА
                                     </td>
-                                    <td class="bordered header" colspan="5">
+                                    <td class="bordered header" colspan="4">
                                         БРУТТО
                                     </td>
-                                    <td class="bordered header" colspan="5">
+                                    <td class="bordered header" colspan="4">
                                         НЕТТО
                                     </td>
                                     <td colspan="2"></td>
                                 </tr>
-                                <tr style="height: 32px">
+                                <tr style="height: 24px">
                                     <td colspan="2"></td>
-                                    <td class="bordered text-center px-2" colspan="2">
+                                    <td class="bordered text-center" colspan="6">
                                         {{ akt.permit_number }}
                                     </td>
-                                    <td class="bordered text-center px-2" colspan="10">
+                                    <td class="bordered text-center" colspan="10">
                                         {{ akt.service_type }}
                                     </td>
-                                    <td class="bordered text-center px-2" colspan="5">
+                                    <td class="bordered text-center" colspan="4">
                                         {{ akt.tara / 1000 }} тонн.
                                     </td>
-                                    <td class="bordered text-center px-2" colspan="5">
+                                    <td class="bordered text-center" colspan="4">
                                         {{ akt.brutto / 1000 }} тонн.
                                     </td>
-                                    <td class="bordered text-center px-2" colspan="5">
+                                    <td class="bordered text-center" colspan="4">
                                         {{ akt.netto / 1000 }} тонн.
                                     </td>
                                     <td colspan="2"></td>
                                 </tr>
-                                <tr style="height: 32px"></tr>
-                                <tr style="height: 32px">
-                                    <td class="text-start px-2" colspan="16">
+                                <tr style="height: 24px"></tr>
+                                <tr style="height: 24px">
+                                    <td colspan="4"></td>
+                                    <td class="text-start px-2" colspan="12">
                                         Представитель<br>ООО «Магнит»
                                     </td>
-                                    <td class="text-start px-2" colspan="16">
+                                    <td class="text-start px-2" colspan="12">
                                         Представитель<br>{{ akt.carrier }}
                                     </td>
+                                    <td colspan="4"></td>
+                                </tr>
+                                <tr style="height: 32px">
+                                    <td colspan="4"></td>
+                                    <td class="underline" colspan="10"></td>
+                                    <td colspan="2"></td>
+                                    <td class="underline" colspan="12"></td>
+                                    <td colspan="4"></td>
+                                </tr>
+                                <tr style="height: 42px;">
+                                    <td colspan="2"></td>
+                                    <td class="dashedline" colspan="28"></td>
+                                    <td colspan="2"></td>
+                                </tr>
+
+                                <tr style="height: 24px"></tr>
+
+                                <tr style="height: 20px">
+                                    <td class="header" colspan="32">
+                                        {{ akt.polygon }} полигон ООО «Магнит»
+                                    </td>
+                                </tr>
+                                <tr style="height: 20px"></tr>
+                                <tr style="height: 20px">
+                                    <td colspan="2"></td>
+                                    <td class="header" colspan="28">
+                                        Акт взвешивания № {{ akt.number }} от {{ akt.date.toLocaleDateString('ru') }} г.
+                                    </td>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr style="height: 24px"></tr>
+                                <tr style="height: 20px">
+                                    <td colspan="4"></td>
+                                    <td class="text-start" colspan="6">
+                                        Перевозчик
+                                    </td>
+                                    <td class="header text-start" colspan="12">
+                                        {{ akt.carrier }}
+                                    </td>
+                                    <td colspan="10"></td>
+                                </tr>
+                                <tr style="height: 20px">
+                                    <td colspan="4"></td>
+                                    <td class="text-start" colspan="6">
+                                        Марка машины
+                                    </td>
+                                    <td class="header text-start" colspan="12">
+                                        {{ akt.truck_mark }}
+                                    </td>
+                                    <td colspan="10"></td>
+                                </tr>
+                                <tr style="height: 20px">
+                                    <td colspan="4"></td>
+                                    <td class="text-start" colspan="6">
+                                        Гос. номер
+                                    </td>
+                                    <td class="header text-start" colspan="12">
+                                        {{ akt.truck_number }}
+                                    </td>
+                                    <td colspan="10"></td>
+                                </tr>
+                                <tr style="height: 24px"></tr>
+                                <tr style="height: 24px">
+                                    <td colspan="2"></td>
+                                    <td class="bordered header" colspan="6">Пропуск</td>
+                                    <td class="bordered header" colspan="10">
+                                        Вид услуги
+                                    </td>
+                                    <td class="bordered header" colspan="4">
+                                        ТАРА
+                                    </td>
+                                    <td class="bordered header" colspan="4">
+                                        БРУТТО
+                                    </td>
+                                    <td class="bordered header" colspan="4">
+                                        НЕТТО
+                                    </td>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr style="height: 24px">
+                                    <td colspan="2"></td>
+                                    <td class="bordered text-center" colspan="6">
+                                        {{ akt.permit_number }}
+                                    </td>
+                                    <td class="bordered text-center" colspan="10">
+                                        {{ akt.service_type }}
+                                    </td>
+                                    <td class="bordered text-center" colspan="4">
+                                        {{ akt.tara / 1000 }} тонн.
+                                    </td>
+                                    <td class="bordered text-center" colspan="4">
+                                        {{ akt.brutto / 1000 }} тонн.
+                                    </td>
+                                    <td class="bordered text-center" colspan="4">
+                                        {{ akt.netto / 1000 }} тонн.
+                                    </td>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr style="height: 24px"></tr>
+                                <tr style="height: 24px">
+                                    <td colspan="4"></td>
+                                    <td class="text-start px-2" colspan="12">
+                                        Представитель<br>ООО «Магнит»
+                                    </td>
+                                    <td class="text-start px-2" colspan="12">
+                                        Представитель<br>{{ akt.carrier }}
+                                    </td>
+                                    <td colspan="4"></td>
+                                </tr>
+                                <tr style="height: 32px">
+                                    <td colspan="4"></td>
+                                    <td class="underline" colspan="10"></td>
+                                    <td colspan="2"></td>
+                                    <td class="underline" colspan="12"></td>
+                                    <td colspan="4"></td>
+                                </tr>
+                                <tr style="height: 42px;">
+                                    <td colspan="2"></td>
+                                    <td class="dashedline" colspan="28"></td>
+                                    <td colspan="2"></td>
+                                </tr>
+
+                                <tr style="height: 24px"></tr>
+
+                                <tr style="height: 20px">
+                                    <td class="header" colspan="32">
+                                        {{ akt.polygon }} полигон ООО «Магнит»
+                                    </td>
+                                </tr>
+                                <tr style="height: 20px"></tr>
+                                <tr style="height: 20px">
+                                    <td colspan="2"></td>
+                                    <td class="header" colspan="28">
+                                        Акт взвешивания № {{ akt.number }} от {{ akt.date.toLocaleDateString('ru') }} г.
+                                    </td>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr style="height: 24px"></tr>
+                                <tr style="height: 20px">
+                                    <td colspan="4"></td>
+                                    <td class="text-start" colspan="6">
+                                        Перевозчик
+                                    </td>
+                                    <td class="header text-start" colspan="12">
+                                        {{ akt.carrier }}
+                                    </td>
+                                    <td colspan="10"></td>
+                                </tr>
+                                <tr style="height: 20px">
+                                    <td colspan="4"></td>
+                                    <td class="text-start" colspan="6">
+                                        Марка машины
+                                    </td>
+                                    <td class="header text-start" colspan="12">
+                                        {{ akt.truck_mark }}
+                                    </td>
+                                    <td colspan="10"></td>
+                                </tr>
+                                <tr style="height: 20px">
+                                    <td colspan="4"></td>
+                                    <td class="text-start" colspan="6">
+                                        Гос. номер
+                                    </td>
+                                    <td class="header text-start" colspan="12">
+                                        {{ akt.truck_number }}
+                                    </td>
+                                    <td colspan="10"></td>
+                                </tr>
+                                <tr style="height: 24px"></tr>
+                                <tr style="height: 24px">
+                                    <td colspan="2"></td>
+                                    <td class="bordered header" colspan="6">Пропуск</td>
+                                    <td class="bordered header" colspan="10">
+                                        Вид услуги
+                                    </td>
+                                    <td class="bordered header" colspan="4">
+                                        ТАРА
+                                    </td>
+                                    <td class="bordered header" colspan="4">
+                                        БРУТТО
+                                    </td>
+                                    <td class="bordered header" colspan="4">
+                                        НЕТТО
+                                    </td>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr style="height: 24px">
+                                    <td colspan="2"></td>
+                                    <td class="bordered text-center" colspan="6">
+                                        {{ akt.permit_number }}
+                                    </td>
+                                    <td class="bordered text-center" colspan="10">
+                                        {{ akt.service_type }}
+                                    </td>
+                                    <td class="bordered text-center" colspan="4">
+                                        {{ akt.tara / 1000 }} тонн.
+                                    </td>
+                                    <td class="bordered text-center" colspan="4">
+                                        {{ akt.brutto / 1000 }} тонн.
+                                    </td>
+                                    <td class="bordered text-center" colspan="4">
+                                        {{ akt.netto / 1000 }} тонн.
+                                    </td>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr style="height: 24px"></tr>
+                                <tr style="height: 24px">
+                                    <td colspan="4"></td>
+                                    <td class="text-start px-2" colspan="12">
+                                        Представитель<br>ООО «Магнит»
+                                    </td>
+                                    <td class="text-start px-2" colspan="12">
+                                        Представитель<br>{{ akt.carrier }}
+                                    </td>
+                                    <td colspan="4"></td>
+                                </tr>
+                                <tr style="height: 32px">
+                                    <td colspan="4"></td>
+                                    <td class="underline" colspan="10"></td>
+                                    <td colspan="2"></td>
+                                    <td class="underline" colspan="12"></td>
+                                    <td colspan="4"></td>
                                 </tr>
                             </tbody>
                         </table>
