@@ -25,12 +25,22 @@ const setAuthLayout = function (to, from, next) {
     next();
 }
 
+const roleRouter = () => {
+    const start_page_match = {
+        'Супервайзер': import('../views/magnit/polygon.vue'),
+        'Логист': import('../views/magnit/catalogs/trucks.vue'),
+        'Контролер': import('../views/magnit/polygon.vue'),
+    }
+
+    return start_page_match[store.state.AuthModule.credentials.user_role]
+}
+
 const routes = [
 
     {
         path: '/',
         name: 'home',
-        component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/polygon.vue'),
+        component: roleRouter,
         beforeEnter: authGuard,
     },
     //magnit
