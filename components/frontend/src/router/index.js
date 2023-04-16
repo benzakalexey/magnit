@@ -75,6 +75,12 @@ const routes = [
         beforeEnter: authGuard
     },
     {
+        path: '/tonars',
+        name: 'tonars',
+        component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/tonars.vue'),
+        beforeEnter: authGuard
+    },
+    {
         path: '/contragents',
         name: 'contragents',
         component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/catalogs/contragents.vue'),
