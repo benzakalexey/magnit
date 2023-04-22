@@ -62,9 +62,7 @@ export const VisitsModule = {
             const pretty_num = (n) => {
                 let r = n.match(/[а-яА-Я]+|[0-9]+/g);
                 return r.join(' ');
-            }
-            state.polygon = data[0].polygon + ' полигон'
-
+            };
             for (var v of data) {
 
                 visits.push(
