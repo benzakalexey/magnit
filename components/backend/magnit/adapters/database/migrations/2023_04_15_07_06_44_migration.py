@@ -1074,75 +1074,76 @@ visits = Table(
 
 
 def upgrade():
-    bind = op.get_bind()
-    session = orm.Session(bind=bind)
-
-    # for m in visits_chunk_by_chunk():
-    q = visits.insert().values(
-        [
-            {
-                'checked_in': i['checked_in'],
-                'checked_out': i['checked_out'],
-                'contract_id': (
-                    select(contracts.c.id)
-                    .join(polygons,
-                          polygons.c.id == contracts.c.destination_id)
-                    .where(
-                        and_(
-                            polygons.c.name == i['destination'],
-                            contracts.c.departure_point_id == select(
-                                polygons.c.id
-                            ).where(polygons.c.name == i['polygon'])
-                            .scalar_subquery(),
-                            contracts.c.valid_from <= datetime.fromisoformat(
-                                i.get('checked_in')
-                            ),
-                            contracts.c.valid_to >= datetime.fromisoformat(
-                                i.get('checked_in')
-                            )
-                        )
-                    )
-                ) if i['destination'] else None,
-                'invoice_num': i.get('invoice_num'),
-                'driver_id': (
-                    select(drivers.c.id)
-                    .where(
-                        and_(
-                            drivers.c.name == i.get('name'),
-                            drivers.c.surname == i.get('surname'),
-                            drivers.c.patronymic == i.get('patronymic'),
-                        )
-                    )
-                ) if i.get('destination') else None,
-                'is_deleted': i.get('is_deleted'),
-                'delete_reason': i.get('delete_reason'),
-                'operator_in_id': (
-                    select(users.c.id)
-                    .where(users.c.phone == i['operator_in'])
-                ),
-                'operator_out_id': (
-                    select(users.c.id)
-                    .where(users.c.phone == i['operator_out'])
-                ),
-                'permission_id': (
-                    select(permissions.c.id)
-                    .join(permits, permissions.c.permit_id == permits.c.id)
-                    .where(permits.c.number == i['permit']
-                    )
-                )
-                .order_by(desc(text('app.permissions.expired_at')))
-                .limit(1),
-                'polygon_id': (
-                    select(polygons.c.id)
-                    .where(polygons.c.name == i['polygon'])
-                ),
-                'weight_in': i['weight_in'],
-                'weight_out': i['weight_out'],
-            } for i in visits_data
-        ]
-    )
-    op.execute(q)
-    session.commit()
+    ...
+    # bind = op.get_bind()
+    # session = orm.Session(bind=bind)
+    #
+    # # for m in visits_chunk_by_chunk():
+    # q = visits.insert().values(
+    #     [
+    #         {
+    #             'checked_in': i['checked_in'],
+    #             'checked_out': i['checked_out'],
+    #             'contract_id': (
+    #                 select(contracts.c.id)
+    #                 .join(polygons,
+    #                       polygons.c.id == contracts.c.destination_id)
+    #                 .where(
+    #                     and_(
+    #                         polygons.c.name == i['destination'],
+    #                         contracts.c.departure_point_id == select(
+    #                             polygons.c.id
+    #                         ).where(polygons.c.name == i['polygon'])
+    #                         .scalar_subquery(),
+    #                         contracts.c.valid_from <= datetime.fromisoformat(
+    #                             i.get('checked_in')
+    #                         ),
+    #                         contracts.c.valid_to >= datetime.fromisoformat(
+    #                             i.get('checked_in')
+    #                         )
+    #                     )
+    #                 )
+    #             ) if i['destination'] else None,
+    #             'invoice_num': i.get('invoice_num'),
+    #             'driver_id': (
+    #                 select(drivers.c.id)
+    #                 .where(
+    #                     and_(
+    #                         drivers.c.name == i.get('name'),
+    #                         drivers.c.surname == i.get('surname'),
+    #                         drivers.c.patronymic == i.get('patronymic'),
+    #                     )
+    #                 )
+    #             ) if i.get('destination') else None,
+    #             'is_deleted': i.get('is_deleted'),
+    #             'delete_reason': i.get('delete_reason'),
+    #             'operator_in_id': (
+    #                 select(users.c.id)
+    #                 .where(users.c.phone == i['operator_in'])
+    #             ),
+    #             'operator_out_id': (
+    #                 select(users.c.id)
+    #                 .where(users.c.phone == i['operator_out'])
+    #             ),
+    #             'permission_id': (
+    #                 select(permissions.c.id)
+    #                 .join(permits, permissions.c.permit_id == permits.c.id)
+    #                 .where(permits.c.number == i['permit']
+    #                 )
+    #             )
+    #             .order_by(desc(text('app.permissions.expired_at')))
+    #             .limit(1),
+    #             'polygon_id': (
+    #                 select(polygons.c.id)
+    #                 .where(polygons.c.name == i['polygon'])
+    #             ),
+    #             'weight_in': i['weight_in'],
+    #             'weight_out': i['weight_out'],
+    #         } for i in visits_data
+    #     ]
+    # )
+    # op.execute(q)
+    # session.commit()
 
 
 def downgrade():

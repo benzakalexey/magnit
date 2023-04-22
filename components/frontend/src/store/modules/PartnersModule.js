@@ -3,7 +3,7 @@ import { PartnersAPI } from "@/api/partnersAPI";
 
 const pretty_num = (n) => {
     let r = n.match(/[а-яА-Я]+|[0-9]+/g);
-    return r.join('\u2009');
+    return r.join(' ');
 }
 
 export const PartnersModule = {

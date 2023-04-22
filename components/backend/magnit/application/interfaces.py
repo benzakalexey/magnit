@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from datetime import datetime
 from typing import Optional, List
 
 from magnit.application import entities
@@ -286,4 +287,20 @@ class VisitRepo(ABC):
             список Визитов
 
         """
-        ...
+
+    @abstractmethod
+    def get_tonars(
+        self,
+        after: datetime,
+        before: datetime,
+    ) -> List[entities.Visit]:
+        """Возвращает визиты тонаров в диапазоне дат.
+
+        Args:
+            after: после
+            before: до
+
+        Returns:
+            список Визитов
+
+        """

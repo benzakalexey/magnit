@@ -9,6 +9,15 @@ export const VisitsAPI = {
         const url = 'visits/get';
         return DefaultAPIInstance.get(url);
     },
+    /**
+     * 
+     * @returns {Promise<AxiosResponse<any>>}
+     */
+    get_tonars(after, before) {
+        const url = 'visits/get_tonars';
+        const data = { after, before };
+        return DefaultAPIInstance.get(url, { params: data });
+    },
     /**Пометить визит как удаленный
      *      
      * @param {number} id 

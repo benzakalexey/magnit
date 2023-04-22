@@ -45,7 +45,7 @@ onMounted(
 
 const pretty_num = (n) => {
     let r = n.match(/[а-яА-Я]+|[0-9]+/g);
-    return r ? r.join('\u2009') : '';
+    return r ? r.join(' ') : '';
 };
 
 </script>

@@ -2,24 +2,40 @@
 import { onMounted, ref } from 'vue';
 import { useMeta } from '@/composables/use-meta';
 import { useStore } from 'vuex';
-import addVisit from '@/components/magnit/forms/addVisit';
 import visitDetails from '@/components/magnit/forms/visitDetails';
+
+//flatpickr
+import flatpickr from 'flatpickr';
+import flatPickr from 'vue-flatpickr-component';
+import 'flatpickr/dist/flatpickr.css';
+import '@/assets/sass/forms/custom-flatpickr.css';
+
+import { Russian } from "flatpickr/dist/l10n/ru.js"
+
+flatpickr.localize(Russian); // default locale is now Russian
 
 const store = useStore();
 useMeta({ title: 'Тонары' });
 
 const columns = ref([
-    // 'invoice_num',
     'permit',
-    'reg_number',
     'carrier',
+    'reg_number',
     'truck_model',
+    'polygon',
     'checked_in',
-    'weight_in',
-    'tonar',
-    'status',
-    'actions',
+    'brutto',
+    'tara',
+    'netto',
+    'invoice_num',
+    'destination',
+    'driver_name',
 ]);
+
+if (store.state.AuthModule.credentials.user_role !== 'Аналитик тонаров') {
+    columns.value.push('actions')
+}
+
 const isOpen = ref(null);
 const item = ref(
     {
@@ -46,30 +62,31 @@ const item = ref(
     }
 );
 const table_option = ref({
-    perPage: 15,
-    perPageValues: [15, 50, 100],
+    perPage: 50,
+    perPageValues: [50, 500, 1000, 2000],
     skin: 'table table-hover',
     headings: {
         tonar: '',
-        invoice_num: 'Номер накладной',
+        invoice_num: 'Номер ТН',
         permit: 'Пропуск',
         reg_number: 'Номер',
         carrier: 'Контрагент',
+        polygon: 'Полигон',
         truck_model: 'Марка ТС',
         truck_type: 'Тип ТС',
         checked_in: 'Въезд',
         weight_in: 'Вес въезда, кг',
         status: 'Статус',
+        brutto: 'Брутто',
+        tara: 'Тара',
+        netto: 'Нетто',
+        destination: 'Направление',
+        driver_name: 'Водитель',
         actions: '',
     },
     columnsClasses: { actions: 'actions text-center' },
     sortable: [
-        'permit',
-        'reg_number',
-        'carrier',
-        'truck_model',
         'checked_in',
-        'weight_in',
     ],
     sortIcon: {
         base: 'sort-icon-none',
@@ -136,34 +153,65 @@ const printAkt = (visit_id) => {
     winPrint.focus();
     winPrint.onafterprint = winPrint.close;
 };
-const getOut = (data) => {
-    store.dispatch('VisitsModule/finish', {
-        visit_id: data.visit_id,
-        weight_out: data.out_weight,
-        driver_id: data.driver,
-        contract_id: data.direction,
-    }).then((res) => {
-        if (res.data.success) {
-            new window.Swal('Успешно!', 'Автомобиль выехал.', 'success');
-            store.dispatch('VisitsModule/update');
-        }
-        if (data.tonar) {
-            printTonarPack(data.visit_id);
-        }
-    })
-    .catch((error) => new window.Swal('Ошибка!', error.data, 'error'))
+
+
+const interval = ref([]);
+const bind_data = async () => {
+    var now = new Date();
+    now.setHours(0, 0, 0, 0);
+    var before = (new Date(now.setDate(0))).setHours(23, 59, 59, 0);
+    var after = now.setDate(1);
+    interval.value = [after, before]
+    store.dispatch('VisitsModule/update_tonars', { after, before });
 };
 
-const bind_data = async() => {
-    while (true) {
-        store.dispatch('VisitsModule/update');
-        await new Promise(r => setTimeout(r, 120_000));
-    }  
+const excel_columns = () => {
+    return {
+        'Пропуск': 'permit',
+        'Контрагент': 'carrier',
+        'Рег.номер': 'reg_number',
+        'Марка ТС': 'truck_model',
+        'Полигон': 'polygon',
+        'Дата заезда': 'checked_in',
+        'Брутто': 'brutto',
+        'Тара': 'tara',
+        'Нетто': 'netto',
+        'Номер ТН': 'invoice_num',
+        'Направление': 'destination',
+        'Водитель': 'driver_name',
+    };
+};
+const excel_items = () => {
+    let items = []
+    for (var row of store.state.VisitsModule.tonar_visits) {
+        items.push({
+            permit: row.permit,
+            carrier: row.carrier,
+            reg_number: row.reg_number,
+            truck_model: row.truck_model,
+            polygon: row.polygon,
+            checked_in: row.checked_in.toLocaleString('ru'),
+            brutto: row.brutto,
+            tara: row.tara,
+            netto: row.netto,
+            invoice_num: row.invoice_num,
+            destination: row.destination,
+            driver_name: row.driver_name,
+        })
+    }
+    return items;
 };
 
 onMounted(
     bind_data(),
 );
+const change = (x) => {
+    if (x.length == 2) {
+        var after = x[0]
+        var before = x[1]
+        store.dispatch('VisitsModule/update_tonars', { after, before });
+    }
+}
 
 </script>
 
@@ -176,20 +224,29 @@ onMounted(
                         <nav class="breadcrumb-one" aria-label="breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item active" aria-current="page">
-                                    <span>{{ store.state.VisitsModule.polygon }}</span>
+                                    <span>{{ $t('tonars') }}</span>
                                 </li>
                             </ol>
                         </nav>
                     </div>
                 </li>
             </ul>
+            <div class="navbar-nav d-flex justify-content-end align-items-center">
+                <h5 class="mb-0 me-3">Данные&nbspза:</h5>
+                <flat-pickr v-model="interval" :config="{ dateFormat: 'd.m.Y', mode: 'range' }"
+                    class="form-control flatpickr active me-4 width-100 text-center" style="width: 18em; height: 2.5em;"
+                    @on-change="change"></flat-pickr>
+                <vue3-json-excel class="btn btn-primary me-4" name="Тонары.xls" :fields="excel_columns()"
+                    :json-data="excel_items()">Выгрузить&nbspв&nbspExcel</vue3-json-excel>
+            </div>
         </teleport>
 
         <div class="row layout-top-spacing">
             <div class="col-xl-12 col-lg-12 col-sm-12 layout-spacing">
                 <div class="panel br-6 p-0">
                     <div class="custom-table">
-                        <v-client-table :data="store.state.VisitsModule.visits" :columns="columns" :options="table_option">
+                        <v-client-table :data="store.state.VisitsModule.tonar_visits" :columns="columns"
+                            :options="table_option">
                             <template #checked_in="props">
                                 <div :data_sort="props.row.checked_in">{{ props.row.checked_in.toLocaleString('ru') }}</div>
                             </template>
@@ -211,9 +268,7 @@ onMounted(
             </div>
         </div>
     </div>
-
-    <addVisit></addVisit>
-    <visitDetails :item="item" :isOpen="isOpen" @closed="closeDetails" @deleted="deleteItem" @get_out="getOut"
-        @print_invoice="printInvoice" @print_akt="printAkt" @print_pack="printTonarPack">
+    <visitDetails :item="item" :isOpen="isOpen" @closed="closeDetails" @deleted="deleteItem" @print_invoice="printInvoice"
+        @print_akt="printAkt" @print_pack="printTonarPack">
     </visitDetails>
 </template>
