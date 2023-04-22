@@ -7227,6 +7227,15 @@
     "trailer_number": null
   },
   {
+    "number": 819,
+    "valid_from": "25.04.2022 16:29:34",
+    "valid_to": "25.07.2023 23:59:59",
+    "partner": "ЗАО «ЭКОС»",
+    "truck_number": "С204ЕЕ55",
+    "is_tonar": false,
+    "trailer_number": null
+  },
+  {
     "number": 820,
     "valid_from": "29.04.2022 16:29:16",
     "valid_to": "29.04.2023 23:59:59",
