@@ -157,6 +157,14 @@ const printAkt = (visit_id) => {
 
 const interval = ref([]);
 const bind_data = async () => {
+    if (store.state.VisitsModule.tonar_visits.length != 0) {
+        interval.value = [
+            Math.min(...store.state.VisitsModule.tonar_visits.map(o => o.checked_in)),
+            Math.max(...store.state.VisitsModule.tonar_visits.map(o => o.checked_in))
+        ]
+        return
+    };
+
     var now = new Date();
     now.setHours(0, 0, 0, 0);
     var before = (new Date(now.setDate(0))).setHours(23, 59, 59, 0);
@@ -207,8 +215,8 @@ onMounted(
 );
 const change = (x) => {
     if (x.length == 2) {
-        var after = x[0]
-        var before = x[1]
+        var after = x[0].setHours(0, 0, 0, 0)
+        var before = x[1].setHours(23, 59, 59, 0)
         store.dispatch('VisitsModule/update_tonars', { after, before });
     }
 }
@@ -232,7 +240,7 @@ const change = (x) => {
                 </li>
             </ul>
             <div class="navbar-nav d-flex justify-content-end align-items-center">
-                <h5 class="mb-0 me-3">Данные&nbspза:</h5>
+                <h6 class="mb-0 me-2">Данные&nbspза:</h6>
                 <flat-pickr v-model="interval" :config="{ dateFormat: 'd.m.Y', mode: 'range' }"
                     class="form-control flatpickr active me-4 width-100 text-center" style="width: 18em; height: 2.5em;"
                     @on-change="change"></flat-pickr>
