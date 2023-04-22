@@ -8,6 +8,8 @@ class UserRole(Enum):
     CONTROLLER = 'Контролер'
     SUPERVISOR = 'Супервайзер'
     LOGISTIC = 'Логист'
+    TONARS_ANALYSIS = 'Аналитик тонаров'
+    TONARS_EDITOR = 'Редактор тонаров'
 
 
 class PartnerType(Enum):

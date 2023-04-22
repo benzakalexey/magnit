@@ -1,17 +1,13 @@
+import logging
 from datetime import datetime, timedelta
 from random import randint
-
 from typing import List, Dict, Any
 
 from classic.app import validate_with_dto
 from classic.components import component
-
 from pydantic import validate_arguments, conint
 
-from magnit.application import interfaces, entities, errors, dto, \
-    constants
-from magnit.application.constants import UserRole, TruckType
-
+from magnit.application import interfaces, entities, errors, dto
 from magnit.application.services.join_point import join_point
 
 
@@ -29,6 +25,9 @@ class Visit:
     truck_repo: interfaces.TruckRepo
     users_repo: interfaces.UserRepo
     visits_repo: interfaces.VisitRepo
+
+    def __attrs_post_init__(self):
+        self.logger = logging.getLogger(self.__class__.__name__)
 
     @join_point
     @validate_arguments
@@ -140,6 +139,27 @@ class Visit:
             )
 
         return self.visits_repo.get_last_50(polygon.id)
+
+    @join_point
+    @validate_arguments
+    def get_tonars(
+        self,
+        user_id: int,
+        after: datetime,
+        before: datetime,
+    ) -> List[entities.Visit]:
+        self.logger.info('\nafter: %s\nbefore: %s', after, before)
+        staff = self.staff_repo.get_by_user_id(user_id)
+        if staff is None:
+            raise errors.UserIDNotExistError(user_id=user_id)
+
+        polygon = staff.polygon
+        if polygon is None:
+            raise errors.PolygonIDNotExistError(
+                polygon_id=staff.polygon.id
+            )
+
+        return self.visits_repo.get_tonars(after, before)
 
     @join_point
     @validate_arguments

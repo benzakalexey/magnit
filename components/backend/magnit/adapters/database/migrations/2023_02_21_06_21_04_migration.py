@@ -845,75 +845,68 @@ def upgrade():
     def get_dir(d: str) -> str:
         return d if d not in directions_map else directions_map.get(d)
 
+    format = "%Y-%m-%dT%H:%M:%S.%fZ"
     for m in visits_chunk_by_chunk():
         q = visits.insert().values(
             [
                 {
-                    'checked_in': tz_to_utc(i.get('checked_in')),
-                    'checked_out': tz_to_utc(i.get('checked_out')),
+                    'checked_in': datetime.strptime(i.get('checked_in'),
+                                                    format),
+                    'checked_out': datetime.strptime(i.get('checked_in'),
+                                                     format),
                     'contract_id': (
                         select(contracts.c.id)
                         .join(polygons,
                               polygons.c.id == contracts.c.destination_id)
                         .where(
                             and_(
-                                polygons.c.name == get_dir(i['direction']),
+                                polygons.c.name == i['destination'],
                                 contracts.c.departure_point_id == select(
                                     polygons.c.id
                                 ).where(polygons.c.name == i['polygon'])
                                 .scalar_subquery(),
-                                contracts.c.valid_from <= tz_to_utc(
-                                    i.get('checked_in')
-                                ),
-                                contracts.c.valid_to >= tz_to_utc(
-                                    i.get('checked_out')
-                                )
+                                contracts.c.valid_from <= datetime.strptime(
+                                    i.get('checked_in'), format),
+                                contracts.c.valid_to >= datetime.strptime(
+                                    i.get('checked_in'), format),
                             )
                         )
-                    ) if i['is_tonar'] else None,
+                    ) if i['destination'] else None,
                     'invoice_num': i.get('invoice_num'),
                     'driver_id': (
                         select(drivers.c.id)
                         .where(
                             and_(
-                                drivers.c.name == i.get('driver').split()[1],
-                                drivers.c.surname == i.get('driver').split()[0],
-                                drivers.c.patronymic == i.get(
-                                    'driver'
-                                ).split()[2],
+                                drivers.c.name == i.get('name'),
+                                drivers.c.surname == i.get('surname'),
+                                drivers.c.patronymic == i.get('patronymic'),
                             )
                         )
-                    ) if i.get('driver') else None,
-                    'is_deleted': False,
+                    ) if i.get('destination') else None,
+                    'is_deleted': i.get('is_deleted'),
+                    'delete_reason': i.get('delete_reason'),
                     'operator_in_id': (
                         select(users.c.id)
-                        .where(users.c.phone == 9136001600)
+                        .where(users.c.phone == i['operator_in'])
                     ),
                     'operator_out_id': (
                         select(users.c.id)
-                        .where(users.c.phone == 9136000600)
+                        .where(users.c.phone == i['operator_out'])
                     ),
                     'permission_id': (
                         select(permissions.c.id)
                         .join(permits, permissions.c.permit_id == permits.c.id)
                         .join(trucks, permits.c.truck_id == trucks.c.id)
-                        .where(
-                            and_(
-                                trucks.c.reg_number == permits_by_num.get(
-                                    i['permit_number']
-                                ),
-                                # permissions.c.is_active == True  # noqa
-                            )
-                        )
-                    )
-                    .order_by(desc(text('app.permissions.expired_at')))
-                    .limit(1),
+                        .where(trucks.c.reg_number == i['reg_num'])
+                        .order_by(desc(text('app.permissions.expired_at')))
+                        .limit(1)
+                    ),
                     'polygon_id': (
                         select(polygons.c.id)
                         .where(polygons.c.name == i['polygon'])
                     ),
-                    'weight_in': i['tara'] if i['is_tonar'] else i['brutto'],
-                    'weight_out': i['brutto'] if i['is_tonar'] else i['tara'],
+                    'weight_in': i['weight_in'],
+                    'weight_out': i['weight_out'],
                 } for i in m
             ]
         )

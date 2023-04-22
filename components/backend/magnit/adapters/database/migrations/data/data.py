@@ -26,7 +26,7 @@ drivers_data = pathlib.PurePath(
     parent_dir, 'drivers_data.json'
 )
 visits_data = pathlib.PurePath(
-    parent_dir, 'visits_data.json'
+    parent_dir, 'visits.json'
 )
 
 # json
