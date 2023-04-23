@@ -52,7 +52,7 @@ const changeLanguage = (item) => {
                         </svg>
                     </a>
                 </div>
-                <ul class="navbar-item flex-row ms-md-0 ms-auto">
+                <!-- <ul class="navbar-item flex-row ms-md-0 ms-auto">
                     <li class="nav-item align-self-center search-animated"
                         :class="{ 'show-search': $store.state.is_show_search }">
                         <svg @click="$store.commit('toggleSearch', !$store.state.is_show_search)"
@@ -70,7 +70,7 @@ const changeLanguage = (item) => {
                             </div>
                         </form>
                     </li>
-                </ul>
+                </ul> -->
 
                 <div class="navbar-item flex-row ms-md-auto">
                     <div class="dark-mode d-flex align-items-center">

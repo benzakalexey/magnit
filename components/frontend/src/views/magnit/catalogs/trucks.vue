@@ -1,11 +1,12 @@
 <script setup>
 import '@/assets/sass/visits/visits.scss';
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, nextTick } from 'vue';
 import { useMeta } from '@/composables/use-meta';
 import { useStore } from 'vuex';
 import { useVuelidate } from '@vuelidate/core'
 import { helpers, required, numeric, minValue, minLength, maxLength } from '@vuelidate/validators';
 import { Modal } from 'bootstrap';
+import { EventBus } from 'v-tables-3';
 
 //flatpickr
 import flatpickr from 'flatpickr';
@@ -81,14 +82,24 @@ const table_option = ref({
         filter: '',
         filterPlaceholder: 'Поиск...',
         limit: 'Показать:',
+        noResults: 'Нет данных',
     },
     resizableColumns: false,
+    customFilters: [
+        {
+            name: 'expiredAt',
+            callback: (row, days) => 0 < row.days_before_exp && row.days_before_exp < days,
+        },
+        {
+            name: 'all',
+            callback: (row, query) => true,
+        },
+    ],
 });
+
 const closeDetails = () => {
     isOpen.value = false;
 };
-
-
 
 // new Truck form
 const model = ref(null);
@@ -300,6 +311,22 @@ onMounted(
         initDetailsModal();
     }
 );
+const table = ref(null);
+const showTable = ref(true);
+let clickedExpSoon = ref(false);
+const expSoonFilter = () => {
+    clickedExpSoon.value = !clickedExpSoon.value;
+
+    if (clickedExpSoon.value) {
+        EventBus.emit('vue-tables.filter::expiredAt', 7)
+    }
+    else {
+        showTable.value = !showTable.value;
+
+        nextTick(() => showTable.value = !showTable.value)
+    }
+};
+
 </script>
 
 <template>
@@ -316,7 +343,26 @@ onMounted(
                     </div>
                 </li>
             </ul>
-            <div class="navbar-nav flex-row ms-auto">
+            <div class="navbar-nav justify-content-end align-items-center">
+                <button v-show="store.state.TrucksModule.trucks.reduce((acc, e) => acc +
+                    (e.days_before_exp < 7 && e.days_before_exp > 0 ? 1 : 0), 0)" type="button"
+                    class="btn me-4" :class="clickedExpSoon ? 'btn-secondary' : 'btn-outline-secondary'" @click="expSoonFilter()">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="feather feather-alert-triangle me-2" data-v-5522efca="">
+                            <path
+                                d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                            </path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                    </span>
+                    Скоро истекает
+                    <span class="badge badge-danger counter" style="top: -8px; right: -8px;">
+                        {{ store.state.TrucksModule.trucks.reduce((acc, e) => acc +
+                            (e.days_before_exp < 7 && e.days_before_exp > 0 ? 1 : 0), 0) }}</span>
+                </button>
                 <button type="button" class="btn btn-primary me-4" @click="isOpen = !isOpen">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -328,12 +374,13 @@ onMounted(
                 </button>
             </div>
         </teleport>
-
+        
         <div class="row layout-top-spacing">
             <div class="col-xl-12 col-lg-12 col-sm-12 layout-spacing">
                 <div class="panel br-6 p-0">
                     <div class="custom-table">
-                        <v-client-table :data="store.state.TrucksModule.trucks" :columns="columns" :options="table_option">
+                        <v-client-table v-if="showTable" :data="store.state.TrucksModule.trucks" :columns="columns" :options="table_option"
+                            ref="table">
                             <template #started_at="props">
                                 <div :data_sort="props.row.started_at">
                                     {{ props.row.started_at ? props.row.started_at.toLocaleDateString('ru') : '-' }}

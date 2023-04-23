@@ -32,6 +32,7 @@ const links = {
     polygon: ['Супервайзер', 'Контролер'],
     trucks: ['Супервайзер', 'Логист'],
     tonars: ['Супервайзер', 'Аналитик тонаров'],
+    garbage_trucks: ['Супервайзер', 'Аналитик мусоровозов'],
 };
 
 </script>
@@ -78,9 +79,9 @@ const links = {
                 <li v-show="links.tonars.includes(store.state.AuthModule.credentials.user_role)" class="menu">
                     <router-link to="/tonars" class="dropdown-toggle" @click="toggleMobileMenu">
                         <div class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="feather feather-layers">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="feather feather-layers">
                                 <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
                                 <polyline points="2 17 12 22 22 17"></polyline>
                                 <polyline points="2 12 12 17 22 12"></polyline>
@@ -89,9 +90,25 @@ const links = {
                         </div>
                     </router-link>
                 </li>
-                
-            </perfect-scrollbar>
-        </nav>
-    </div>
-    <!--  END SIDEBAR  -->
-</template>
+
+                <li v-show="links.garbage_trucks.includes(store.state.AuthModule.credentials.user_role)" class="menu">
+                    <router-link to="/garbage_trucks" class="dropdown-toggle" @click="toggleMobileMenu">
+                        <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="feather feather-box" data-v-5522efca="">
+                                <path
+                                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                                </path>
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                            </svg>
+                            <span>{{ $t('garbage_trucks') }}</span>
+                        </div>
+                    </router-link>
+            </li>
+
+        </perfect-scrollbar>
+    </nav>
+</div>
+<!--  END SIDEBAR  --></template>

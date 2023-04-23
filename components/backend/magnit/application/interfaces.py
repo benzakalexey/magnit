@@ -304,3 +304,20 @@ class VisitRepo(ABC):
             список Визитов
 
         """
+
+    @abstractmethod
+    def get_garbage_trucks(
+        self,
+        after: datetime,
+        before: datetime,
+    ) -> List[entities.Visit]:
+        """Возвращает визиты тонаров в диапазоне дат.
+
+        Args:
+            after: после
+            before: до
+
+        Returns:
+            список Визитов
+
+        """

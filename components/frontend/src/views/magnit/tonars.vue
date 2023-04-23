@@ -244,7 +244,7 @@ const change = (x) => {
                 <flat-pickr v-model="interval" :config="{ dateFormat: 'd.m.Y', mode: 'range' }"
                     class="form-control flatpickr active me-4 width-100 text-center" style="width: 18em; height: 2.5em;"
                     @on-change="change"></flat-pickr>
-                <vue3-json-excel class="btn btn-primary me-4" name="Тонары.xls" :fields="excel_columns()"
+                <vue3-json-excel class="btn btn-primary me-4" name="Визиты тонаров.xls" :fields="excel_columns()"
                     :json-data="excel_items()">Выгрузить&nbspв&nbspExcel</vue3-json-excel>
             </div>
         </teleport>

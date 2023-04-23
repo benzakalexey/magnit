@@ -40,3 +40,19 @@ class VisitRepo(BaseRepo, interfaces.VisitRepo):
             .order_by(asc(self.dto.checked_in))
         )
         return self.session.execute(query).scalars().all()
+
+    def get_garbage_trucks(
+        self,
+        after: datetime,
+        before: datetime,
+    ) -> List[entities.Visit]:
+        query = (
+            select(self.dto)
+            .join(entities.Permission)
+            .where(self.dto.is_deleted == False)
+            .where(entities.Permission.is_tonar == False)
+            .where(self.dto.checked_in >= after)
+            .where(self.dto.checked_in <= before)
+            .order_by(asc(self.dto.checked_in))
+        )
+        return self.session.execute(query).scalars().all()
