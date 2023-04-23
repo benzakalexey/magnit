@@ -9,6 +9,7 @@ class UserRole(Enum):
     SUPERVISOR = 'Супервайзер'
     LOGISTIC = 'Логист'
     TONARS_ANALYSIS = 'Аналитик тонаров'
+    GARBAGE_TRUCK_ANALYSIS = 'Аналитик мусоровозов'
     TONARS_EDITOR = 'Редактор тонаров'
 
 

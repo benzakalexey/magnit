@@ -18,6 +18,15 @@ export const VisitsAPI = {
         const data = { after, before };
         return DefaultAPIInstance.get(url, { params: data });
     },
+    /**
+     * 
+     * @returns {Promise<AxiosResponse<any>>}
+     */
+    get_garbage_trucks(after, before) {
+        const url = 'visits/get_garbage_trucks';
+        const data = { after, before };
+        return DefaultAPIInstance.get(url, { params: data });
+    },    
     /**Пометить визит как удаленный
      *      
      * @param {number} id 

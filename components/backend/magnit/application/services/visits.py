@@ -163,6 +163,27 @@ class Visit:
 
     @join_point
     @validate_arguments
+    def get_garbage_trucks(
+        self,
+        user_id: int,
+        after: datetime,
+        before: datetime,
+    ) -> List[entities.Visit]:
+        self.logger.info('\nafter: %s\nbefore: %s', after, before)
+        staff = self.staff_repo.get_by_user_id(user_id)
+        if staff is None:
+            raise errors.UserIDNotExistError(user_id=user_id)
+
+        polygon = staff.polygon
+        if polygon is None:
+            raise errors.PolygonIDNotExistError(
+                polygon_id=staff.polygon.id
+            )
+
+        return self.visits_repo.get_garbage_trucks(after, before)
+
+    @join_point
+    @validate_arguments
     def get_invoice(self, visit_id: int) -> Dict[str, Any]:
         visit = self.visits_repo.get_by_id(visit_id)
 
