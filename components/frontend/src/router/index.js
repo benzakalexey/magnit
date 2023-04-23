@@ -53,31 +53,37 @@ const routes = [
     {
         path: '/trucks',
         name: 'trucks',
-        component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/catalogs/trucks.vue'),
+        component: () => import(/* webpackChunkName: "trucks" */ '../views/magnit/catalogs/trucks.vue'),
         beforeEnter: authGuard
     },
     {
         path: '/permits',
         name: 'permits',
-        component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/catalogs/permits.vue'),
+        component: () => import(/* webpackChunkName: "permits" */ '../views/magnit/catalogs/permits.vue'),
         // beforeEnter: authGuard
     },
     {
         path: '/users',
         name: 'users',
-        component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/catalogs/users.vue'),
+        component: () => import(/* webpackChunkName: "users" */ '../views/magnit/catalogs/users.vue'),
         beforeEnter: authGuard
     },
     {
         path: '/polygons',
         name: 'polygons',
-        component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/catalogs/polygons.vue'),
+        component: () => import(/* webpackChunkName: "polygons" */ '../views/magnit/catalogs/polygons.vue'),
         beforeEnter: authGuard
     },
     {
         path: '/tonars',
         name: 'tonars',
-        component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/tonars.vue'),
+        component: () => import(/* webpackChunkName: "tonars" */ '../views/magnit/tonars.vue'),
+        beforeEnter: authGuard
+    },
+    {
+        path: '/garbage_trucks',
+        name: 'garbage_trucks',
+        component: () => import(/* webpackChunkName: "garbage_trucks" */ '../views/magnit/garbage_trucks.vue'),
         beforeEnter: authGuard
     },
     {

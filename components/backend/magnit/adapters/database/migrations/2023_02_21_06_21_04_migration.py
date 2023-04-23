@@ -629,6 +629,24 @@ def upgrade():
                     "patronymic": "Николаевна",
                     "is_staff": True,
                     "is_active": True
+                },
+                {
+                    "phone": 9048272784,
+                    "password_hash": default_pass,
+                    "surname": "Давыдова",
+                    "name": "Анастасия",
+                    "patronymic": "Владимировна",
+                    "is_staff": True,
+                    "is_active": True
+                },
+                {
+                    "phone": 9831186248,
+                    "password_hash": default_pass,
+                    "surname": "Коряков",
+                    "name": "Денис",
+                    "patronymic": None,
+                    "is_staff": True,
+                    "is_active": True
                 }
             ]
         )
@@ -805,6 +823,25 @@ def upgrade():
                     "added_by_id": select(users.c.id).where(
                         users.c.phone == 9136001600),
                     "added_at": "2023-02-23 14:32:30.000000"
+                },
+                {
+                    "user_id": select(users.c.id).where(
+                        users.c.phone == 9048272784),
+                    "role": "CONTROLLER",
+                    "polygon_id": select(polygons.c.id).where(
+                        polygons.c.name == 'Калачинский'),
+                    "added_by_id": select(users.c.id).where(
+                        users.c.phone == 9136001600),
+                    "added_at": "2023-02-23 14:32:30.000000"
+                },
+                {
+                    "user_id": select(users.c.id).where(
+                        users.c.phone == 9831186248),
+                    "role": "LOGISTIC",
+                    "polygon_id": None,
+                    "added_by_id": select(users.c.id).where(
+                        users.c.phone == 9136001600),
+                    "added_at": "2023-02-23 14:32:30.000000"
                 }
             ]
         )
@@ -845,15 +882,25 @@ def upgrade():
     def get_dir(d: str) -> str:
         return d if d not in directions_map else directions_map.get(d)
 
-    format = "%Y-%m-%dT%H:%M:%S.%fZ"
+    def get_date(s: str):
+        if s is None:
+            return s
+
+        format = "%Y-%m-%dT%H:%M:%S.%fZ"
+        try:
+            d = datetime.strptime(s, format)
+        except ValueError:
+            d = datetime.fromisoformat(s)
+
+        return d
+
+
     for m in visits_chunk_by_chunk():
         q = visits.insert().values(
             [
                 {
-                    'checked_in': datetime.strptime(i.get('checked_in'),
-                                                    format),
-                    'checked_out': datetime.strptime(i.get('checked_in'),
-                                                     format),
+                    'checked_in': get_date(i.get('checked_in')),
+                    'checked_out': get_date(i.get('checked_out')),
                     'contract_id': (
                         select(contracts.c.id)
                         .join(polygons,
@@ -865,10 +912,8 @@ def upgrade():
                                     polygons.c.id
                                 ).where(polygons.c.name == i['polygon'])
                                 .scalar_subquery(),
-                                contracts.c.valid_from <= datetime.strptime(
-                                    i.get('checked_in'), format),
-                                contracts.c.valid_to >= datetime.strptime(
-                                    i.get('checked_in'), format),
+                                contracts.c.valid_from <= get_date(i.get('checked_in')),
+                                contracts.c.valid_to >= get_date(i.get('checked_in')),
                             )
                         )
                     ) if i['destination'] else None,

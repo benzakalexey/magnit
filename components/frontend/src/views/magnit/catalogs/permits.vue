@@ -77,7 +77,17 @@ const table_option = ref({
         limit: 'Показать:',
     },
     resizableColumns: false,
+    customFilters: [{
+        name: 'alphabet',
+        callback: function (row, query) {
+            console.log(row)
+            console.log(query)
+            return row.name[0] == query;
+        }
+    }]
 });
+
+EventBus.emit('vue-tables.filter::alphabet', query);
 const openDetails = (i) => {
     item.value = i;
     isOpen.value = true;

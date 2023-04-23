@@ -6,6 +6,7 @@ export const VisitsModule = {
         return {
             visits: [],
             tonar_visits: [],
+            garbage_truck_visits: [],
             polygon: null,
         }
     },
@@ -14,6 +15,7 @@ export const VisitsModule = {
         visits: (state) => state.visits,
         polygon: (state) => state.polygon,
         tonar_visits: (state) => state.tonar_visits,
+        garbage_truck_visits: (state) => state.garbage_truck_visits,
     },
 
     mutations: {
@@ -96,6 +98,45 @@ export const VisitsModule = {
             };
             state.tonar_visits = visits
         },
+        setGarbageTruckVisits(state, data) {
+            let visits = []
+            const pretty_num = (n) => {
+                let r = n.match(/[а-яА-Я]+|[0-9]+/g);
+                return r.join(' ');
+            };
+            for (var v of data) {
+
+                visits.push(
+                    {
+                        id: v.id,
+                        permit: v.permit,
+                        is_deleted: v.is_deleted,
+                        delete_reason: v.delete_reason,
+                        contragent_id: v.contragent_id,
+                        polygon_id: v.polygon_id,
+                        polygon: v.polygon,
+                        tonar: v.tonar,
+                        carrier: v.carrier,
+                        invoice_num: v.invoice_num,
+                        truck_model: v.truck_model,
+                        truck_type: v.truck_type,
+                        tara: v.tara,
+                        netto: v.netto,
+                        brutto: v.brutto,
+                        max_weight: v.max_weight,
+                        reg_number: pretty_num(v.reg_number),
+                        weight_in: v.weight_in,
+                        checked_in: new Date(v.checked_in),
+                        weight_out: v.weight_out,
+                        checked_out: v.checked_out ? new Date(v.checked_out) : v.checked_out,
+                        driver_name: v.driver_name,
+                        destination: v.destination,
+                        status: v.status
+                    }
+                )
+            };
+            state.garbage_truck_visits = visits
+        },
 
         deleteItem(state, id, reason) {
             let visit = state.visits.find(i => i.id == id);
@@ -118,6 +159,16 @@ export const VisitsModule = {
             try {
                 const res = await VisitsAPI.get_tonars(after, before);
                 commit('setTonarVisits', res.data);
+            } catch (err) {
+                throw err;
+            }
+        },
+
+        async update_garbage_trucks({ commit }, { after, before }) {
+            
+            try {
+                const res = await VisitsAPI.get_garbage_trucks(after, before);
+                commit('setGarbageTruckVisits', res.data);
             } catch (err) {
                 throw err;
             }
