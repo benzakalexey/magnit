@@ -153,12 +153,6 @@ class Visit:
         if staff is None:
             raise errors.UserIDNotExistError(user_id=user_id)
 
-        polygon = staff.polygon
-        if polygon is None:
-            raise errors.PolygonIDNotExistError(
-                polygon_id=staff.polygon.id
-            )
-
         return self.visits_repo.get_tonars(after, before)
 
     @join_point
@@ -173,12 +167,6 @@ class Visit:
         staff = self.staff_repo.get_by_user_id(user_id)
         if staff is None:
             raise errors.UserIDNotExistError(user_id=user_id)
-
-        polygon = staff.polygon
-        if polygon is None:
-            raise errors.PolygonIDNotExistError(
-                polygon_id=staff.polygon.id
-            )
 
         return self.visits_repo.get_garbage_trucks(after, before)
 
