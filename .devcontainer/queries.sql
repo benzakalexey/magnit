@@ -25,8 +25,8 @@ from app.visits v
          left outer join app.permits on permissions.permit_id = permits.id
          left outer join app.trucks on permits.truck_id = trucks.id
 
-where v.checked_in > '2023-04-14 00:00:00.000'
-order by v.checked_in desc;
+where v.checked_in > '2023-04-10 00:00:00.000'
+order by v.checked_in;
 
 DROP TYPE "trucktype";
 DROP TYPE "userrole";
@@ -55,3 +55,5 @@ SET role = cast('CONTROLLER' as userrole)
 WHERE id = 19;
 
 alter type userrole add value 'LOGISTIC';
+
+INSERT INTO app.staff (id, user_id, role, polygon_id, added_by_id, added_at) VALUES (DEFAULT, 21, 'GARBAGE_TRUCK_ANALYSIS', null, 1, '2023-02-23 14:32:30.000000')

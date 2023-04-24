@@ -30,6 +30,8 @@ const roleRouter = () => {
         'Супервайзер': import('../views/magnit/polygon.vue'),
         'Логист': import('../views/magnit/catalogs/trucks.vue'),
         'Контролер': import('../views/magnit/polygon.vue'),
+        'Аналитик тонаров': import('../views/magnit/tonars.vue'),
+        'Аналитик мусоровозов': import('../views/magnit/garbage_trucks.vue'),
     }
 
     return start_page_match[store.state.AuthModule.credentials.user_role]
