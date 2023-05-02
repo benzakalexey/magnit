@@ -639,8 +639,9 @@ const expSoonFilter = () => {
                     <div class="modal-footer">
                         <button type="button" class="btn" data-dismiss="modal" data-bs-dismiss="modal"><i
                                 class="flaticon-cancel-12"></i>Отмена</button>
-                        <button type="button" class="btn btn-primary" @click.prevent="updatePermit">Сохранить данные
-                            пропуска</button>
+                        <button type="button" class="btn btn-primary" @click.prevent="updatePermit">
+                            Сохранить
+                        </button>
                     </div>
                 </div>
             </div>

@@ -1,8 +1,12 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import '@/assets/sass/widgets/widgets.scss';
+import { onMounted, ref, computed } from 'vue';
 import { useMeta } from '@/composables/use-meta';
 import { useStore } from 'vuex';
-import visitDetails from '@/components/magnit/forms/visitDetails';
+import { Modal } from 'bootstrap';
+import { PolygonsAPI } from '@/api/polygonsAPI'
+import { DriversAPI } from '@/api/driversAPI'
+import ApexChart from 'vue3-apexcharts';
 
 //flatpickr
 import flatpickr from 'flatpickr';
@@ -21,7 +25,7 @@ const columns = ref([
     'permit',
     'carrier',
     'reg_number',
-    'truck_model',
+    // 'truck_model',
     'polygon',
     'checked_in',
     'brutto',
@@ -35,7 +39,7 @@ const columns = ref([
 if (store.state.AuthModule.credentials.user_role !== 'Аналитик тонаров') {
     columns.value.push('actions')
 }
-
+const table = ref(null)
 const isOpen = ref(null);
 const item = ref(
     {
@@ -69,7 +73,7 @@ const table_option = ref({
         tonar: '',
         invoice_num: 'Номер ТН',
         permit: 'Пропуск',
-        reg_number: 'Номер',
+        reg_number: 'Рег. номер',
         carrier: 'Контрагент',
         polygon: 'Полигон',
         truck_model: 'Марка ТС',
@@ -93,42 +97,27 @@ const table_option = ref({
         up: 'sort-icon-asc',
         down: 'sort-icon-desc',
     },
+    filterable: [
+        'permit',
+        'carrier',
+        'reg_number',
+        'polygon',
+        'invoice_num',
+        'destination',
+        'driver_name',
+    ],
+    filterByColumn: true,
     pagination: { nav: 'scroll', chunk: 5 },
     texts: {
         count: 'С {from} по {to} из {count}',
         filter: '',
         filterPlaceholder: 'Поиск...',
         limit: 'Показать:',
+        noResults: "Нет данных",
+        filterBy: "Фильтр по {column}",
     },
     resizableColumns: false,
 });
-const statuses = {
-    0: `<span class="badge inv-status badge-warning">На полигоне</span>`,
-    1: `<span class="badge inv-status badge-success">Выехал</span>`,
-    2: `<span class="badge inv-status badge-dark">Удален</span>`,
-};
-const tonar = {
-    true: `<span class="badge inv-status outline-badge-warning">Tонар</span>`,
-    false: '',
-};
-const openDetails = (i) => {
-    item.value = i;
-    isOpen.value = true;
-};
-const closeDetails = () => {
-    isOpen.value = false;
-};
-const deleteItem = (id, reason) => {
-    store.dispatch('VisitsModule/delete', {
-        visit_id: id,
-        reason: reason,
-    }).then((res) => {
-        if (res.data.success) {
-            new window.Swal('Удалено!', 'Данные помечены как удаленные.', 'success');
-            store.dispatch('VisitsModule/update');
-        }
-    }).catch((error) => new window.Swal('Ошибка!', error.message, 'error'))
-};
 const printTonarPack = (visit_id) => {
     let winPrint = window.open(
         '/doc/tonar_pack?print=true&visit_id=' + visit_id,
@@ -153,10 +142,27 @@ const printAkt = (visit_id) => {
     winPrint.focus();
     winPrint.onafterprint = winPrint.close;
 };
-
+let after = null;
+let before = null;
+const updateVisit = () => {
+    console.log(interval.value.length)
+    store.dispatch('VisitsModule/update_tonar_visit', {
+        weight_in: visitDetails.value.weight_in,
+        weight_out: visitDetails.value.weight_out,
+        visit_id: visitDetails.value.id,
+        driver_id: visitDetails.value.driver_id,
+        contract_id: visitDetails.value.contract_id,
+    }).then((res) => {
+        if (res.data.success) {
+            new window.Swal('Успешно!', 'Данные сохранены.', 'success');
+            detailModal.hide();
+            store.dispatch('VisitsModule/update_tonars', { after, before });
+        }
+    }).catch((error) => new window.Swal('Ошибка!', error.message, 'error'))
+};
 
 const interval = ref([]);
-const bind_data = async () => {
+const bind_data = () => {
     if (store.state.VisitsModule.tonar_visits.length != 0) {
         interval.value = [
             Math.min(...store.state.VisitsModule.tonar_visits.map(o => o.checked_in)),
@@ -167,10 +173,10 @@ const bind_data = async () => {
 
     var now = new Date();
     now.setHours(0, 0, 0, 0);
-    var before = (new Date(now.setDate(0))).setHours(23, 59, 59, 0);
-    var after = now.setDate(1);
+    before = now.valueOf(); //(new Date(now.setDate(0))).setHours(23, 59, 59, 0);
+    after = now.setDate(now.getDate() - 3);
     interval.value = [after, before]
-    store.dispatch('VisitsModule/update_tonars', { after, before });
+    // store.dispatch('VisitsModule/update_tonars', { after, before });
 };
 
 const excel_columns = () => {
@@ -190,8 +196,9 @@ const excel_columns = () => {
     };
 };
 const excel_items = () => {
+    const rows = table.value ? table.value.filteredData : store.state.VisitsModule.tonar_visits
     let items = []
-    for (var row of store.state.VisitsModule.tonar_visits) {
+    for (var row of rows) {
         items.push({
             permit: row.permit,
             carrier: row.carrier,
@@ -210,17 +217,58 @@ const excel_items = () => {
     return items;
 };
 
+
+// Details Modal
+
+let detailModal = null;
+
+const visitDetails = ref(
+    {
+        id: '',
+        truck_model: '',
+        reg_number: '',
+        truck_type: '',
+        tara: '',
+        max_weight: '',
+        permit: '',
+        permission_owner: '',
+        started_at: '',
+        expired_at: '',
+        days_before_exp: '',
+        body_volume: '',
+    }
+);
+const visitDetailsModal = ref(null)
+const drivers = ref([]);
+const directions = ref([]);
+const initDetailsModal = () => {
+    detailModal = new Modal(visitDetailsModal.value)
+    visitDetailsModal.value.addEventListener("hidden.bs.modal", onHidden)
+};
+const openDetails = (i) => {
+    DriversAPI.get(i.contragent_id).then((ref) => (drivers.value = ref.data));
+    PolygonsAPI.get_directions(i.polygon_id).then((ref) => (directions.value = ref.data));
+    visitDetails.value = i;
+    console.log(i)
+    detailModal.show();
+};
+const onHidden = () => {
+    drivers.value = [];
+    directions.value = [];
+};
 onMounted(
-    bind_data(),
+    () => {
+        bind_data();
+        initDetailsModal();
+    }
 );
 const change = (x) => {
     if (x.length == 2) {
-        var after = x[0].setHours(0, 0, 0, 0)
-        var before = x[1].setHours(23, 59, 59, 0)
+        after = x[0].setHours(0, 0, 0, 0)
+        before = x[1].setHours(23, 59, 59, 0)
         store.dispatch('VisitsModule/update_tonars', { after, before });
     }
-}
-
+};
 </script>
 
 <template>
@@ -248,13 +296,102 @@ const change = (x) => {
                     :json-data="excel_items()">Выгрузить&nbspв&nbspExcel</vue3-json-excel>
             </div>
         </teleport>
-
         <div class="row layout-top-spacing">
+            <div v-show="store.state.VisitsModule.tonar_visits.length > 0"
+                class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing pb-4">
+                <div class="widget widget-statistics">
+                    <div class="widget-heading pb-0">
+                        <h5>Статистика</h5>
+                        <div class="task-action">
+                            <div class="mb-4 me-2 custom-dropdown btn-group">
+                                <a class="btn dropdown-toggle btn-icon-only" href="#" role="button" id="pendingTask"
+                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <svg xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 24px" width="24"
+                                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="feather feather-more-horizontal">
+                                        <circle cx="12" cy="12" r="1"></circle>
+                                        <circle cx="19" cy="12" r="1"></circle>
+                                        <circle cx="5" cy="12" r="1"></circle>
+                                    </svg>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="pendingTask">
+                                    <li>
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Изменить
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="widget-content pt-0">
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="w-detail">
+                                    <p class="w-title">Всего визитов (Кир. / Лен.)</p>
+                                    <p class="w-stats">{{ table ? table.filteredData.length : 0 }} (
+                                        {{ table ? table.filteredData.reduce(
+                                            (acc, visit) => acc + (visit.polygon == 'Кировский' ? 1 : 0), 0
+                                        ) : 0 }} /
+                                        {{ table ? table.filteredData.reduce(
+                                            (acc, visit) => acc + (visit.polygon == 'Ленинский' ? 1 : 0), 0
+                                        ) : 0 }}
+                                        )
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="w-detail">
+                                    <p class="w-title">Общее нетто (Кир. / Лен.), тонн</p>
+                                    <p class="w-stats">
+                                        {{ Math.round(table ? table.filteredData.reduce(
+                                            (acc, visit) => acc + visit.netto, 0) : 0) / 1000 }} (
+                                        {{ Math.round(table ? table.filteredData.reduce(
+                                            (acc, visit) => acc + (visit.polygon == 'Кировский' ? visit.netto : 0), 0
+                                        ) : 0) / 1000 }} /
+                                        {{ Math.round(table ? table.filteredData.reduce(
+                                            (acc, visit) => acc + (visit.polygon == 'Ленинский' ? visit.netto : 0), 0
+                                        ) : 0) / 1000 }}
+                                        )
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="w-detail">
+                                    <p class="w-title">Мин. нетто, тонн</p>
+                                    <p class="w-stats">
+                                        {{ Math.min(...(table ? table.filteredData.map(o => o.netto) : [])) / 1000 }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="w-detail">
+                                    <p class="w-title">Среднее нетто, тонн</p>
+                                    <p class="w-stats">
+                                        {{ Math.round(table ? table.filteredData.reduce(
+                                            (acc, visit) => acc + visit.netto / table.filteredData.length, 0) : 0) /
+                                            1000 }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="w-detail">
+                                    <p class="w-title">Макс. нетто, тонн</p>
+                                    <p class="w-stats">
+                                        {{ Math.max(...(table ? table.filteredData.map(o => o.netto) : [])) / 1000 }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="col-xl-12 col-lg-12 col-sm-12 layout-spacing">
                 <div class="panel br-6 p-0">
                     <div class="custom-table">
                         <v-client-table :data="store.state.VisitsModule.tonar_visits" :columns="columns"
-                            :options="table_option">
+                            :options="table_option" ref="table">
                             <template #checked_in="props">
                                 <div :data_sort="props.row.checked_in">{{ props.row.checked_in.toLocaleString('ru') }}</div>
                             </template>
@@ -276,7 +413,120 @@ const change = (x) => {
             </div>
         </div>
     </div>
-    <visitDetails :item="item" :isOpen="isOpen" @closed="closeDetails" @deleted="deleteItem" @print_invoice="printInvoice"
-        @print_akt="printAkt" @print_pack="printTonarPack">
-    </visitDetails>
+    <div class="modal fade" ref="visitDetailsModal" tabindex="-1" role="dialog" aria-labelledby="visitDetailsModalLable"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="visitDetailsModalLable">{{ visitDetails.invoice_num }}</h5>
+                    <button type="button" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close"
+                        class="btn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="col-form-label" for="permit">Пропуск</label>
+                            <input v-model="visitDetails.permit" type="text" readonly="true" class="form-control"
+                                id="permit" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="col-form-label" for="reg_num">Рег. номер</label>
+                            <input v-model="visitDetails.reg_number" type="text" readonly="true" class="form-control"
+                                id="reg_num" />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="col-form-label" for="polygon">Полигон</label>
+                            <input v-model="visitDetails.polygon" type="text" readonly="true" class="form-control"
+                                id="polygon" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="col-form-label" for="carrier">Компания-перевозчик</label>
+                            <input v-model="visitDetails.carrier" type="text" readonly="true" class="form-control"
+                                id="carrier" />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="col-form-label" for="checked_in">Дата въезда</label>
+                            <input :value="visitDetails.checked_in ? visitDetails.checked_in.toLocaleString('ru') : ''"
+                                type="text" readonly="true" class="form-control" id="checked_in" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="col-form-label" for="checked_out">Дата выезда</label>
+                            <input :value="visitDetails.checked_out ? visitDetails.checked_out.toLocaleString('ru') : ''"
+                                type="text" readonly="true" class="form-control" id="checked_out" />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="col-form-label" for="weight_in">Вес въезда</label>
+                            <input v-model="visitDetails.weight_in" type="number" class="form-control" id="weight_in" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="col-form-label" for="weight_out">Вес выезда</label>
+                            <input v-model="visitDetails.weight_out" type="number" class="form-control" id="weight_out" />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="col-form-label" for="direction">Направление</label>
+                            <select class="form-select form-select" v-model="visitDetails.contract_id">
+                                <option selected disabled>Выберите значение</option>
+                                <option v-for="t in directions" :value="t.id">{{ t.name }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="col-form-label" for="driver">Водитель</label>
+                            <select class="form-select form-select" v-model="visitDetails.driver_id">
+                                <option selected disabled>Выберите значение</option>
+                                <option v-for="t in drivers" :value="t.id">{{ t.name }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" data-dismiss="modal" data-bs-dismiss="modal"><i
+                            class="flaticon-cancel-12"></i>Отмена</button>
+                    <button type="button" class="btn btn-primary" @click.prevent="updateVisit">
+                        Сохранить
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" ref="weightCorrectorModal" tabindex="-1" role="dialog"
+        aria-labelledby="weightCorrectorModalLable" aria-hidden="true">
+        <div class="modal-dialog modal" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="weightCorrectorModalLable">Изменить вес</h5>
+                    <button type="button" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close"
+                        class="btn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <form>
+                                <div>
+                                    <p>Use input <code>type="range"</code>.</p>
+                                    <input type="range" class="form-range" required />
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" data-dismiss="modal" data-bs-dismiss="modal"><i
+                            class="flaticon-cancel-12"></i>Отмена</button>
+                    <button type="button" class="btn btn-primary" @click.prevent="updateVisit">
+                        Изменить
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>

@@ -91,6 +91,8 @@ export const VisitsModule = {
                         weight_out: v.weight_out,
                         checked_out: v.checked_out ? new Date(v.checked_out) : v.checked_out,
                         driver_name: v.driver_name,
+                        driver_id: v.driver_id,
+                        contract_id: v.contract_id,
                         destination: v.destination,
                         status: v.status
                     }
@@ -153,9 +155,8 @@ export const VisitsModule = {
                 throw err;
             }
         },
-
         async update_tonars({ commit }, { after, before }) {
-            
+
             try {
                 const res = await VisitsAPI.get_tonars(after, before);
                 commit('setTonarVisits', res.data);
@@ -163,9 +164,8 @@ export const VisitsModule = {
                 throw err;
             }
         },
-
         async update_garbage_trucks({ commit }, { after, before }) {
-            
+
             try {
                 const res = await VisitsAPI.get_garbage_trucks(after, before);
                 commit('setGarbageTruckVisits', res.data);
@@ -173,20 +173,30 @@ export const VisitsModule = {
                 throw err;
             }
         },
-
         async delete({ commit }, { visit_id, reason }) {
             return await VisitsAPI.delete(visit_id, reason);
             // commit('deleteItem', id, reason);
         },
-
         async finish({ commit }, { visit_id, weight_out, driver_id, contract_id }) {
             return await VisitsAPI.finish(visit_id, weight_out, driver_id, contract_id);
             // commit('deleteItem', id, reason);
         },
-
         async add({ commit }, { permission_id, weight }) {
             return await VisitsAPI.add(permission_id, weight);
             // commit('deleteItem', id, reason);
+        },
+        async update_tonar_visit({ commit }, { weight_in,
+            weight_out,
+            visit_id,
+            driver_id,
+            contract_id, }) {
+            return await VisitsAPI.update(
+                weight_in,
+                weight_out,
+                visit_id,
+                driver_id,
+                contract_id,
+            );
         }
     },
 }

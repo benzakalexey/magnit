@@ -90,6 +90,27 @@ class Visit:
         self._update_if_tonar(visit, visit_info)
         self.visits_repo.save()
 
+    @join_point
+    @validate_with_dto
+    def update(self, visit_info: dto.TonarUpdateInfo):
+        visit = self.visits_repo.get_by_id(visit_info.visit_id)
+        if visit is None:
+            raise errors.VisitIDNotExistError(visit_id=visit_info.visit_id)
+
+        driver = self.driver_repo.get_by_id(visit_info.driver_id)
+        if driver is None:
+            raise errors.UserIDNotExistError(user_id=visit_info.driver_id)
+
+        contract = self.contract_repo.get_by_id(visit_info.contract_id)
+        if contract is None:
+            raise errors.ContractIDNotFound(contract_id=visit_info.contract_id)
+
+        visit.contract = contract
+        visit.driver = driver
+        visit.weight_in = visit_info.weight_in
+        visit.weight_out = visit_info.weight_out
+        self.visits_repo.save()
+
     def _update_if_tonar(
         self,
         visit: entities.Visit,
