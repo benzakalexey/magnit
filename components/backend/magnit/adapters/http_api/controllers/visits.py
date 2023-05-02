@@ -105,8 +105,10 @@ class Visits:
                 'checked_out': v.checked_out,
                 'driver_name': f'{v.driver.surname} {v.driver.name}'
                 if v.driver else None,
-                # 'driver_phone': v.driver.phone
-                # if v.driver else None,
+                'driver_id': v.driver.id
+                if v.driver else None,
+                'contract_id': v.contract.id
+                if v.contract else None,
                 'destination': v.contract.destination.name
                 if v.contract else None,
                 'status': v.status,
@@ -169,6 +171,12 @@ class Visits:
     @authenticate
     def on_post_add(self, request, response):
         self.service.create_visit(user_id=request.uid, **request.media)
+        response.media = SUCCESS_TRUE
+
+    @join_point
+    @authenticate
+    def on_post_update(self, request, response):
+        self.service.update(user_id=request.uid, **request.media)
         response.media = SUCCESS_TRUE
 
     @join_point
