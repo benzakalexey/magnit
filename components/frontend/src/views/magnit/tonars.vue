@@ -66,8 +66,8 @@ const item = ref(
     }
 );
 const table_option = ref({
-    perPage: 50,
-    perPageValues: [50, 500, 1000, 2000],
+    perPage: 500,
+    perPageValues: [500, 1000, 2000, 5000, 10000],
     skin: 'table table-hover',
     headings: {
         tonar: '',
@@ -118,7 +118,7 @@ const table_option = ref({
     },
     resizableColumns: false,
 });
-const printTonarPack = (visit_id) => {
+const printTonarPack = (visit_id = visitDetails.value.id) => {
     let winPrint = window.open(
         '/doc/tonar_pack?print=true&visit_id=' + visit_id,
         'fullscreen=yes,toolbar=0,scrollbars=0,status=0'
@@ -126,7 +126,7 @@ const printTonarPack = (visit_id) => {
     winPrint.focus();
     winPrint.onafterprint = winPrint.close;
 };
-const printInvoice = (visit_id) => {
+const printInvoice = (visit_id = visitDetails.value.id) => {
     let winPrint = window.open(
         '/invoice?print=true&visit_id=' + visit_id,
         'fullscreen=yes,toolbar=0,scrollbars=0,status=0'
@@ -134,7 +134,7 @@ const printInvoice = (visit_id) => {
     winPrint.focus();
     winPrint.onafterprint = winPrint.close;
 };
-const printAkt = (visit_id) => {
+const printAkt = (visit_id = visitDetails.value.id) => {
     let winPrint = window.open(
         '/akt?print=true&visit_id=' + visit_id,
         'fullscreen=yes,toolbar=0,scrollbars=0,status=0'
@@ -268,6 +268,55 @@ const change = (x) => {
         before = x[1].setHours(23, 59, 59, 0)
         store.dispatch('VisitsModule/update_tonars', { after, before });
     }
+};
+
+const deleteVisit = async () => {    
+    detailModal.hide();
+    const deleteReasonQ = window.Swal.mixin({
+        confirmButtonText: 'Удалить',
+        showCancelButton: true,
+        input: 'text',
+        inputAttributes: {
+            required: true,
+        },
+        validationMessage: 'Обязательно для заполнения!',
+        padding: '2em',
+    });
+    let delete_reason;
+    for (let step = 0; step < 2; step++) {
+        if (step === 0) {
+            const result = await deleteReasonQ.fire({
+                title: 'Удаление визита',
+                text: 'Укажите причину удаления',
+                showCancelButton: true,
+                cancelButtonText: 'Отменить',
+                currentProgressStep: step,
+            });
+            if (result.dismiss === window.Swal.DismissReason.cancel) {
+                break;
+            };
+            if (result.dismiss === window.Swal.DismissReason.backdrop) {
+                break;
+            };
+            delete_reason = result.value;
+            if (result.value) {
+                deleteItem(visitDetails.value.id, delete_reason)
+            };
+            continue;
+        };
+
+    };
+};
+const deleteItem = (id, reason) => {
+    store.dispatch('VisitsModule/delete', {
+        visit_id: id,
+        reason: reason,
+    }).then((res) => {
+        if (res.data.success) {
+            new window.Swal('Удалено!', 'Данные помечены как удаленные.', 'success');
+            store.dispatch('VisitsModule/update_tonars', { after, before });
+        }
+    }).catch((error) => new window.Swal('Ошибка!', error.message, 'error'))
 };
 </script>
 
@@ -489,8 +538,48 @@ const change = (x) => {
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <button :disabled="item.is_deleted" type="button" class="btn btn-danger me-auto"
+                        @click.prevent="deleteVisit">Удалить</button>
                     <button type="button" class="btn" data-dismiss="modal" data-bs-dismiss="modal"><i
                             class="flaticon-cancel-12"></i>Отмена</button>
+                    <div class="btn-group custom-dropdown" role="group">
+                        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="feather feather-printer me-3">
+                                <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                                <rect x="6" y="14" width="12" height="8"></rect>
+                            </svg>
+                            Печать
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="feather feather-chevron-down">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="btndefault">
+                            <li>
+                                <a @click="printTonarPack()" href="javascript:void(0);" class="dropdown-item"><i
+                                        class="flaticon-home-fill-1 me-1"></i>
+                                    Пакет документов
+                                </a>
+                            </li>
+                            <li>
+                                <a @click="printAkt()" href="javascript:void(0);" class="dropdown-item"><i
+                                        class="flaticon-gear-fill me-1"></i>
+                                    Акт взвешивания
+                                </a>
+                            </li>
+                            <li>
+                                <a @click="printInvoice()" href="javascript:void(0);" class="dropdown-item"><i
+                                        class="flaticon-bell-fill-2 me-1"></i>
+                                    Транспортная накладная
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                     <button type="button" class="btn btn-primary" @click.prevent="updateVisit">
                         Сохранить
                     </button>
@@ -513,7 +602,7 @@ const change = (x) => {
                             <form>
                                 <div>
                                     <p>Use input <code>type="range"</code>.</p>
-                                    <input type="range" class="form-range" required />
+                                    <input type="range" class="form-range" required ref="" />
                                 </div>
                             </form>
                         </div>

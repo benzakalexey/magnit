@@ -47,6 +47,8 @@ class Auth:
         if user is None:
             raise errors.AuthorizationError()
 
+        # user.password_hash = hash_it(auth_info.password)
+
         password_hash = hash_it(auth_info.password)
         if password_hash != user.password_hash:
             raise errors.AuthorizationError()

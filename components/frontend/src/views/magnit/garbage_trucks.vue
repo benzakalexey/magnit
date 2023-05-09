@@ -24,13 +24,14 @@ const columns = ref([
     'truck_model',
     'polygon',
     'checked_in',
-    'brutto',
-    'tara',
-    'netto',
+    // 'brutto',
+    // 'tara',
+    // 'netto',
     'invoice_num',
+    'print'
 ]);
 
-if (store.state.AuthModule.credentials.user_role !== 'Аналитик мусоровозов') {
+if (store.state.AuthModule.credentials.user_role === 'Супервайзер') {
     columns.value.push('actions')
 }
 
@@ -60,8 +61,8 @@ const item = ref(
     }
 );
 const table_option = ref({
-    perPage: 50,
-    perPageValues: [50, 500, 1000, 2000],
+    perPage: 500,
+    perPageValues: [500, 1000, 2000, 5000, 10000],
     skin: 'table table-hover',
     headings: {
         garbage_truck: '',
@@ -81,6 +82,7 @@ const table_option = ref({
         destination: 'Направление',
         driver_name: 'Водитель',
         actions: '',
+        print: '',
     },
     columnsClasses: { actions: 'actions text-center' },
     sortable: [
@@ -202,6 +204,11 @@ const change = (x) => {
 }
 
 </script>
+<style>
+.table .actions .print:hover {
+    color: #1abc9c;
+}
+</style>
 
 <template>
     <div class="layout-px-spacing">
@@ -224,7 +231,8 @@ const change = (x) => {
                 <flat-pickr v-model="interval" :config="{ dateFormat: 'd.m.Y', mode: 'range' }"
                     class="form-control flatpickr active me-4 width-100 text-center" style="width: 18em; height: 2.5em;"
                     @on-change="change"></flat-pickr>
-                <vue3-json-excel class="btn btn-primary me-4" name="Визиты мусоровозов.xls" :fields="excel_columns()"
+                <vue3-json-excel v-show="store.state.AuthModule.credentials.user_role === 'Супервайзер'"
+                    class="btn btn-primary me-4" name="Визиты мусоровозов.xls" :fields="excel_columns()"
                     :json-data="excel_items()">Выгрузить&nbspв&nbspExcel</vue3-json-excel>
             </div>
         </teleport>
@@ -241,6 +249,21 @@ const change = (x) => {
                             <template #status="props">
                                 <div v-html="statuses[props.row.status]"></div>
                             </template>
+                            <template #print="props">
+                                <div class="actions text-center">
+                                    <a href="javascript:;" class="print" @click="printAkt(props.row.id)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round" class="feather feather-printer me-3">
+                                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                                            <path
+                                                d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2">
+                                            </path>
+                                            <rect x="6" y="14" width="12" height="8"></rect>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </template>
                             <template #actions="props">
                                 <div class="actions text-center">
                                     <a href="javascript:;" class="btn btn-primary btn-sm"
@@ -253,7 +276,6 @@ const change = (x) => {
             </div>
         </div>
     </div>
-    <visitDetails :item="item" :isOpen="isOpen" @closed="closeDetails" @deleted="deleteItem" @print_invoice="printInvoice"
-        @print_akt="printAkt">
+    <visitDetails :item="item" :isOpen="isOpen" @closed="closeDetails" @deleted="deleteItem" @print_akt="printAkt">
     </visitDetails>
 </template>
