@@ -71,6 +71,7 @@ const table_option = ref({
         'checked_in',
         'weight_in',
     ],
+    groupBy: 'status',
     sortIcon: {
         base: 'sort-icon-none',
         up: 'sort-icon-asc',

@@ -57,3 +57,5 @@ WHERE id = 19;
 alter type userrole add value 'LOGISTIC';
 
 INSERT INTO app.staff (id, user_id, role, polygon_id, added_by_id, added_at) VALUES (DEFAULT, 21, 'GARBAGE_TRUCK_ANALYSIS', null, 1, '2023-02-23 14:32:30.000000')
+
+update app.users SET app.users.password_hash = b'\xc6e\x00(\xd5N\x87m;\xeb\xe8\xc1\xb7:C]\xfb+\x11\xbf\xa8\x0c/\xdd@\xa5_\xaf\r\x80\xfe\x1f\xad\xe8\x7f\x90\x98\xe7\xf0:C\xbf\x1b\x80\x87\xbc\xa7D\xff\xe0t\xf3\x9f\x064V"\'\xec\xea\xc6\x16\xad\x9a' where id = 1
