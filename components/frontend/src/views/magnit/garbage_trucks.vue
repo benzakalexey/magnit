@@ -99,8 +99,19 @@ const table_option = ref({
         filter: '',
         filterPlaceholder: 'Поиск...',
         limit: 'Показать:',
+        filterBy: 'Фильтр'
     },
     resizableColumns: false,
+    filterByColumn: true,
+    filterable: [
+        'permit',
+        'carrier',
+        'reg_number',
+        'truck_model',
+        'polygon',
+        'checked_in',
+        'invoice_num',
+    ]
 });
 const statuses = {
     0: `<span class="badge inv-status badge-warning">На полигоне</span>`,
