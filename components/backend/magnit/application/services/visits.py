@@ -257,10 +257,10 @@ class Visit:
         if visit is None:
             raise errors.VisitIDNotExistError(visit_id=visit_id)
 
-        if not visit.permission.is_tonar:
-            raise errors.CantCreateNotTonarInvoice()
+        # if not visit.permission.is_tonar:
+        #     raise errors.CantCreateNotTonarInvoice()
 
-        carrier = visit.contract.carrier.short_name
+        carrier = visit.permission.owner.short_name
 
         return {
             'date': visit.checked_out,

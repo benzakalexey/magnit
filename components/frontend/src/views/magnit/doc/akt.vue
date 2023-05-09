@@ -155,13 +155,13 @@ const pretty_num = (n) => {
                                         {{ akt.service_type }}
                                     </td>
                                     <td class="bordered text-center" colspan="4">
-                                        {{ akt.tara / 1000 }} тонн.
+                                        {{ akt.tara / 1000 }} тонн
                                     </td>
                                     <td class="bordered text-center" colspan="4">
-                                        {{ akt.brutto / 1000 }} тонн.
+                                        {{ akt.brutto / 1000 }} тонн
                                     </td>
                                     <td class="bordered text-center" colspan="4">
-                                        {{ akt.netto / 1000 }} тонн.
+                                        {{ akt.netto / 1000 }} тонн
                                     </td>
                                     <td colspan="2"></td>
                                 </tr>
@@ -262,13 +262,13 @@ const pretty_num = (n) => {
                                         {{ akt.service_type }}
                                     </td>
                                     <td class="bordered text-center" colspan="4">
-                                        {{ akt.tara / 1000 }} тонн.
+                                        {{ akt.tara / 1000 }} тонн
                                     </td>
                                     <td class="bordered text-center" colspan="4">
-                                        {{ akt.brutto / 1000 }} тонн.
+                                        {{ akt.brutto / 1000 }} тонн
                                     </td>
                                     <td class="bordered text-center" colspan="4">
-                                        {{ akt.netto / 1000 }} тонн.
+                                        {{ akt.netto / 1000 }} тонн
                                     </td>
                                     <td colspan="2"></td>
                                 </tr>
@@ -369,13 +369,13 @@ const pretty_num = (n) => {
                                         {{ akt.service_type }}
                                     </td>
                                     <td class="bordered text-center" colspan="4">
-                                        {{ akt.tara / 1000 }} тонн.
+                                        {{ akt.tara / 1000 }} тонн
                                     </td>
                                     <td class="bordered text-center" colspan="4">
-                                        {{ akt.brutto / 1000 }} тонн.
+                                        {{ akt.brutto / 1000 }} тонн
                                     </td>
                                     <td class="bordered text-center" colspan="4">
-                                        {{ akt.netto / 1000 }} тонн.
+                                        {{ akt.netto / 1000 }} тонн
                                     </td>
                                     <td colspan="2"></td>
                                 </tr>
