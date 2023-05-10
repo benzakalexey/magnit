@@ -190,3 +190,9 @@ class Visits:
     def on_post_delete(self, request, response):
         self.service.delete_visit(**request.media)
         response.media = SUCCESS_TRUE
+
+    @join_point
+    @authenticate
+    def on_post_bulk_tonars_update(self, request, response):
+        self.service.bulk_tonars_update(request.media)
+        response.media = SUCCESS_TRUE

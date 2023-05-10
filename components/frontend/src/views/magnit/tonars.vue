@@ -4,9 +4,9 @@ import { onMounted, ref, computed } from 'vue';
 import { useMeta } from '@/composables/use-meta';
 import { useStore } from 'vuex';
 import { Modal } from 'bootstrap';
-import { PolygonsAPI } from '@/api/polygonsAPI'
-import { DriversAPI } from '@/api/driversAPI'
-import ApexChart from 'vue3-apexcharts';
+import { PolygonsAPI } from '@/api/polygonsAPI';
+import { DriversAPI } from '@/api/driversAPI';
+import set_netto from '@/scripts/weight_corrector'
 
 //flatpickr
 import flatpickr from 'flatpickr';
@@ -266,11 +266,11 @@ const change = (x) => {
     if (x.length == 2) {
         after = x[0].setHours(0, 0, 0, 0)
         before = x[1].setHours(23, 59, 59, 0)
-        store.dispatch('VisitsModule/update_tonars', { after, before });
+        resetData();
     }
 };
 
-const deleteVisit = async () => {    
+const deleteVisit = async () => {
     detailModal.hide();
     const deleteReasonQ = window.Swal.mixin({
         confirmButtonText: 'Удалить',
@@ -307,6 +307,75 @@ const deleteVisit = async () => {
 
     };
 };
+const changed_visits = ref(null);
+const updateNetto = async () => {
+    const targetNetto = window.Swal.mixin({
+        confirmButtonText: 'Изменить',
+        showCancelButton: true,
+        input: 'number',
+        inputAttributes: {
+            required: true,
+        },
+        validationMessage: 'Обязательно для заполнения!',
+        padding: '2em',
+    });
+    for (let step = 0; step < 2; step++) {
+        if (step === 0) {
+            const result = await targetNetto.fire({
+                title: 'Изменить общее нетто',
+                html: 'Введите нетто для выбранной группы.<br>В килограммах, кратно 20.',
+                showCancelButton: true,
+                cancelButtonText: 'Отменить',
+                currentProgressStep: step,
+            });
+            if (result.dismiss === window.Swal.DismissReason.cancel) {
+                break;
+            };
+            if (result.dismiss === window.Swal.DismissReason.backdrop) {
+                break;
+            };
+            if (result.value) {
+                changed_visits.value = set_netto(table.value.filteredData, result.value)
+                for (let visit of changed_visits.value) {
+                    let i = store.state.VisitsModule.tonar_visits.findIndex((v) => v.id === visit.id)
+
+                    if (i === -1) continue
+
+                    store.state.VisitsModule.tonar_visits[i] = visit
+                }
+            };
+            continue;
+        };
+
+    };
+};
+const resetData = () => store.dispatch('VisitsModule/update_tonars', { after, before });
+const saveNettoChanges = () => {
+    let data = []
+    for (let visit of changed_visits.value) {
+        data.push({
+            id: visit.id,
+            weight_in: visit.weight_in,
+            weight_out: visit.weight_out,
+        })
+    };
+    store.dispatch('VisitsModule/bulk_tonars_update', data)
+        .then((res) => {
+            if (res.data.success) {
+                new window.Swal('Сохранено!', 'Данные успешно сохранены.', 'success');
+                resetData();
+            }
+        })
+        .catch((error) => new window.Swal('Ошибка!', error.message, 'error'));
+};
+const bulkPrintAkt = () => {
+    store.dispatch('VisitsModule/setAkts', table.value.filteredData);
+    let winPrint = window.open(
+        '/doc/bulk_akt?print=true', 'fullscreen=yes,toolbar=0,scrollbars=0,status=0'
+    );
+    winPrint.focus();
+    winPrint.onafterprint = winPrint.close;
+}
 const deleteItem = (id, reason) => {
     store.dispatch('VisitsModule/delete', {
         visit_id: id,
@@ -366,8 +435,24 @@ const deleteItem = (id, reason) => {
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="pendingTask">
                                     <li>
-                                        <a href="javascript:void(0);" class="dropdown-item">
+                                        <a href="javascript:void(0);" class="dropdown-item" @click="updateNetto()">
                                             Изменить
+                                        </a>
+                                    </li>
+                                    <li v-show="changed_visits">
+                                        <a href="javascript:void(0);" class="dropdown-item" @click="saveNettoChanges()">
+                                            Сохранить
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0);" class="dropdown-item" @click="bulkPrintAkt()">
+                                            Печать актов
+                                        </a>
+                                    </li>
+                                    <li class="mt-3 text-danger">
+                                        <a href="javascript:void(0);" class="dropdown-item text-danger"
+                                            @click="resetData()">
+                                            Сбросить
                                         </a>
                                     </li>
                                 </ul>

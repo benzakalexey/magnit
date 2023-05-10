@@ -32,6 +32,7 @@ const roleRouter = () => {
         'Контролер': import('../views/magnit/polygon.vue'),
         'Аналитик тонаров': import('../views/magnit/tonars.vue'),
         'Аналитик мусоровозов': import('../views/magnit/garbage_trucks.vue'),
+        'Редактор тонаров': import('../views/magnit/tonars.vue'),
     }
 
     return start_page_match[store.state.AuthModule.credentials.user_role]
@@ -112,6 +113,13 @@ const routes = [
         path: '/doc/tonar_pack',
         name: 'tonar_pack',
         component: () => import(/* webpackChunkName: "components-tabs" */ '../views/magnit/doc/tonar_pack.vue'),
+        meta: { layout: 'auth' },
+        beforeEnter: setAuthLayout,
+    },
+    {
+        path: '/doc/bulk_akt',
+        name: 'bulk_akt',
+        component: () => import(/* webpackChunkName: "components-tabs" */ '../views/magnit/doc/bulk_akt.vue'),
         meta: { layout: 'auth' },
         beforeEnter: setAuthLayout,
     },
