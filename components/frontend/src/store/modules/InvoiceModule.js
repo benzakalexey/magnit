@@ -77,5 +77,13 @@ export const InvoiceModule = {
                 throw err;
             }
         },
+        async get_akts({ commit }, { visit_id }) {
+            try {
+                const res = await InvoiceAPI.get_akt(visit_id);
+                commit('setAkt', res.data);
+            } catch (err) {
+                throw err;
+            }
+        },
     },
 }

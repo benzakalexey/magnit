@@ -42,13 +42,13 @@ values (9048272784,
 insert into app.staff(user_id, role, added_by_id, added_at)
 VALUES (18, 'LOGISTIC', 1, '2023-04-16 00:00:00');
 
-insert into app.users(phone, password_hash, surname, name, patronymic, is_staff, is_active)
-values (9048272784,
+insert into app.users(phone, password_hash, surname, name, is_staff, is_active)
+values (9503327700,
         E'\\xE8789D0C556E5F0222A5043B364984590339AA007216EB56AD184AADDB5F4ACE16F3297B3B08DD7CD2B2D9A087337F067032BE5E3DE7517A1C1936D3D1118F52',
-        'Давыдова', 'Анастасия', 'Владимировна', true, true);
+        'Гашпорт', 'Анатолий', true, true);
 
-insert into app.staff(user_id, role, added_by_id, added_at, polygon_id)
-VALUES (19, 'LOGISTIC', 1, '2023-04-16 00:00:00', 1);
+insert into app.staff(user_id, role, added_by_id, added_at)
+VALUES (23, 'TONARS_EDITOR', 1, '2023-04-16 00:00:00');
 
 UPDATE app.staff
 SET role = cast('CONTROLLER' as userrole)
