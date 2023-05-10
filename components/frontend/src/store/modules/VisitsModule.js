@@ -7,6 +7,7 @@ export const VisitsModule = {
             visits: [],
             tonar_visits: [],
             garbage_truck_visits: [],
+            akts: [],
             polygon: null,
         }
     },
@@ -16,6 +17,7 @@ export const VisitsModule = {
         polygon: (state) => state.polygon,
         tonar_visits: (state) => state.tonar_visits,
         garbage_truck_visits: (state) => state.garbage_truck_visits,
+        akts: (state) => state.akts,
     },
 
     mutations: {
@@ -139,6 +141,10 @@ export const VisitsModule = {
             };
             state.garbage_truck_visits = visits
         },
+        setAkts(state, data) {
+            console.log(data)
+            localStorage.setItem('akts', JSON.stringify(data));
+        },
 
         deleteItem(state, id, reason) {
             let visit = state.visits.find(i => i.id == id);
@@ -197,6 +203,13 @@ export const VisitsModule = {
                 driver_id,
                 contract_id,
             );
+        },
+        async bulk_tonars_update({ commit }, data) {
+            console.log(data)
+            return await VisitsAPI.bulk_tonars_update(data);
+        },
+        setAkts({ commit }, data) {
+            commit('setAkts', data);
         }
     },
 }
