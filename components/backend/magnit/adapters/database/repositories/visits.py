@@ -26,6 +26,7 @@ class VisitRepo(BaseRepo, interfaces.VisitRepo):
         on_polygon = (
             select(self.dto)
             .where(self.dto.checked_out == None)
+            .where(self.dto.polygon_id == polygon_id)
         )
         on_polygon_r = self.session.execute(on_polygon).scalars().all()
         query = (
