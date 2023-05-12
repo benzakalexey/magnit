@@ -46,8 +46,8 @@ const item = ref(
     }
 );
 const table_option = ref({
-    perPage: 50,
-    perPageValues: [15, 50],
+    perPage: 100,
+    perPageValues: [15, 50, 100],
     skin: 'table table-hover',
     headings: {
         tonar: '',
