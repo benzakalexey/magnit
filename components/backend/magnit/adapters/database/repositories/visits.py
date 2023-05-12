@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import List
 
 from classic.components import component
@@ -16,14 +16,25 @@ class VisitRepo(BaseRepo, interfaces.VisitRepo):
         self,
         polygon_id: int,
     ) -> List[entities.Visit]:
-        query = (
+        last50 = (
             select(self.dto)
             .where(self.dto.polygon_id == polygon_id)
             .order_by(desc(self.dto.checked_in))
             .limit(50)
         )
-
-        return self.session.execute(query).scalars().all()
+        last50_r = self.session.execute(last50).scalars().all()
+        on_polygon = (
+            select(self.dto)
+            .where(self.dto.checked_out == None)
+        )
+        on_polygon_r = self.session.execute(on_polygon).scalars().all()
+        query = (
+            on_polygon.union(last50)
+            .order_by(desc(self.dto.checked_in))
+        )
+        visits = [*last50_r, *on_polygon_r]
+        visits_map = {v.id: v for v in visits}
+        return list(visits_map.values())
 
     def get_tonars(
         self,
@@ -35,8 +46,8 @@ class VisitRepo(BaseRepo, interfaces.VisitRepo):
             .join(entities.Permission)
             .where(self.dto.is_deleted == False)
             .where(entities.Permission.is_tonar == True)
-            .where(self.dto.checked_in >= after)
-            .where(self.dto.checked_in <= before)
+            .where(self.dto.checked_in >= str(after))
+            .where(self.dto.checked_in <= str(before))
             .order_by(asc(self.dto.checked_in))
         )
         return self.session.execute(query).scalars().all()
@@ -51,8 +62,8 @@ class VisitRepo(BaseRepo, interfaces.VisitRepo):
             .join(entities.Permission)
             .where(self.dto.is_deleted == False)
             .where(entities.Permission.is_tonar == False)
-            .where(self.dto.checked_in >= after)
-            .where(self.dto.checked_in <= before)
+            .where(self.dto.checked_in >= str(after))
+            .where(self.dto.checked_in <= str(before))
             .order_by(asc(self.dto.checked_in))
         )
         return self.session.execute(query).scalars().all()
