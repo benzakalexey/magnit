@@ -66,8 +66,13 @@ const item = ref(
     }
 );
 const table_option = ref({
-    perPage: 10000,
-    perPageValues: [500, 1000, 2000, 5000, 10000],
+    perPage: 10000000,
+    perPageValues: [],
+    pagination:{
+        show: false,
+        virtual: false,
+
+    },
     skin: 'table table-hover',
     headings: {
         tonar: '',
@@ -107,7 +112,6 @@ const table_option = ref({
         'driver_name',
     ],
     filterByColumn: true,
-    pagination: { nav: 'scroll', chunk: 5 },
     texts: {
         count: 'С {from} по {to} из {count}',
         filter: '',
@@ -477,43 +481,42 @@ const deleteItem = (id, reason) => {
                             </div>
                             <div class="col-3">
                                 <div class="w-detail">
-                                    <p class="w-title">Общее нетто (Кир. / Лен.), тонн</p>
+                                    <p class="w-title">Общее нетто (Кир. / Лен.), кг</p>
                                     <p class="w-stats">
                                         {{ Math.round(table ? table.filteredData.reduce(
-                                            (acc, visit) => acc + visit.netto, 0) : 0) / 1000 }} (
+                                            (acc, visit) => acc + visit.netto, 0) : 0) }} (
                                         {{ Math.round(table ? table.filteredData.reduce(
                                             (acc, visit) => acc + (visit.polygon == 'Кировский' ? visit.netto : 0), 0
-                                        ) : 0) / 1000 }} /
+                                        ) : 0) }} /
                                         {{ Math.round(table ? table.filteredData.reduce(
                                             (acc, visit) => acc + (visit.polygon == 'Ленинский' ? visit.netto : 0), 0
-                                        ) : 0) / 1000 }}
+                                        ) : 0) }}
                                         )
                                     </p>
                                 </div>
                             </div>
                             <div class="col-2">
                                 <div class="w-detail">
-                                    <p class="w-title">Мин. нетто, тонн</p>
+                                    <p class="w-title">Мин. нетто, кг</p>
                                     <p class="w-stats">
-                                        {{ Math.min(...(table ? table.filteredData.map(o => o.netto) : [])) / 1000 }}
+                                        {{ Math.min(...(table ? table.filteredData.map(o => o.netto) : [])) }}
                                     </p>
                                 </div>
                             </div>
                             <div class="col-2">
                                 <div class="w-detail">
-                                    <p class="w-title">Среднее нетто, тонн</p>
+                                    <p class="w-title">Среднее нетто, кг</p>
                                     <p class="w-stats">
                                         {{ Math.round(table ? table.filteredData.reduce(
-                                            (acc, visit) => acc + visit.netto / table.filteredData.length, 0) : 0) /
-                                            1000 }}
+                                            (acc, visit) => acc + visit.netto / table.filteredData.length, 0) : 0)}}
                                     </p>
                                 </div>
                             </div>
                             <div class="col-2">
                                 <div class="w-detail">
-                                    <p class="w-title">Макс. нетто, тонн</p>
+                                    <p class="w-title">Макс. нетто, кг</p>
                                     <p class="w-stats">
-                                        {{ Math.max(...(table ? table.filteredData.map(o => o.netto) : [])) / 1000 }}
+                                        {{ Math.max(...(table ? table.filteredData.map(o => o.netto) : [])) }}
                                     </p>
                                 </div>
                             </div>
@@ -525,7 +528,7 @@ const deleteItem = (id, reason) => {
                 <div class="panel br-6 p-0">
                     <div class="custom-table">
                         <v-client-table :data="store.state.VisitsModule.tonar_visits" :columns="columns"
-                            :options="table_option" ref="table">
+                            :options="table_option" ref="table" disable-pagination>
                             <template #checked_in="props">
                                 <div :data_sort="props.row.checked_in">{{ props.row.checked_in.toLocaleString('ru') }}</div>
                             </template>
