@@ -22,7 +22,7 @@ const columns = ref([
     'permit',
     'carrier',
     'reg_number',
-    'truck_model',
+    // 'truck_model',
     'polygon',
     'checked_out',
     'brutto',
@@ -37,9 +37,9 @@ if (store.state.AuthModule.credentials.user_role === 'Супервайзер') {
         'permit',
         'carrier',
         'reg_number',
-        'truck_model',
+        // 'truck_model',
         'polygon',
-        'checked_in',
+        'checked_out',
         'brutto',
         'tara',
         'netto',
@@ -386,30 +386,36 @@ const bulkPrintAkt = () => {
                         <div class="row">
                             <div class="col-3">
                                 <div class="w-detail">
-                                    <p class="w-title">Всего визитов (Кир. / Лен.)</p>
-                                    <p class="w-stats">{{ table ? table.filteredData.length : 0 }} (
+                                    <p class="w-title">Всего визитов (Кир. / Лен. / Калач.)</p>
+                                    <p class="w-stats">{{ table ? table.filteredData.length.toLocaleString('ru') : 0 }} (
                                         {{ table ? table.filteredData.reduce(
                                             (acc, visit) => acc + (visit.polygon == 'Кировский' ? 1 : 0), 0
-                                        ) : 0 }} /
+                                        ).toLocaleString('ru') : 0 }} /
                                         {{ table ? table.filteredData.reduce(
                                             (acc, visit) => acc + (visit.polygon == 'Ленинский' ? 1 : 0), 0
-                                        ) : 0 }}
+                                        ).toLocaleString('ru') : 0 }} /
+                                        {{ table ? table.filteredData.reduce(
+                                            (acc, visit) => acc + (visit.polygon == 'Калачинский' ? 1 : 0), 0
+                                        ).toLocaleString('ru') : 0 }}
                                         )
                                     </p>
                                 </div>
                             </div>
                             <div class="col-3">
                                 <div class="w-detail">
-                                    <p class="w-title">Общее нетто (Кир. / Лен.), кг</p>
+                                    <p class="w-title">Общее нетто (Кир. / Лен. / Калач.), кг</p>
                                     <p class="w-stats">
                                         {{ Math.round(table ? table.filteredData.reduce(
-                                            (acc, visit) => acc + visit.netto, 0) : 0) }} (
+                                            (acc, visit) => acc + visit.netto, 0) : 0).toLocaleString('ru') }} (
                                         {{ Math.round(table ? table.filteredData.reduce(
                                             (acc, visit) => acc + (visit.polygon == 'Кировский' ? visit.netto : 0), 0
-                                        ) : 0) }} /
+                                        ) : 0).toLocaleString('ru') }} /
                                         {{ Math.round(table ? table.filteredData.reduce(
                                             (acc, visit) => acc + (visit.polygon == 'Ленинский' ? visit.netto : 0), 0
-                                        ) : 0) }}
+                                        ) : 0).toLocaleString('ru') }} /
+                                        {{ Math.round(table ? table.filteredData.reduce(
+                                            (acc, visit) => acc + (visit.polygon == 'Калачинский' ? visit.netto : 0), 0
+                                        ) : 0).toLocaleString('ru') }}
                                         )
                                     </p>
                                 </div>
@@ -418,7 +424,7 @@ const bulkPrintAkt = () => {
                                 <div class="w-detail">
                                     <p class="w-title">Мин. нетто, кг</p>
                                     <p class="w-stats">
-                                        {{ Math.min(...(table ? table.filteredData.map(o => o.netto) : [])) }}
+                                        {{ Math.min(...(table ? table.filteredData.map(o => o.netto) : [])).toLocaleString('ru') }}
                                     </p>
                                 </div>
                             </div>
@@ -427,7 +433,7 @@ const bulkPrintAkt = () => {
                                     <p class="w-title">Среднее нетто, кг</p>
                                     <p class="w-stats">
                                         {{ Math.round(table ? table.filteredData.reduce(
-                                            (acc, visit) => acc + visit.netto / table.filteredData.length, 0) : 0) }}
+                                            (acc, visit) => acc + visit.netto / table.filteredData.length, 0) : 0).toLocaleString('ru') }}
                                     </p>
                                 </div>
                             </div>
@@ -435,7 +441,7 @@ const bulkPrintAkt = () => {
                                 <div class="w-detail">
                                     <p class="w-title">Макс. нетто, кг</p>
                                     <p class="w-stats">
-                                        {{ Math.max(...(table ? table.filteredData.map(o => o.netto) : [])) }}
+                                        {{ Math.max(...(table ? table.filteredData.map(o => o.netto) : [])).toLocaleString('ru') }}
                                     </p>
                                 </div>
                             </div>
@@ -448,8 +454,8 @@ const bulkPrintAkt = () => {
                     <div class="custom-table">
                         <v-client-table :data="store.state.VisitsModule.garbage_truck_visits" :columns="columns"
                             :options="table_option" ref="table">
-                            <template #checked_in="props">
-                                <div :data_sort="props.row.checked_in">{{ props.row.checked_in.toLocaleString('ru') }}</div>
+                            <template #checked_out="props">
+                                <div :data_sort="props.row.checked_out">{{ props.row.checked_out.toLocaleString('ru') }}</div>
                             </template>
                             <template #status="props">
                                 <div v-html="statuses[props.row.status]"></div>
