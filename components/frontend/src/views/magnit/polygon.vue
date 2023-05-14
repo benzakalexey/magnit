@@ -47,7 +47,8 @@ const item = ref(
 );
 const table_option = ref({
     perPage: 100,
-    perPageValues: [15, 50, 100],
+    perPageValues: [100],
+    orderBy: { column: 'checked_in', ascending: false },
     skin: 'table table-hover',
     headings: {
         tonar: '',
@@ -87,9 +88,9 @@ const table_option = ref({
     resizableColumns: false,
 });
 const statuses = {
-    0: `<span class="badge inv-status badge-warning">На полигоне</span>`,
-    1: `<span class="badge inv-status badge-success">Выехал</span>`,
-    2: `<span class="badge inv-status badge-dark">Удален</span>`,
+    "На полигоне": `<span class="badge inv-status badge-warning">На полигоне</span>`,
+    "Выехал": `<span class="badge inv-status badge-success">Выехал</span>`,
+    "Удален": `<span class="badge inv-status badge-dark">Удален</span>`,
 };
 const tonar = {
     true: `<span class="badge inv-status outline-badge-warning">Tонар</span>`,
@@ -152,14 +153,14 @@ const getOut = (data) => {
             printTonarPack(data.visit_id);
         }
     })
-    .catch((error) => new window.Swal('Ошибка!', error.data, 'error'))
+        .catch((error) => new window.Swal('Ошибка!', error.data, 'error'))
 };
 
-const bind_data = async() => {
+const bind_data = async () => {
     while (true) {
         store.dispatch('VisitsModule/update');
         await new Promise(r => setTimeout(r, 120_000));
-    }  
+    }
 };
 
 onMounted(

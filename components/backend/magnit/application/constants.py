@@ -47,14 +47,11 @@ class PermitStatus(Enum):
 
 class VisitStatus(Enum):
     """Статус визита"""
-    IN = 0
-    "На полигоне"
+    IN = "На полигоне"
 
-    OUT = 1
-    "Выехал"
+    OUT = "Выехал"
 
-    DEL = 2
-    "Удален"
+    DEL = "Удален"
 
 
 class DocType(Enum):

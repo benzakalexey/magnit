@@ -27,9 +27,10 @@ const columns = ref([
     'reg_number',
     // 'truck_model',
     'polygon',
-    'checked_in',
-    'brutto',
-    'tara',
+    // 'checked_in',
+    'checked_out',
+    // 'brutto',
+    // 'tara',
     'netto',
     'invoice_num',
     'destination',
@@ -67,12 +68,7 @@ const item = ref(
 );
 const table_option = ref({
     perPage: 10000000,
-    perPageValues: [],
-    pagination:{
-        show: false,
-        virtual: false,
-
-    },
+    perPageValues: [10000000,],
     skin: 'table table-hover',
     headings: {
         tonar: '',
@@ -84,6 +80,7 @@ const table_option = ref({
         truck_model: 'Марка ТС',
         truck_type: 'Тип ТС',
         checked_in: 'Въезд',
+        checked_out: 'Время выезда',
         weight_in: 'Вес въезда, кг',
         status: 'Статус',
         brutto: 'Брутто',
@@ -95,7 +92,8 @@ const table_option = ref({
     },
     columnsClasses: { actions: 'actions text-center' },
     sortable: [
-        'checked_in',
+        'checked_out',
+        'netto',
     ],
     sortIcon: {
         base: 'sort-icon-none',
@@ -103,7 +101,7 @@ const table_option = ref({
         down: 'sort-icon-desc',
     },
     filterable: [
-        'permit',
+        // 'permit',
         'carrier',
         'reg_number',
         'polygon',
@@ -112,13 +110,14 @@ const table_option = ref({
         'driver_name',
     ],
     filterByColumn: true,
+    pagination: { nav: 'scroll', chunk: 5 },
     texts: {
         count: 'С {from} по {to} из {count}',
         filter: '',
         filterPlaceholder: 'Поиск...',
         limit: 'Показать:',
         noResults: "Нет данных",
-        filterBy: "Фильтр по {column}",
+        filterBy: "Фильтр",
     },
     resizableColumns: false,
 });
@@ -149,7 +148,6 @@ const printAkt = (visit_id = visitDetails.value.id) => {
 let after = null;
 let before = null;
 const updateVisit = () => {
-    console.log(interval.value.length)
     store.dispatch('VisitsModule/update_tonar_visit', {
         weight_in: visitDetails.value.weight_in,
         weight_out: visitDetails.value.weight_out,
@@ -180,7 +178,7 @@ const bind_data = () => {
     before = now.valueOf(); //(new Date(now.setDate(0))).setHours(23, 59, 59, 0);
     after = now.setDate(now.getDate() - 3);
     interval.value = [after, before]
-    // store.dispatch('VisitsModule/update_tonars', { after, before });
+    store.dispatch('VisitsModule/update_tonars', { after, before });
 };
 
 const excel_columns = () => {
@@ -190,7 +188,7 @@ const excel_columns = () => {
         'Рег.номер': 'reg_number',
         'Марка ТС': 'truck_model',
         'Полигон': 'polygon',
-        'Дата заезда': 'checked_in',
+        'Время выезда': 'checked_out',
         'Брутто': 'brutto',
         'Тара': 'tara',
         'Нетто': 'netto',
@@ -209,7 +207,7 @@ const excel_items = () => {
             reg_number: row.reg_number,
             truck_model: row.truck_model,
             polygon: row.polygon,
-            checked_in: row.checked_in.toLocaleString('ru'),
+            checked_out: row.checked_out.toLocaleString('ru'),
             brutto: row.brutto,
             tara: row.tara,
             netto: row.netto,
@@ -387,7 +385,7 @@ const deleteItem = (id, reason) => {
     }).then((res) => {
         if (res.data.success) {
             new window.Swal('Удалено!', 'Данные помечены как удаленные.', 'success');
-            store.dispatch('VisitsModule/update_tonars', { after, before });
+            resetData();
         }
     }).catch((error) => new window.Swal('Ошибка!', error.message, 'error'))
 };
@@ -508,7 +506,7 @@ const deleteItem = (id, reason) => {
                                     <p class="w-title">Среднее нетто, кг</p>
                                     <p class="w-stats">
                                         {{ Math.round(table ? table.filteredData.reduce(
-                                            (acc, visit) => acc + visit.netto / table.filteredData.length, 0) : 0)}}
+                                            (acc, visit) => acc + visit.netto / table.filteredData.length, 0) : 0) }}
                                     </p>
                                 </div>
                             </div>
@@ -528,9 +526,10 @@ const deleteItem = (id, reason) => {
                 <div class="panel br-6 p-0">
                     <div class="custom-table">
                         <v-client-table :data="store.state.VisitsModule.tonar_visits" :columns="columns"
-                            :options="table_option" ref="table" disable-pagination>
-                            <template #checked_in="props">
-                                <div :data_sort="props.row.checked_in">{{ props.row.checked_in.toLocaleString('ru') }}</div>
+                            :options="table_option" ref="table">
+                            <template #checked_out="props">
+                                <div :data_sort="props.row.checked_out">{{ props.row.checked_out.toLocaleString('ru') }}
+                                </div>
                             </template>
                             <template #status="props">
                                 <div v-html="statuses[props.row.status]"></div>
