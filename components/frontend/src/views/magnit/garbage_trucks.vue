@@ -125,9 +125,9 @@ const table_option = ref({
         'permit',
         'carrier',
         'reg_number',
-        'truck_model',
+        // 'truck_model',
         'polygon',
-        'checked_in',
+        // 'checked_in',
         'invoice_num',
     ]
 });
@@ -343,7 +343,7 @@ const bulkPrintAkt = () => {
                 <div class="widget widget-statistics">
                     <div class="widget-heading pb-0">
                         <h5>Статистика</h5>
-                        <div class="task-action">
+                        <div class="task-action" v-show="store.state.AuthModule.credentials.user_role === 'Супервайзер'">
                             <div class="mb-4 me-2 custom-dropdown btn-group">
                                 <a class="btn dropdown-toggle btn-icon-only" href="#" role="button" id="pendingTask"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
