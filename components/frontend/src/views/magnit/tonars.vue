@@ -466,13 +466,13 @@ const deleteItem = (id, reason) => {
                             <div class="col-3">
                                 <div class="w-detail">
                                     <p class="w-title">Всего визитов (Кир. / Лен.)</p>
-                                    <p class="w-stats">{{ table ? table.filteredData.length : 0 }} (
+                                    <p class="w-stats">{{ table ? table.filteredData.length.toLocaleString('ru') : 0 }} (
                                         {{ table ? table.filteredData.reduce(
                                             (acc, visit) => acc + (visit.polygon == 'Кировский' ? 1 : 0), 0
-                                        ) : 0 }} /
+                                        ).toLocaleString('ru') : 0 }} /
                                         {{ table ? table.filteredData.reduce(
                                             (acc, visit) => acc + (visit.polygon == 'Ленинский' ? 1 : 0), 0
-                                        ) : 0 }}
+                                        ).toLocaleString('ru') : 0 }}
                                         )
                                     </p>
                                 </div>
@@ -482,13 +482,13 @@ const deleteItem = (id, reason) => {
                                     <p class="w-title">Общее нетто (Кир. / Лен.), кг</p>
                                     <p class="w-stats">
                                         {{ Math.round(table ? table.filteredData.reduce(
-                                            (acc, visit) => acc + visit.netto, 0) : 0) }} (
+                                            (acc, visit) => acc + visit.netto, 0) : 0).toLocaleString('ru') }} (
                                         {{ Math.round(table ? table.filteredData.reduce(
                                             (acc, visit) => acc + (visit.polygon == 'Кировский' ? visit.netto : 0), 0
-                                        ) : 0) }} /
+                                        ) : 0).toLocaleString('ru') }} /
                                         {{ Math.round(table ? table.filteredData.reduce(
                                             (acc, visit) => acc + (visit.polygon == 'Ленинский' ? visit.netto : 0), 0
-                                        ) : 0) }}
+                                        ) : 0).toLocaleString('ru') }}
                                         )
                                     </p>
                                 </div>
@@ -497,7 +497,7 @@ const deleteItem = (id, reason) => {
                                 <div class="w-detail">
                                     <p class="w-title">Мин. нетто, кг</p>
                                     <p class="w-stats">
-                                        {{ Math.min(...(table ? table.filteredData.map(o => o.netto) : [])) }}
+                                        {{ Math.min(...(table ? table.filteredData.map(o => o.netto) : [])).toLocaleString('ru') }}
                                     </p>
                                 </div>
                             </div>
@@ -506,7 +506,7 @@ const deleteItem = (id, reason) => {
                                     <p class="w-title">Среднее нетто, кг</p>
                                     <p class="w-stats">
                                         {{ Math.round(table ? table.filteredData.reduce(
-                                            (acc, visit) => acc + visit.netto / table.filteredData.length, 0) : 0) }}
+                                            (acc, visit) => acc + visit.netto / table.filteredData.length, 0) : 0).toLocaleString('ru') }}
                                     </p>
                                 </div>
                             </div>
@@ -514,7 +514,7 @@ const deleteItem = (id, reason) => {
                                 <div class="w-detail">
                                     <p class="w-title">Макс. нетто, кг</p>
                                     <p class="w-stats">
-                                        {{ Math.max(...(table ? table.filteredData.map(o => o.netto) : [])) }}
+                                        {{ Math.max(...(table ? table.filteredData.map(o => o.netto) : [])).toLocaleString('ru') }}
                                     </p>
                                 </div>
                             </div>
