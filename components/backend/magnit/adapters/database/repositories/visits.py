@@ -28,13 +28,10 @@ class VisitRepo(BaseRepo, interfaces.VisitRepo):
             .where(self.dto.checked_out == None)
             .where(self.dto.is_deleted == False)
             .where(self.dto.polygon_id == polygon_id)
-        )
-        on_polygon_r = self.session.execute(on_polygon).scalars().all()
-        query = (
-            on_polygon.union(last50)
             .order_by(desc(self.dto.checked_in))
         )
-        visits = [*last50_r, *on_polygon_r]
+        on_polygon_r = self.session.execute(on_polygon).scalars().all()
+        visits = [*on_polygon_r, *last50_r]
         visits_map = {v.id: v for v in visits}
         return list(visits_map.values())
 
