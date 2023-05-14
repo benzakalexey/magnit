@@ -57,7 +57,6 @@ class Visit:
         if staff is None:
             raise errors.UserIDNotExistError(user_id=visit_info.user_id)
 
-        # polygon = staff.polygon
         if staff.polygon is None:
             raise errors.PolygonIDNotExistError()
 
@@ -67,7 +66,7 @@ class Visit:
             operator_in=staff.user,
             polygon=staff.polygon,
         )
-        self.visits_repo.add(visit)  # ЛЕН-МАЙ.2022-23
+        self.visits_repo.add(visit)
 
         visit.generate_invoice()
 
@@ -216,10 +215,10 @@ class Visit:
             raise errors.CantCreateNotTonarInvoice()
 
         cargo_type = 'Остатки сортировки ТКО'
-        receiver = visit.contract.receiver.get_full_name(visit.checked_in)
-        carrier = visit.contract.carrier.get_full_name(visit.checked_in)
+        receiver = visit.contract.receiver.get_full_name(visit.checked_out)
+        carrier = visit.contract.carrier.get_full_name(visit.checked_out)
         direction = (
-            visit.contract.destination.get_details(visit.checked_in).address
+            visit.contract.destination.get_details(visit.checked_out).address
         )
         planned_date = visit.checked_out - timedelta(minutes=randint(20, 30))
 
