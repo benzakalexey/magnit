@@ -88,9 +88,9 @@ const table_option = ref({
     resizableColumns: false,
 });
 const statuses = {
-    "На полигоне": `<span class="badge inv-status badge-warning">На полигоне</span>`,
-    "Выехал": `<span class="badge inv-status badge-success">Выехал</span>`,
-    "Удален": `<span class="badge inv-status badge-dark">Удален</span>`,
+    0: `<span class="badge inv-status badge-warning">На полигоне</span>`,
+    1: `<span class="badge inv-status badge-success">Выехал</span>`,
+    2: `<span class="badge inv-status badge-dark">Удален</span>`,
 };
 const tonar = {
     true: `<span class="badge inv-status outline-badge-warning">Tонар</span>`,
