@@ -36,6 +36,10 @@ class DriverRepo(ABC):
     def get_all(self) -> List[entities.Driver]:
         ...
 
+    @abstractmethod
+    def get_by_name(self, surname, name) -> Optional[entities.Driver]:
+        ...
+
 
 class StaffRepo(ABC):
 
@@ -100,6 +104,13 @@ class PolygonRepo(ABC):
         ...
 
     @abstractmethod
+    def get_by_name(
+        self,
+        name: str,
+    ) -> Optional[entities.Polygon]:
+        ...
+
+    @abstractmethod
     def add(self, instance: entities.Polygon):
         ...
 
@@ -117,6 +128,14 @@ class ContractRepo(ABC):
     @abstractmethod
     def get_by_departure_point_id(
         self,
+        departure_point_id: int,
+    ) -> List[entities.Contract]:
+        ...
+
+    @abstractmethod
+    def get_by_destination_and_departure(
+        self,
+        destination_point_id: int,
         departure_point_id: int,
     ) -> List[entities.Contract]:
         ...
@@ -262,6 +281,10 @@ class VisitRepo(ABC):
         ...
 
     @abstractmethod
+    def get_by_invoice_num(self, invoice_num: str) -> Optional[entities.Visit]:
+        ...
+
+    @abstractmethod
     def get_all(self) -> List[entities.Visit]:
         ...
 
@@ -321,3 +344,10 @@ class VisitRepo(ABC):
             список Визитов
 
         """
+
+
+class ExcelParser(ABC):
+
+    @abstractmethod
+    def get_data(self, file):
+        ...

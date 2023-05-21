@@ -205,8 +205,10 @@ export const VisitsModule = {
             );
         },
         async bulk_tonars_update({ commit }, data) {
-            console.log(data)
             return await VisitsAPI.bulk_tonars_update(data);
+        },
+        async upload_tonars_data({ commit }, file) {
+            return await VisitsAPI.upload_tonars_data(file);
         },
         setAkts({ commit }, data) {
             commit('setAkts', data);

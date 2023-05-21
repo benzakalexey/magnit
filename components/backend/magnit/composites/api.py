@@ -3,7 +3,7 @@ import secrets
 from classic.sql_storage import TransactionContext
 from sqlalchemy import create_engine
 
-from magnit.adapters import database, logger, http_api
+from magnit.adapters import database, logger, http_api, etl_from_excel
 from magnit.adapters.database import repositories
 from magnit.application import services
 
@@ -91,6 +91,7 @@ class Application:
         truck_repo=DB.trucks_repo,
         users_repo=DB.users_repo,
         visits_repo=DB.visits_repo,
+        tonars_xls_parser=etl_from_excel.TonarsExcelParser()
     )
 
 

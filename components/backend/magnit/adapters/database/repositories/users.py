@@ -23,6 +23,14 @@ class UserRepo(BaseRepo, interfaces.UserRepo):
 class DriverRepo(BaseRepo, interfaces.DriverRepo):
     dto = entities.Driver
 
+    def get_by_name(self, surname, name) -> Optional[entities.Driver]:
+        query = (
+            select(self.dto)
+            .where(self.dto.surname == surname)
+            .where(self.dto.name == name)
+        )
+        return self.session.execute(query).scalars().one_or_none()
+
 
 @component
 class StaffRepo(BaseRepo, interfaces.StaffRepo):

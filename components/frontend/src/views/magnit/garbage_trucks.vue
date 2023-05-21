@@ -175,8 +175,8 @@ const interval = ref([]);
 const bind_data = async () => {
     if (store.state.VisitsModule.garbage_truck_visits.length != 0) {
         interval.value = [
-            Math.min(...store.state.VisitsModule.garbage_truck_visits.map(o => o.checked_in)),
-            Math.max(...store.state.VisitsModule.garbage_truck_visits.map(o => o.checked_in))
+            Math.min(...store.state.VisitsModule.garbage_truck_visits.map(o => o.checked_out)),
+            Math.max(...store.state.VisitsModule.garbage_truck_visits.map(o => o.checked_out))
         ]
         return
     };
@@ -338,12 +338,12 @@ const bulkPrintAkt = () => {
         </teleport>
 
         <div class="row layout-top-spacing">
-            <div v-show="store.state.VisitsModule.garbage_truck_visits.length > 0"
+            <div v-show="store.state.VisitsModule.garbage_truck_visits.length > 0 && store.state.AuthModule.credentials.user_role === 'Супервайзер'"
                 class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing pb-4">
                 <div class="widget widget-statistics">
                     <div class="widget-heading pb-0">
                         <h5>Статистика</h5>
-                        <div class="task-action" v-show="store.state.AuthModule.credentials.user_role === 'Супервайзер'">
+                        <div class="task-action">
                             <div class="mb-4 me-2 custom-dropdown btn-group">
                                 <a class="btn dropdown-toggle btn-icon-only" href="#" role="button" id="pendingTask"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -424,7 +424,8 @@ const bulkPrintAkt = () => {
                                 <div class="w-detail">
                                     <p class="w-title">Мин. нетто, кг</p>
                                     <p class="w-stats">
-                                        {{ Math.min(...(table ? table.filteredData.map(o => o.netto) : [])).toLocaleString('ru') }}
+                                        {{ Math.min(...(table ? table.filteredData.map(o => o.netto) :
+                                            [])).toLocaleString('ru') }}
                                     </p>
                                 </div>
                             </div>
@@ -433,7 +434,8 @@ const bulkPrintAkt = () => {
                                     <p class="w-title">Среднее нетто, кг</p>
                                     <p class="w-stats">
                                         {{ Math.round(table ? table.filteredData.reduce(
-                                            (acc, visit) => acc + visit.netto / table.filteredData.length, 0) : 0).toLocaleString('ru') }}
+                                            (acc, visit) => acc + visit.netto / table.filteredData.length, 0) :
+                                            0).toLocaleString('ru') }}
                                     </p>
                                 </div>
                             </div>
@@ -441,7 +443,8 @@ const bulkPrintAkt = () => {
                                 <div class="w-detail">
                                     <p class="w-title">Макс. нетто, кг</p>
                                     <p class="w-stats">
-                                        {{ Math.max(...(table ? table.filteredData.map(o => o.netto) : [])).toLocaleString('ru') }}
+                                        {{ Math.max(...(table ? table.filteredData.map(o => o.netto) :
+                                            [])).toLocaleString('ru') }}
                                     </p>
                                 </div>
                             </div>
@@ -455,7 +458,8 @@ const bulkPrintAkt = () => {
                         <v-client-table :data="store.state.VisitsModule.garbage_truck_visits" :columns="columns"
                             :options="table_option" ref="table">
                             <template #checked_out="props">
-                                <div :data_sort="props.row.checked_out">{{ props.row.checked_out.toLocaleString('ru') }}</div>
+                                <div :data_sort="props.row.checked_out">{{ props.row.checked_out.toLocaleString('ru') }}
+                                </div>
                             </template>
                             <template #status="props">
                                 <div v-html="statuses[props.row.status]"></div>

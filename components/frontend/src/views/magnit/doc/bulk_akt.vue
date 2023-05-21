@@ -18,9 +18,6 @@ const bind_data = () => {
         store.dispatch('InvoiceModule/get_akts', { visit_id: d.id })
             .then(() => akts.value.push(store.state.InvoiceModule.akt))
     }
-    console.log(akts)
-    // if (route.query.print === 'true') window.print()
-    // TODO bulk_request and print after bind data
 }
 
 onMounted(

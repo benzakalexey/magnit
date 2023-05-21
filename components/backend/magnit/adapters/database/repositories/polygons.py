@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from classic.components import component
 from sqlalchemy import select
@@ -28,3 +28,13 @@ class PolygonRepo(BaseRepo, interfaces.PolygonRepo):
             )
         )
         return self.session.execute(query).scalars().all()
+
+    def get_by_name(
+        self,
+        name: str,
+    ) -> Optional[entities.Polygon]:
+        query = (
+            select(self.dto)
+            .where(self.dto.name == name)
+        )
+        return self.session.execute(query).scalars().one_or_none()
