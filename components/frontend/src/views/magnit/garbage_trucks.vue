@@ -181,11 +181,11 @@ const bind_data = async () => {
         return
     };
 
-    var now = new Date();
-    now.setHours(0, 0, 0, 0);
-    before = now.valueOf(); //(new Date(now.setDate(0))).setHours(23, 59, 59, 0);
-    after = now.setHours(23, 59, 59, 0);
-    interval.value = [after, before];
+    before = new Date();
+    after = new Date();
+    before = before.setHours(0, 0, 0, 0);
+    after = after.setHours(23, 59, 59, 0);
+    interval.value = [after, before]
     resetData();
 };
 
