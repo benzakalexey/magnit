@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional
 
 from classic.app import DTO
-from pydantic import conint, validator
+from pydantic import conint
 
 from magnit.application import constants
 
@@ -91,6 +91,20 @@ class TonarUpdateInfo(DTO):
     visit_id: int
     driver_id: Optional[conint(gt=0)] = None
     contract_id: Optional[conint(gt=0)] = None
+
+
+class TonarXls(DTO):
+    weight_out: conint(gt=0)
+    invoice_num: str
+    driver: str
+    destination: str
+
+
+class TonarXlsError(DTO):
+    row: conint(gt=0)
+    field: str
+    value: str
+    comment: str
 
 
 class DocLogInfo(DTO):

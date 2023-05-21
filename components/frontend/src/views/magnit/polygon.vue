@@ -46,9 +46,9 @@ const item = ref(
     }
 );
 const table_option = ref({
-    perPage: 100,
-    perPageValues: [100],
-    orderBy: { column: 'checked_in', ascending: false },
+    perPage: 1000,
+    perPageValues: [1000],
+    // orderBy: { column: 'checked_in', ascending: false },
     skin: 'table table-hover',
     headings: {
         tonar: '',
@@ -72,7 +72,7 @@ const table_option = ref({
         'checked_in',
         'weight_in',
     ],
-    groupBy: 'status',
+    // groupBy: 'status',
     sortIcon: {
         base: 'sort-icon-none',
         up: 'sort-icon-asc',

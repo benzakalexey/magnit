@@ -24,3 +24,15 @@ class ContractRepo(BaseRepo, interfaces.ContractRepo):
             .where(self.dto.departure_point_id == departure_point_id)
         )
         return self.session.execute(query).scalars().all()
+
+    def get_by_destination_and_departure(
+        self,
+        destination_point_id: int,
+        departure_point_id: int,
+    ) -> List[entities.Contract]:
+        query = (
+            select(self.dto)
+            .where(self.dto.destination_id == destination_point_id)
+            .where(self.dto.departure_point_id == departure_point_id)
+        )
+        return self.session.execute(query).scalars().all()

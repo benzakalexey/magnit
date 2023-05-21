@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from classic.components import component
 from sqlalchemy import select, desc, asc
@@ -66,3 +66,10 @@ class VisitRepo(BaseRepo, interfaces.VisitRepo):
             .order_by(asc(self.dto.checked_out))
         )
         return self.session.execute(query).scalars().all()
+
+    def get_by_invoice_num(self, invoice_num: str) -> Optional[entities.Visit]:
+        query = (
+            select(self.dto)
+            .where(self.dto.invoice_num == invoice_num)
+        )
+        return self.session.execute(query).scalars().one_or_none()

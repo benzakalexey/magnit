@@ -20,3 +20,14 @@ const token = localStorage.getItem('token');
 if (token) defaultConfig.headers['authorization'] = `Bearer ${token}`
 
 export const DefaultAPIInstance = axios.create(defaultConfig);
+
+const uploadConfig = {
+    baseURL: process.env.VUE_APP_API_URL,
+    headers: {
+        'Content-Type': 'multipart/form-data',
+    }
+}
+
+if (token) uploadConfig.headers['authorization'] = `Bearer ${token}`
+
+export const UploadFileInstance = axios.create(uploadConfig);
