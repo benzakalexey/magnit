@@ -8,6 +8,8 @@ import { PolygonsAPI } from '@/api/polygonsAPI';
 import { DriversAPI } from '@/api/driversAPI';
 import set_netto from '@/scripts/weight_corrector'
 
+import { utils, writeFile } from 'xlsx';
+
 //flatpickr
 import flatpickr from 'flatpickr';
 import flatPickr from 'vue-flatpickr-component';
@@ -167,53 +169,36 @@ const interval = ref([]);
 const bind_data = () => {
     if (store.state.VisitsModule.tonar_visits.length != 0) {
         interval.value = [
-            Math.min(...store.state.VisitsModule.tonar_visits.map(o => o.checked_in)),
-            Math.max(...store.state.VisitsModule.tonar_visits.map(o => o.checked_in))
+            Math.min(...store.state.VisitsModule.tonar_visits.map(o => o.checked_out)),
+            Math.max(...store.state.VisitsModule.tonar_visits.map(o => o.checked_out))
         ]
         return
     };
 
-    var now = new Date();
-    now.setHours(0, 0, 0, 0);
-    before = now.valueOf(); //(new Date(now.setDate(0))).setHours(23, 59, 59, 0);
-    after = now.setDate(now.getDate() - 3);
+    before = new Date();
+    after = new Date();
+    before = before.setHours(0, 0, 0, 0);
+    after = after.setDate(after.getDate() - 3);
     interval.value = [after, before]
-    store.dispatch('VisitsModule/update_tonars', { after, before });
-};
-
-const excel_columns = () => {
-    return {
-        'Пропуск': 'permit',
-        'Контрагент': 'carrier',
-        'Рег.номер': 'reg_number',
-        'Марка ТС': 'truck_model',
-        'Полигон': 'polygon',
-        'Время выезда': 'checked_out',
-        'Брутто': 'brutto',
-        'Тара': 'tara',
-        'Нетто': 'netto',
-        'Номер ТН': 'invoice_num',
-        'Направление': 'destination',
-        'Водитель': 'driver_name',
-    };
+    resetData();
 };
 const excel_items = () => {
     const rows = table.value ? table.value.filteredData : store.state.VisitsModule.tonar_visits
     let items = []
     for (var row of rows) {
         items.push({
-            permit: row.permit,
-            carrier: row.carrier,
-            reg_number: row.reg_number,
-            truck_model: row.truck_model,
-            polygon: row.polygon,
-            checked_out: row.checked_out.toLocaleString('ru'),
-            brutto: row.brutto,
-            tara: row.tara,
-            netto: row.netto,
-            invoice_num: row.invoice_num,
-            destination: row.destination,
-            driver_name: row.driver_name,
+            'Пропуск': row.permit,
+            'Контрагент': row.carrier,
+            'Рег.номер': row.reg_number,
+            'Марка ТС': row.truck_model,
+            'Полигон': row.polygon,
+            'Время выезда': row.checked_out.toLocaleString('ru'),
+            'Брутто': row.brutto,
+            'Тара': row.tara,
+            'Нетто': row.netto,
+            'Номер ТН': row.invoice_num,
+            'Направление': row.destination,
+            'Водитель': row.driver_name,
         })
     }
     return items;
@@ -251,19 +236,12 @@ const openDetails = (i) => {
     DriversAPI.get(i.contragent_id).then((ref) => (drivers.value = ref.data));
     PolygonsAPI.get_directions(i.polygon_id).then((ref) => (directions.value = ref.data));
     visitDetails.value = i;
-    console.log(i)
     detailModal.show();
 };
 const onHidden = () => {
     drivers.value = [];
     directions.value = [];
 };
-onMounted(
-    () => {
-        bind_data();
-        initDetailsModal();
-    }
-);
 const change = (x) => {
     if (x.length == 2) {
         after = x[0].setHours(0, 0, 0, 0)
@@ -389,6 +367,62 @@ const deleteItem = (id, reason) => {
         }
     }).catch((error) => new window.Swal('Ошибка!', error.message, 'error'))
 };
+const fileXlsx = ref(null);
+const exportErrorModal = ref(null);
+const exportErrors = ref([]);
+let exportModal = null;
+const initExportErrorModal = () => {
+    exportModal = new Modal(exportErrorModal.value)
+    exportErrorModal.value.addEventListener("hidden.bs.modal", () => fileXlsx.value = null)
+};
+const fileInputKey = ref(0)
+const fileUpload = (event) => {
+    fileXlsx.value = URL.createObjectURL(event.target.files[0]);
+    store.dispatch('VisitsModule/upload_tonars_data', event.target.files[0]).then(
+        (res) => {
+            if (res.data.success == true) {
+                showMessage('Данные сохранены.');
+                resetData();
+            } else {
+                exportModal.show();
+                exportErrors.value = res.data;
+            }
+        }
+    );
+    fileInputKey.value++
+};
+const save = () => {
+    showMessage('Settings saved successfully.');
+};
+
+const showMessage = (msg = '', type = 'success') => {
+    const toast = window.Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        padding: '2em'
+    });
+    toast.fire({
+        icon: type,
+        title: msg,
+        padding: '2em'
+    });
+};
+const download = () => {
+    const data = utils.json_to_sheet(excel_items())
+    const wb = utils.book_new()
+    utils.book_append_sheet(wb, data, 'Визиты тонаров')
+    writeFile(wb, 'Визиты тонаров.xlsx')
+};
+
+onMounted(
+    () => {
+        bind_data();
+        initDetailsModal();
+        initExportErrorModal();
+    }
+);
 </script>
 
 <template>
@@ -412,8 +446,7 @@ const deleteItem = (id, reason) => {
                 <flat-pickr v-model="interval" :config="{ dateFormat: 'd.m.Y', mode: 'range' }"
                     class="form-control flatpickr active me-4 width-100 text-center" style="width: 18em; height: 2.5em;"
                     @on-change="change"></flat-pickr>
-                <vue3-json-excel class="btn btn-primary me-4" name="Визиты тонаров.xls" :fields="excel_columns()"
-                    :json-data="excel_items()">Выгрузить&nbspв&nbspExcel</vue3-json-excel>
+                <button type="button" class="btn btn-primary me-4" v-on:click="download">Выгрузить&nbspв&nbspExcel</button>
             </div>
         </teleport>
         <div class="row layout-top-spacing">
@@ -437,6 +470,15 @@ const deleteItem = (id, reason) => {
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="pendingTask">
                                     <li>
+                                        <input ref="fl_profile" type="file" class="d-none"
+                                            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                            @change="fileUpload" :key="fileInputKey"/>
+                                        <a href="javascript:void(0);" class="dropdown-item"
+                                            @click="$refs.fl_profile.click()">
+                                            Экспорт
+                                        </a>
+                                    </li>
+                                    <!-- <li>
                                         <a href="javascript:void(0);" class="dropdown-item" @click="updateNetto()">
                                             Изменить
                                         </a>
@@ -445,18 +487,18 @@ const deleteItem = (id, reason) => {
                                         <a href="javascript:void(0);" class="dropdown-item" @click="saveNettoChanges()">
                                             Сохранить
                                         </a>
-                                    </li>
+                                    </li> -->
                                     <li>
                                         <a href="javascript:void(0);" class="dropdown-item" @click="bulkPrintAkt()">
                                             Печать актов
                                         </a>
                                     </li>
-                                    <li class="mt-3 text-danger">
+                                    <!-- <li class="mt-3 text-danger">
                                         <a href="javascript:void(0);" class="dropdown-item text-danger"
                                             @click="resetData()">
                                             Сбросить
                                         </a>
-                                    </li>
+                                    </li> -->
                                 </ul>
                             </div>
                         </div>
@@ -497,7 +539,8 @@ const deleteItem = (id, reason) => {
                                 <div class="w-detail">
                                     <p class="w-title">Мин. нетто, кг</p>
                                     <p class="w-stats">
-                                        {{ Math.min(...(table ? table.filteredData.map(o => o.netto) : [])).toLocaleString('ru') }}
+                                        {{ Math.min(...(table ? table.filteredData.map(o => o.netto) :
+                                            [])).toLocaleString('ru') }}
                                     </p>
                                 </div>
                             </div>
@@ -506,7 +549,8 @@ const deleteItem = (id, reason) => {
                                     <p class="w-title">Среднее нетто, кг</p>
                                     <p class="w-stats">
                                         {{ Math.round(table ? table.filteredData.reduce(
-                                            (acc, visit) => acc + visit.netto / table.filteredData.length, 0) : 0).toLocaleString('ru') }}
+                                            (acc, visit) => acc + visit.netto / table.filteredData.length, 0) :
+                                            0).toLocaleString('ru') }}
                                     </p>
                                 </div>
                             </div>
@@ -514,7 +558,8 @@ const deleteItem = (id, reason) => {
                                 <div class="w-detail">
                                     <p class="w-title">Макс. нетто, кг</p>
                                     <p class="w-stats">
-                                        {{ Math.max(...(table ? table.filteredData.map(o => o.netto) : [])).toLocaleString('ru') }}
+                                        {{ Math.max(...(table ? table.filteredData.map(o => o.netto) :
+                                            [])).toLocaleString('ru') }}
                                     </p>
                                 </div>
                             </div>
@@ -674,25 +719,87 @@ const deleteItem = (id, reason) => {
             </div>
         </div>
     </div>
-    <div class="modal fade" ref="weightCorrectorModal" tabindex="-1" role="dialog"
-        aria-labelledby="weightCorrectorModalLable" aria-hidden="true">
-        <div class="modal-dialog modal" role="document">
+    <div class="modal fade" ref="exportErrorModal" tabindex="-1" role="dialog" aria-labelledby="exportErrorModalLable"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="weightCorrectorModalLable">Изменить вес</h5>
+                    <h5 class="modal-title text-danger" id="exportErrorModalLable">Ошибки в файле экспорта</h5>
                     <button type="button" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close"
                         class="btn-close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <form>
-                                <div>
-                                    <p>Use input <code>type="range"</code>.</p>
-                                    <input type="range" class="form-range" required ref="" />
-                                </div>
-                            </form>
-                        </div>
+                    <table role="table" aria-busy="false" aria-colcount="5" class="table b-table">
+                        <thead role="rowgroup">
+                            <tr role="row">
+                                <th role="columnheader" scope="col" aria-colindex="1">
+                                    <div>Строка</div>
+                                </th>
+                                <th role="columnheader" scope="col" aria-colindex="2">
+                                    <div>Столбец</div>
+                                </th>
+                                <th role="columnheader" scope="col" aria-colindex="3">
+                                    <div>Значение</div>
+                                </th>
+                                <th role="columnheader" scope="col" aria-colindex="4">
+                                    <div>Комментарий</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody role="rowgroup">
+                            <tr v-for="item in exportErrors" :key="item.name" role="row">
+                                <td aria-colindex="1" role="cell">{{ item.row }}</td>
+                                <td aria-colindex="2" role="cell">{{ item.field }}</td>
+                                <td aria-colindex="3" role="cell">{{ item.value }}</td>
+                                <td aria-colindex="4" role="cell">{{ item.comment }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" data-dismiss="modal" data-bs-dismiss="modal"><i
+                            class="flaticon-cancel-12"></i>Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="modal fade" ref="exportErrorModal" tabindex="-2" role="dialog" aria-labelledby="exportErrorModalLable"
+        aria-hidden="true">
+        <div class="modal-dialog modal" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exportErrorModalLable">Ошибки в файле экспорта</h5>
+                    <button type="button" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close"
+                        class="btn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table role="table" aria-busy="false" aria-colcount="5" class="table table-bordered">
+                            <thead role="rowgroup">
+                                <tr role="row">
+                                    <th role="columnheader" scope="col" aria-colindex="1">
+                                        <div>Строка</div>
+                                    </th>
+                                    <th role="columnheader" scope="col" aria-colindex="2">
+                                        <div>Столбец</div>
+                                    </th>
+                                    <th role="columnheader" scope="col" aria-colindex="3">
+                                        <div>Значение</div>
+                                    </th>
+                                    <th role="columnheader" scope="col" aria-colindex="4" class="text-center">
+                                        <div>Комментарий</div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody role="rowgroup">
+                                <tr v-for="item in exportErrors" :key="item.name" role="row">
+                                    <td aria-colindex="1" role="cell">{{ item.row }}</td>
+                                    <td aria-colindex="2" role="cell">{{ item.field }}</td>
+                                    <td aria-colindex="3" role="cell">{{ item.value }}</td>
+                                    <td aria-colindex="4" role="cell">{{ item.comment }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -704,5 +811,5 @@ const deleteItem = (id, reason) => {
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 </template>

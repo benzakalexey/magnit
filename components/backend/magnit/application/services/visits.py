@@ -25,6 +25,7 @@ class Visit:
     truck_repo: interfaces.TruckRepo
     users_repo: interfaces.UserRepo
     visits_repo: interfaces.VisitRepo
+    tonars_xls_parser: interfaces.ExcelParser
 
     def __attrs_post_init__(self):
         self.logger = logging.getLogger(self.__class__.__name__)
@@ -118,10 +119,112 @@ class Visit:
             if visit is None:
                 raise errors.VisitIDNotExistError(visit_id=v.get('id'))
 
-            visit.weight_in = v.get('weight_in')
+            # visit.weight_in = v.get('weight_in')
             visit.weight_out = v.get('weight_out')
 
         self.visits_repo.save()
+
+    @join_point
+    # @validate_with_dto
+    def update_from_file(self, file):
+        visits_info = self.tonars_xls_parser.get_data(file)
+        err = self._check_errors_in_export(visits_info)
+        if err:
+            return err
+
+        for row, v in enumerate(visits_info):
+            visit = self.visits_repo.get_by_invoice_num(v.invoice_num)
+
+            surname, name = v.driver.split()
+            driver = self.driver_repo.get_by_name(surname, name)
+
+            destination = self.polygons_repo.get_by_name(v.destination)
+
+            contracts = self.contract_repo.get_by_destination_and_departure(
+                destination_point_id=destination.id,
+                departure_point_id=visit.polygon.id,
+            )
+            active_contracts = [
+                c for c in contracts
+                if c.valid_to >= visit.checked_out >= c.valid_from
+            ]
+
+            visit.weight_out = v.weight_out
+            visit.driver = driver
+            visit.contract = active_contracts[0]
+
+        self.visits_repo.save()
+        return err
+
+    @join_point
+    def _check_errors_in_export(
+        self,
+        visits_info: List[dto.TonarXls],
+    ) -> List[dto.TonarXlsError]:
+        err = []
+        for row, v in enumerate(visits_info):
+            visit = self.visits_repo.get_by_invoice_num(v.invoice_num)
+            if visit is None:
+                err.append(dto.TonarXlsError(
+                    row=row + 2,
+                    field='Номер ТН',
+                    value=v.invoice_num,
+                    comment='Визит не найден'
+                ))
+                continue
+
+            surname, name = v.driver.split()
+            driver = self.driver_repo.get_by_name(surname, name)
+            if driver is None:
+                err.append(dto.TonarXlsError(
+                    row=row + 2,
+                    field='Водитель',
+                    value=v.driver,
+                    comment='Водитель не найден'
+                ))
+
+            if visit.weight_in > v.weight_out:
+                err.append(dto.TonarXlsError(
+                    row=row + 2,
+                    field='Брутто',
+                    value=v.weight_out,
+                    comment='Брутто меньше веса въезда'
+                ))
+
+            destination = self.polygons_repo.get_by_name(v.destination)
+            if destination is None:
+                err.append(dto.TonarXlsError(
+                    row=row + 2,
+                    field='Направление',
+                    value=v.destination,
+                    comment='Направление не найдено'
+                ))
+                continue
+
+            contracts = self.contract_repo.get_by_destination_and_departure(
+                destination_point_id=destination.id,
+                departure_point_id=visit.polygon.id,
+            )
+            active_contracts = [
+                c for c in contracts
+                if c.valid_to >= visit.checked_out >= c.valid_from
+            ]
+            if not active_contracts:
+                err.append(dto.TonarXlsError(
+                    row=row + 2,
+                    field='Направление',
+                    value=v.destination,
+                    comment='Договор для направления "%s" не найден' % v.destination
+                ))
+            if len(active_contracts) != 1:
+                err.append(dto.TonarXlsError(
+                    row=row + 2,
+                    field='Направление',
+                    value=v.destination,
+                    comment='Для направления "%s" больше одного договора.' % v.destination
+                ))
+
+        return err
 
     def _update_if_tonar(
         self,

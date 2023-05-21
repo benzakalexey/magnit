@@ -1,4 +1,4 @@
-import { DefaultAPIInstance } from "@/api";
+import { DefaultAPIInstance, UploadFileInstance } from "@/api";
 
 export const VisitsAPI = {
     /**
@@ -99,7 +99,11 @@ export const VisitsAPI = {
         //     driver_id,
         //     contract_id,
         // };
-        console.log(data)
+        // console.log(data)
         return DefaultAPIInstance.post(url, data);
-    }
+    },
+    upload_tonars_data(file) {
+        const url = 'visits/upload_tonars_data'
+        return UploadFileInstance.post(url, {data: file});
+    },
 }

@@ -196,3 +196,12 @@ class Visits:
     def on_post_bulk_tonars_update(self, request, response):
         self.service.bulk_tonars_update(request.media)
         response.media = SUCCESS_TRUE
+
+    @join_point
+    # @authenticate
+    def on_post_upload_tonars_data(self, request, response):
+        errors = []
+        for f in request.media:
+            errors += self.service.update_from_file(f)
+
+        response.media = errors if errors else SUCCESS_TRUE
