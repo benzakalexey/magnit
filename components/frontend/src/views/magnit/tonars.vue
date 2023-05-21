@@ -180,7 +180,7 @@ const bind_data = () => {
     after = (new Date()).setHours(0, 0, 0, 0);
     before = (new Date()).setHours(23, 59, 59, 0);
     interval.value = [after, before]
-    resetData();
+    // resetData();
 };
 const excel_items = () => {
     const rows = table.value ? table.value.filteredData : store.state.VisitsModule.tonar_visits
