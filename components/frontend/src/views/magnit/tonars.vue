@@ -178,7 +178,7 @@ const bind_data = () => {
     before = new Date();
     after = new Date();
     before = before.setHours(0, 0, 0, 0);
-    after = after.setDate(after.getDate() - 3);
+    after = after.setHours(23, 59, 59, 0);
     interval.value = [after, before]
     resetData();
 };
