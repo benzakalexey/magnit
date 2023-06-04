@@ -3,7 +3,8 @@ import { onMounted, ref } from 'vue';
 import { useMeta } from '@/composables/use-meta';
 import { useStore } from 'vuex';
 import visitDetails from '@/components/magnit/forms/visitDetails';
-import set_netto from '@/scripts/weight_corrector'
+import { incNetto } from '@/scripts/weight_corrector'
+import { Modal } from 'bootstrap';
 
 //flatpickr
 import flatpickr from 'flatpickr';
@@ -12,6 +13,9 @@ import 'flatpickr/dist/flatpickr.css';
 import '@/assets/sass/forms/custom-flatpickr.css';
 
 import { Russian } from "flatpickr/dist/l10n/ru.js"
+import { integer } from '@vuelidate/validators';
+
+import { utils, writeFile } from 'xlsx';
 
 flatpickr.localize(Russian); // default locale is now Russian
 
@@ -167,28 +171,6 @@ const printAkt = (visit_id) => {
     winPrint.onafterprint = winPrint.close;
 };
 
-let after = null;
-let before = null;
-const resetData = () => store.dispatch('VisitsModule/update_garbage_trucks', { after, before });
-
-const interval = ref([]);
-const bind_data = async () => {
-    if (store.state.VisitsModule.garbage_truck_visits.length != 0) {
-        interval.value = [
-            Math.min(...store.state.VisitsModule.garbage_truck_visits.map(o => o.checked_out)),
-            Math.max(...store.state.VisitsModule.garbage_truck_visits.map(o => o.checked_out))
-        ]
-        return
-    };
-
-    // before = new Date();
-    // after = new Date();
-    after = (new Date()).setHours(0, 0, 0, 0);
-    before = (new Date()).setHours(23, 59, 59, 0);
-    interval.value = [after, before]
-    resetData();
-};
-
 const excel_columns = () => {
     return {
         'Пропуск': 'permit',
@@ -207,92 +189,27 @@ const excel_items = () => {
     let items = []
     for (var row of store.state.VisitsModule.garbage_truck_visits) {
         items.push({
-            permit: row.permit,
-            carrier: row.carrier,
-            reg_number: row.reg_number,
-            truck_model: row.truck_model,
-            polygon: row.polygon,
-            checked_in: row.checked_in.toLocaleString('ru'),
-            brutto: row.brutto,
-            tara: row.tara,
-            netto: row.netto,
-            invoice_num: row.invoice_num,
-            destination: row.destination,
-            driver_name: row.driver_name,
+            'Пропуск': row.permit,
+            'Контрагент': row.carrier,
+            'Рег.номер': row.reg_number,
+            'Марка ТС': row.truck_model,
+            'Полигон': row.polygon,
+            'Время выезда': row.checked_out.toLocaleString('ru'),
+            'Брутто': row.brutto,
+            'Тара': row.tara,
+            'Нетто': row.netto,
+            'Номер акта': row.invoice_num,
         })
     }
     return items;
 };
 
-onMounted(
-    bind_data(),
-);
 const change = (x) => {
     if (x.length == 2) {
         after = x[0].setHours(0, 0, 0, 0)
         before = x[1].setHours(23, 59, 59, 0)
         resetData();
     }
-};
-const changed_visits = ref(null);
-const updateNetto = async () => {
-    const targetNetto = window.Swal.mixin({
-        confirmButtonText: 'Изменить',
-        showCancelButton: true,
-        input: 'number',
-        inputAttributes: {
-            required: true,
-        },
-        validationMessage: 'Обязательно для заполнения!',
-        padding: '2em',
-    });
-    for (let step = 0; step < 2; step++) {
-        if (step === 0) {
-            const result = await targetNetto.fire({
-                title: 'Изменить общее нетто',
-                html: 'Введите нетто для выбранной группы.<br>В килограммах, кратно 20.',
-                showCancelButton: true,
-                cancelButtonText: 'Отменить',
-                currentProgressStep: step,
-            });
-            if (result.dismiss === window.Swal.DismissReason.cancel) {
-                break;
-            };
-            if (result.dismiss === window.Swal.DismissReason.backdrop) {
-                break;
-            };
-            if (result.value) {
-                changed_visits.value = set_netto(table.value.filteredData, result.value)
-                for (let visit of changed_visits.value) {
-                    let i = store.state.VisitsModule.garbage_truck_visits.findIndex((v) => v.id === visit.id)
-
-                    if (i === -1) continue
-
-                    store.state.VisitsModule.garbage_truck_visits[i] = visit
-                }
-            };
-            continue;
-        };
-
-    };
-};
-const saveNettoChanges = () => {
-    let data = []
-    for (let visit of changed_visits.value) {
-        data.push({
-            id: visit.id,
-            weight_in: visit.weight_in,
-            weight_out: visit.weight_out,
-        })
-    };
-    store.dispatch('VisitsModule/bulk_tonars_update', data)
-        .then((res) => {
-            if (res.data.success) {
-                new window.Swal('Сохранено!', 'Данные успешно сохранены.', 'success');
-                resetData();
-            }
-        })
-        .catch((error) => new window.Swal('Ошибка!', error.message, 'error'));
 };
 const bulkPrintAkt = () => {
     store.dispatch('VisitsModule/setAkts', table.value.filteredData);
@@ -303,10 +220,179 @@ const bulkPrintAkt = () => {
     winPrint.onafterprint = winPrint.close;
 }
 
+const updateVisitsModal = ref(null)
+const updateVisits = ref([]);
+let exportModal = null;
+const fileXlsx = ref(null);
+const initupdateVisitsModal = () => {
+    exportModal = new Modal(updateVisitsModal.value)
+    updateVisitsModal.value.addEventListener("hidden.bs.modal", () => fileXlsx.value = null)
+};
+const analyticMethod = ref("max");
+const totalWeight = ref();
+const changed_visits = ref(null);
+const visitsStat = ref({
+    weight: {
+        before: {
+            min: '',
+            avg: '',
+            max: '',
+            total: '',
+        },
+        after: {
+            min: '',
+            avg: '',
+            max: '',
+            total: '',
+        },
+    },
+    loading: {
+        before: {
+            min: '',
+            avg: '',
+            max: '',
+        },
+        after: {
+            min: '',
+            avg: '',
+            max: '',
+        },
+    }
+})
+const calculateBeforeData = () => {
+    let loadings = []
+    let totalNettos = []
+    for (var visit of table.value.filteredData) {
+        loadings.push(visit.brutto / visit.max_weight * 100)
+        totalNettos.push(parseInt(visit.netto))
+    }
+    visitsStat.value.weight.before.min = Math.min(...totalNettos)
+    visitsStat.value.weight.before.max = Math.max(...totalNettos)
+    visitsStat.value.weight.before.total = totalNettos.reduce((a, b) => a + b, 0)
+    visitsStat.value.weight.before.avg = Math.trunc(visitsStat.value.weight.before.total / totalNettos.length * 100) / 100;
+
+    visitsStat.value.loading.before.min = Math.trunc(Math.min(...loadings) * 100) / 100;
+    visitsStat.value.loading.before.max = Math.trunc(Math.max(...loadings) * 100) / 100;
+    visitsStat.value.loading.before.avg = Math.trunc(loadings.reduce((a, b) => a + b, 0) / loadings.length * 100) / 100;
+}
+const calculateAfterData = () => {
+    let loadings = []
+    let totalNettos = []
+    for (let visit of table.value.filteredData) {
+        loadings.push(visit.brutto / visit.max_weight * 100)
+        totalNettos.push(parseInt(visit.netto))
+    }
+    visitsStat.value.weight.after.min = Math.min(...totalNettos)
+    visitsStat.value.weight.after.max = Math.max(...totalNettos)
+    visitsStat.value.weight.after.total = totalNettos.reduce((a, b) => a + b, 0)
+    visitsStat.value.weight.after.avg = Math.trunc(visitsStat.value.weight.after.total / totalNettos.length * 100) / 100;
+
+    visitsStat.value.loading.after.min = Math.trunc(Math.min(...loadings) * 100) / 100;
+    visitsStat.value.loading.after.max = Math.trunc(Math.max(...loadings) * 100) / 100;
+    visitsStat.value.loading.after.avg = Math.trunc(loadings.reduce((a, b) => a + b, 0) / loadings.length * 100) / 100;
+}
+const updateNetto = () => {
+    calculateBeforeData();
+    exportModal.show();
+};
+const applyMethod = () => {
+    if (analyticMethod.value === 'max') {
+        changed_visits.value = incNetto(table.value.filteredData)
+    } else {
+        changed_visits.value = incNetto(table.value.filteredData, totalWeight.value)
+    };
+    for (let visit of changed_visits.value) {
+        let i = store.state.VisitsModule.garbage_truck_visits.findIndex((v) => v.id === visit.id);
+        if (i === -1) continue;
+        store.state.VisitsModule.garbage_truck_visits[i] = visit;
+    };
+    calculateAfterData();
+}
+const saveData = () => {
+    let data = []
+    for (let visit of changed_visits.value) {
+        data.push({
+            id: visit.id,
+            weight_in: visit.weight_in,
+            // weight_out: visit.weight_out,
+        })
+    };
+    store.dispatch('VisitsModule/bulk_update', data)
+        .then((res) => {
+            if (res.data.success) {
+                exportModal.hide()
+                new window.Swal('Сохранено!', 'Данные успешно сохранены.', 'success');
+                resetData();
+            }
+        })
+        .catch((error) => {
+            new window.Swal('Ошибка!', error.message, 'error')
+        });
+};
+
+
+
+
+let after = null;
+let before = null;
+const resetData = () => {
+    store.dispatch('VisitsModule/update_garbage_trucks', { after, before });
+    changed_visits.value = null;
+
+    visitsStat.value.weight.after.min = ''
+    visitsStat.value.weight.after.max = ''
+    visitsStat.value.weight.after.total = ''
+    visitsStat.value.weight.after.avg = ''
+
+    visitsStat.value.loading.after.min = ''
+    visitsStat.value.loading.after.max = ''
+    visitsStat.value.loading.after.avg = ''
+};
+
+const interval = ref([]);
+const bind_data = async () => {
+    if (store.state.VisitsModule.garbage_truck_visits.length != 0) {
+        interval.value = [
+            Math.min(...store.state.VisitsModule.garbage_truck_visits.map(o => o.checked_out)),
+            Math.max(...store.state.VisitsModule.garbage_truck_visits.map(o => o.checked_out))
+        ]
+        return
+    };
+
+    // before = new Date();
+    // after = new Date();
+    after = (new Date()).setHours(0, 0, 0, 0);
+    before = (new Date()).setHours(23, 59, 59, 0);
+    interval.value = [after, before]
+    resetData();
+};
+const download = () => {
+    const data = utils.json_to_sheet(excel_items())
+    const wb = utils.book_new()
+    utils.book_append_sheet(wb, data, 'Визиты мусоровозов')
+    writeFile(wb, 'Визиты мусоровозов.xlsx')
+};
+onMounted(
+    () => {
+        bind_data();
+        initupdateVisitsModal();
+    }
+);
+const polygons = [
+    'Кировский',
+    'Ленинский',
+    'Калачинский',
+]
 </script>
 <style>
 .table .actions .print:hover {
     color: #1abc9c;
+}
+
+.w-stat-sum {
+    color: #f8538d;
+    font-size: 14px;
+    letter-spacing: 1px;
 }
 </style>
 
@@ -331,9 +417,7 @@ const bulkPrintAkt = () => {
                 <flat-pickr v-model="interval" :config="{ dateFormat: 'd.m.Y', mode: 'range' }"
                     class="form-control flatpickr active me-4 width-100 text-center" style="width: 18em; height: 2.5em;"
                     @on-change="change"></flat-pickr>
-                <vue3-json-excel v-show="store.state.AuthModule.credentials.user_role === 'Супервайзер'"
-                    class="btn btn-primary me-4" name="Визиты мусоровозов.xls" :fields="excel_columns()"
-                    :json-data="excel_items()">Выгрузить&nbspв&nbspExcel</vue3-json-excel>
+                <button type="button" class="btn btn-primary me-4" v-on:click="download">Выгрузить&nbspв&nbspExcel</button>
             </div>
         </teleport>
 
@@ -350,7 +434,8 @@ const bulkPrintAkt = () => {
                                     <svg xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 24px" width="24"
                                         height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                         stroke-linecap="round" stroke-linejoin="round"
-                                        class="feather feather-more-horizontal">
+                                        class="feather feather-more-horizontal"
+                                        :class="changed_visits ? 'text-danger': ''">
                                         <circle cx="12" cy="12" r="1"></circle>
                                         <circle cx="19" cy="12" r="1"></circle>
                                         <circle cx="5" cy="12" r="1"></circle>
@@ -383,72 +468,77 @@ const bulkPrintAkt = () => {
                         </div>
                     </div>
                     <div class="widget-content pt-0">
-                        <div class="row">
-                            <div class="col-3">
-                                <div class="w-detail">
-                                    <p class="w-title">Всего визитов (Кир. / Лен. / Калач.)</p>
-                                    <p class="w-stats">{{ table ? table.filteredData.length.toLocaleString('ru') : 0 }} (
-                                        {{ table ? table.filteredData.reduce(
-                                            (acc, visit) => acc + (visit.polygon == 'Кировский' ? 1 : 0), 0
-                                        ).toLocaleString('ru') : 0 }} /
-                                        {{ table ? table.filteredData.reduce(
-                                            (acc, visit) => acc + (visit.polygon == 'Ленинский' ? 1 : 0), 0
-                                        ).toLocaleString('ru') : 0 }} /
-                                        {{ table ? table.filteredData.reduce(
-                                            (acc, visit) => acc + (visit.polygon == 'Калачинский' ? 1 : 0), 0
-                                        ).toLocaleString('ru') : 0 }}
-                                        )
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="w-detail">
-                                    <p class="w-title">Общее нетто (Кир. / Лен. / Калач.), кг</p>
-                                    <p class="w-stats">
-                                        {{ Math.round(table ? table.filteredData.reduce(
-                                            (acc, visit) => acc + visit.netto, 0) : 0).toLocaleString('ru') }} (
-                                        {{ Math.round(table ? table.filteredData.reduce(
-                                            (acc, visit) => acc + (visit.polygon == 'Кировский' ? visit.netto : 0), 0
-                                        ) : 0).toLocaleString('ru') }} /
-                                        {{ Math.round(table ? table.filteredData.reduce(
-                                            (acc, visit) => acc + (visit.polygon == 'Ленинский' ? visit.netto : 0), 0
-                                        ) : 0).toLocaleString('ru') }} /
-                                        {{ Math.round(table ? table.filteredData.reduce(
-                                            (acc, visit) => acc + (visit.polygon == 'Калачинский' ? visit.netto : 0), 0
-                                        ) : 0).toLocaleString('ru') }}
-                                        )
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-2">
-                                <div class="w-detail">
-                                    <p class="w-title">Мин. нетто, кг</p>
-                                    <p class="w-stats">
-                                        {{ Math.min(...(table ? table.filteredData.map(o => o.netto) :
-                                            [])).toLocaleString('ru') }}
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-2">
-                                <div class="w-detail">
-                                    <p class="w-title">Среднее нетто, кг</p>
-                                    <p class="w-stats">
-                                        {{ Math.round(table ? table.filteredData.reduce(
-                                            (acc, visit) => acc + visit.netto / table.filteredData.length, 0) :
-                                            0).toLocaleString('ru') }}
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-2">
-                                <div class="w-detail">
-                                    <p class="w-title">Макс. нетто, кг</p>
-                                    <p class="w-stats">
-                                        {{ Math.max(...(table ? table.filteredData.map(o => o.netto) :
-                                            [])).toLocaleString('ru') }}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                        <table role="table" aria-busy="false" aria-colcount="5" class="w-detail table b-table my-4">
+                            <thead role="rowgroup" class="w-title">
+                                <tr role="row">
+                                    <th role="columnheader" scope="col" aria-colindex="1">
+                                        <p class="w-title">Полигон</p>
+                                    </th>
+                                    <th role="columnheader" scope="col" aria-colindex="3">
+                                        <p class="w-title">Визитов</p>
+                                    </th>
+                                    <th role="columnheader" scope="col" aria-colindex="3">
+                                        <p class="w-title">Сум. нетто</p>
+                                    </th>
+                                    <th role="columnheader" scope="col" aria-colindex="3">
+                                        <p class="w-title">Мин. нетто</p>
+                                    </th>
+                                    <th role="columnheader" scope="col" aria-colindex="3">
+                                        <p class="w-title">Среднее нетто</p>
+                                    </th>
+                                    <th role="columnheader" scope="col" aria-colindex="3">
+                                        <p class="w-title">Макс. нетто</p>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody role="rowgroup" class="w-stats">
+                                <tr v-for="polygon in polygons">
+                                    <td>{{ polygon }}</td>
+                                    <td>{{ table ? table.filteredData.reduce(
+                                        (acc, visit) => acc + (visit.polygon == polygon ? 1 : 0), 0
+                                    ).toLocaleString('ru') : 0 }}</td>
+                                    <td>{{ Math.round(table ? table.filteredData.reduce(
+                                        (acc, visit) => acc + (visit.polygon == polygon ? visit.netto : 0), 0
+                                    ) : 0).toLocaleString('ru') }}</td>
+                                    <td>
+                                        {{ Math.min(
+                                            ...(table ? table.filteredData
+                                                .filter(o => o.polygon == polygon)
+                                                .map(o => o.netto) :
+                                                [])).toLocaleString('ru') }}</td>
+                                    <td>{{ Math.round(table ? table.filteredData
+                                        .filter(o => o.polygon == polygon)
+                                        .reduce(
+                                            (acc, visit) => acc + visit.netto / table.filteredData
+                                                .filter(o => o.polygon == polygon).length, 0) :
+                                        0).toLocaleString('ru') }}
+                                    </td>
+                                    <td>{{ Math.max(
+                                        ...(table ? table.filteredData
+                                            .filter(o => o.polygon == polygon)
+                                            .map(o => o.netto) :
+                                            [])).toLocaleString('ru') }}</td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="mt-2">
+                                <tr>
+                                    <td class="fw-bold w-stat-sum">ОБЩЕЕ</td>
+                                    <td class="fw-bold w-stat-sum">{{ table ? table.filteredData.length.toLocaleString('ru')
+                                        : 0 }}</td>
+                                    <td class="fw-bold w-stat-sum">{{ Math.round(table ? table.filteredData.reduce(
+                                        (acc, visit) => acc + visit.netto, 0) : 0).toLocaleString('ru') }}</td>
+                                    <td class="fw-bold w-stat-sum">{{ Math.min(...(table ? table.filteredData.map(o =>
+                                        o.netto) :
+                                        [])).toLocaleString('ru') }}</td>
+                                    <td class="fw-bold w-stat-sum">{{ Math.round(table ? table.filteredData.reduce(
+                                        (acc, visit) => acc + visit.netto / table.filteredData.length, 0) :
+                                        0).toLocaleString('ru') }}</td>
+                                    <td class="fw-bold w-stat-sum">{{ Math.max(...(table ? table.filteredData.map(o =>
+                                        o.netto) :
+                                        [])).toLocaleString('ru') }}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -618,4 +708,97 @@ const bulkPrintAkt = () => {
     </div>
     <visitDetails :item="item" :isOpen="isOpen" @closed="closeDetails" @deleted="deleteItem" @print_akt="printAkt">
     </visitDetails>
+
+
+    <div class="modal fade" ref="updateVisitsModal" tabindex="-1" role="dialog" aria-labelledby="updateVisitsModalLable"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateVisitsModalLable">Аналитика</h5>
+                    <button type="button" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close"
+                        class="btn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="row mb-3">
+                        <div class="col-md-5">
+                            <label class="col-form-label">Метод</label>
+                            <select class="form-select form-select" v-model="analyticMethod">
+                                <option selected value="max">К большему</option>
+                                <option value="def">Точно</option>
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="col-form-label" for="totalWeight">Вес, кг</label>
+                            <input v-model="totalWeight" type="number" step=20 class="form-control"
+                                :readonly="analyticMethod !== 'def'" id="totalWeight" />
+                        </div>
+                        <div class="col-md-2 d-flex align-content-end flex-wrap">
+                            <button type="button" class="btn btn-outline-primary btn-lg w-100" @click="applyMethod">
+                                Применить
+                            </button>
+                        </div>
+                    </form>
+                    <table role="table" aria-busy="false" aria-colcount="5" class="table b-table my-4">
+                        <thead role="rowgroup">
+                            <tr role="row">
+                                <th role="columnheader" scope="col" aria-colindex="1">
+                                    <div></div>
+                                </th>
+                                <th role="columnheader" scope="col" aria-colindex="2">
+                                    <div>Вес До, кг</div>
+                                </th>
+                                <th role="columnheader" scope="col" aria-colindex="3">
+                                    <div>Вес После, кг</div>
+                                </th>
+                                <th role="columnheader" scope="col" aria-colindex="2">
+                                    <div>Перегруз До, %</div>
+                                </th>
+                                <th role="columnheader" scope="col" aria-colindex="3">
+                                    <div>Перегруз После, %</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody role="rowgroup">
+                            <tr>
+                                <th>МИН</th>
+                                <td>{{ visitsStat.weight.before.min.toLocaleString('ru') }}</td>
+                                <td>{{ visitsStat.weight.after.min.toLocaleString('ru') }}</td>
+                                <td>{{ visitsStat.loading.before.min.toLocaleString('ru') }}</td>
+                                <td>{{ visitsStat.loading.after.min.toLocaleString('ru') }}</td>
+                            </tr>
+                            <tr>
+                                <th>СРЕД</th>
+                                <td>{{ visitsStat.weight.before.avg.toLocaleString('ru') }}</td>
+                                <td>{{ visitsStat.weight.after.avg.toLocaleString('ru') }}</td>
+                                <td>{{ visitsStat.loading.before.avg.toLocaleString('ru') }}</td>
+                                <td>{{ visitsStat.loading.after.avg.toLocaleString('ru') }}</td>
+                            </tr>
+                            <tr>
+                                <th>МАКС</th>
+                                <td>{{ visitsStat.weight.before.max.toLocaleString('ru') }}</td>
+                                <td>{{ visitsStat.weight.after.max.toLocaleString('ru') }}</td>
+                                <td>{{ visitsStat.loading.before.max.toLocaleString('ru') }}</td>
+                                <td>{{ visitsStat.loading.after.max.toLocaleString('ru') }}</td>
+                            </tr>
+                            <tr>
+                                <th>ВСЕГО</th>
+                                <td>
+                                    {{ visitsStat.weight.before.total.toLocaleString('ru') }}
+                                </td>
+                                <td colspan="3">
+                                    {{ visitsStat.weight.after.total.toLocaleString('ru') }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer d-flex justify-content-between px-4">
+                    <button type="button" class="btn btn-danger" @click.prevent="resetData">Сбросить</button>
+                    <button type="button" class="btn ms-auto" data-dismiss="modal" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-primary ms-4" @click.prevent="saveData">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>

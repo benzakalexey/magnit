@@ -126,6 +126,19 @@ class Visit:
 
     @join_point
     # @validate_with_dto
+    def bulk_update(self, visits_info: List[Dict[str, int]]):
+        for v in visits_info:
+            visit = self.visits_repo.get_by_id(v.get('id'))
+            if visit is None:
+                raise errors.VisitIDNotExistError(visit_id=v.get('id'))
+
+            visit.weight_in = v.get('weight_in')
+            # visit.weight_out = v.get('weight_out')
+
+        self.visits_repo.save()
+
+    @join_point
+    # @validate_with_dto
     def update_from_file(self, file):
         visits_info = self.tonars_xls_parser.get_data(file)
         err = self._check_errors_in_export(visits_info)
