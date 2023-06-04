@@ -261,7 +261,7 @@ const pretty_num = (n) => {
                                     <td class="bordered text-center" colspan="10">
                                         {{ akt.service_type }}
                                     </td>
-                                    <td class="bordered text-center" colspan="4">
+                                    <td class="bordered text-center text-large" colspan="4">
                                         {{ akt.tara / 1000 }} тонн
                                     </td>
                                     <td class="bordered text-center" colspan="4">

@@ -6,7 +6,7 @@ import { useStore } from 'vuex';
 import { Modal } from 'bootstrap';
 import { PolygonsAPI } from '@/api/polygonsAPI';
 import { DriversAPI } from '@/api/driversAPI';
-import set_netto from '@/scripts/weight_corrector'
+import { set_netto } from '@/scripts/weight_corrector'
 
 import { utils, writeFile } from 'xlsx';
 
@@ -315,6 +315,7 @@ const updateNetto = async () => {
                 break;
             };
             if (result.value) {
+                console.log('HERE')
                 changed_visits.value = set_netto(table.value.filteredData, result.value)
                 for (let visit of changed_visits.value) {
                     let i = store.state.VisitsModule.tonar_visits.findIndex((v) => v.id === visit.id)
@@ -416,6 +417,10 @@ const download = () => {
     writeFile(wb, 'Визиты тонаров.xlsx')
 };
 
+const polygons = [
+    'Кировский',
+    'Ленинский',
+]
 onMounted(
     () => {
         bind_data();
@@ -462,7 +467,8 @@ onMounted(
                                     <svg xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 24px" width="24"
                                         height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                         stroke-linecap="round" stroke-linejoin="round"
-                                        class="feather feather-more-horizontal">
+                                        class="feather feather-more-horizontal"
+                                        :class="changed_visits ? 'text-danger': ''">
                                         <circle cx="12" cy="12" r="1"></circle>
                                         <circle cx="19" cy="12" r="1"></circle>
                                         <circle cx="5" cy="12" r="1"></circle>
@@ -472,98 +478,109 @@ onMounted(
                                     <li>
                                         <input ref="fl_profile" type="file" class="d-none"
                                             accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                                            @change="fileUpload" :key="fileInputKey"/>
+                                            @change="fileUpload" :key="fileInputKey" />
                                         <a href="javascript:void(0);" class="dropdown-item"
                                             @click="$refs.fl_profile.click()">
                                             Экспорт
                                         </a>
                                     </li>
                                     <!-- <li>
-                                        <a href="javascript:void(0);" class="dropdown-item" @click="updateNetto()">
+                                        <a href="javascript:void(0);" class="dropdown-item" @click="updateNetto">
                                             Изменить
                                         </a>
                                     </li>
                                     <li v-show="changed_visits">
-                                        <a href="javascript:void(0);" class="dropdown-item" @click="saveNettoChanges()">
+                                        <a href="javascript:void(0);" class="dropdown-item" @click="saveNettoChanges">
                                             Сохранить
                                         </a>
                                     </li> -->
                                     <li>
-                                        <a href="javascript:void(0);" class="dropdown-item" @click="bulkPrintAkt()">
+                                        <a href="javascript:void(0);" class="dropdown-item" @click="bulkPrintAkt">
                                             Печать актов
                                         </a>
                                     </li>
-                                    <!-- <li class="mt-3 text-danger">
+                                    <li class="mt-3 text-danger">
                                         <a href="javascript:void(0);" class="dropdown-item text-danger"
-                                            @click="resetData()">
+                                            @click="resetData">
                                             Сбросить
                                         </a>
-                                    </li> -->
+                                    </li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                     <div class="widget-content pt-0">
-                        <div class="row">
-                            <div class="col-3">
-                                <div class="w-detail">
-                                    <p class="w-title">Всего визитов (Кир. / Лен.)</p>
-                                    <p class="w-stats">{{ table ? table.filteredData.length.toLocaleString('ru') : 0 }} (
-                                        {{ table ? table.filteredData.reduce(
-                                            (acc, visit) => acc + (visit.polygon == 'Кировский' ? 1 : 0), 0
-                                        ).toLocaleString('ru') : 0 }} /
-                                        {{ table ? table.filteredData.reduce(
-                                            (acc, visit) => acc + (visit.polygon == 'Ленинский' ? 1 : 0), 0
-                                        ).toLocaleString('ru') : 0 }}
-                                        )
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="w-detail">
-                                    <p class="w-title">Общее нетто (Кир. / Лен.), кг</p>
-                                    <p class="w-stats">
-                                        {{ Math.round(table ? table.filteredData.reduce(
-                                            (acc, visit) => acc + visit.netto, 0) : 0).toLocaleString('ru') }} (
-                                        {{ Math.round(table ? table.filteredData.reduce(
-                                            (acc, visit) => acc + (visit.polygon == 'Кировский' ? visit.netto : 0), 0
-                                        ) : 0).toLocaleString('ru') }} /
-                                        {{ Math.round(table ? table.filteredData.reduce(
-                                            (acc, visit) => acc + (visit.polygon == 'Ленинский' ? visit.netto : 0), 0
-                                        ) : 0).toLocaleString('ru') }}
-                                        )
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-2">
-                                <div class="w-detail">
-                                    <p class="w-title">Мин. нетто, кг</p>
-                                    <p class="w-stats">
-                                        {{ Math.min(...(table ? table.filteredData.map(o => o.netto) :
-                                            [])).toLocaleString('ru') }}
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-2">
-                                <div class="w-detail">
-                                    <p class="w-title">Среднее нетто, кг</p>
-                                    <p class="w-stats">
-                                        {{ Math.round(table ? table.filteredData.reduce(
-                                            (acc, visit) => acc + visit.netto / table.filteredData.length, 0) :
-                                            0).toLocaleString('ru') }}
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-2">
-                                <div class="w-detail">
-                                    <p class="w-title">Макс. нетто, кг</p>
-                                    <p class="w-stats">
-                                        {{ Math.max(...(table ? table.filteredData.map(o => o.netto) :
-                                            [])).toLocaleString('ru') }}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                        <table role="table" aria-busy="false" aria-colcount="5" class="w-detail table b-table my-4">
+                            <thead role="rowgroup" class="w-title">
+                                <tr role="row">
+                                    <th role="columnheader" scope="col" aria-colindex="1">
+                                        <p class="w-title">Полигон</p>
+                                    </th>
+                                    <th role="columnheader" scope="col" aria-colindex="3">
+                                        <p class="w-title">Визитов</p>
+                                    </th>
+                                    <th role="columnheader" scope="col" aria-colindex="3">
+                                        <p class="w-title">Сум. нетто</p>
+                                    </th>
+                                    <th role="columnheader" scope="col" aria-colindex="3">
+                                        <p class="w-title">Мин. нетто</p>
+                                    </th>
+                                    <th role="columnheader" scope="col" aria-colindex="3">
+                                        <p class="w-title">Среднее нетто</p>
+                                    </th>
+                                    <th role="columnheader" scope="col" aria-colindex="3">
+                                        <p class="w-title">Макс. нетто</p>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody role="rowgroup" class="w-stats">
+                                <tr v-for="polygon in polygons">
+                                    <td>{{ polygon }}</td>
+                                    <td>{{ table ? table.filteredData.reduce(
+                                        (acc, visit) => acc + (visit.polygon == polygon ? 1 : 0), 0
+                                    ).toLocaleString('ru') : 0 }}</td>
+                                    <td>{{ Math.round(table ? table.filteredData.reduce(
+                                        (acc, visit) => acc + (visit.polygon == polygon ? visit.netto : 0), 0
+                                    ) : 0).toLocaleString('ru') }}</td>
+                                    <td>
+                                        {{ Math.min(
+                                            ...(table ? table.filteredData
+                                                .filter(o => o.polygon == polygon)
+                                                .map(o => o.netto) :
+                                                [])).toLocaleString('ru') }}</td>
+                                    <td>{{ Math.round(table ? table.filteredData
+                                        .filter(o => o.polygon == polygon)
+                                        .reduce(
+                                            (acc, visit) => acc + visit.netto / table.filteredData
+                                                .filter(o => o.polygon == polygon).length, 0) :
+                                        0).toLocaleString('ru') }}
+                                    </td>
+                                    <td>{{ Math.max(
+                                        ...(table ? table.filteredData
+                                            .filter(o => o.polygon == polygon)
+                                            .map(o => o.netto) :
+                                            [])).toLocaleString('ru') }}</td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="mt-2">
+                                <tr>
+                                    <td class="fw-bold w-stat-sum">ОБЩЕЕ</td>
+                                    <td class="fw-bold w-stat-sum">{{ table ? table.filteredData.length.toLocaleString('ru')
+                                        : 0 }}</td>
+                                    <td class="fw-bold w-stat-sum">{{ Math.round(table ? table.filteredData.reduce(
+                                        (acc, visit) => acc + visit.netto, 0) : 0).toLocaleString('ru') }}</td>
+                                    <td class="fw-bold w-stat-sum">{{ Math.min(...(table ? table.filteredData.map(o =>
+                                        o.netto) :
+                                        [])).toLocaleString('ru') }}</td>
+                                    <td class="fw-bold w-stat-sum">{{ Math.round(table ? table.filteredData.reduce(
+                                        (acc, visit) => acc + visit.netto / table.filteredData.length, 0) :
+                                        0).toLocaleString('ru') }}</td>
+                                    <td class="fw-bold w-stat-sum">{{ Math.max(...(table ? table.filteredData.map(o =>
+                                        o.netto) :
+                                        [])).toLocaleString('ru') }}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -763,53 +780,4 @@ onMounted(
             </div>
         </div>
     </div>
-    <!-- <div class="modal fade" ref="exportErrorModal" tabindex="-2" role="dialog" aria-labelledby="exportErrorModalLable"
-        aria-hidden="true">
-        <div class="modal-dialog modal" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exportErrorModalLable">Ошибки в файле экспорта</h5>
-                    <button type="button" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close"
-                        class="btn-close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="table-responsive">
-                        <table role="table" aria-busy="false" aria-colcount="5" class="table table-bordered">
-                            <thead role="rowgroup">
-                                <tr role="row">
-                                    <th role="columnheader" scope="col" aria-colindex="1">
-                                        <div>Строка</div>
-                                    </th>
-                                    <th role="columnheader" scope="col" aria-colindex="2">
-                                        <div>Столбец</div>
-                                    </th>
-                                    <th role="columnheader" scope="col" aria-colindex="3">
-                                        <div>Значение</div>
-                                    </th>
-                                    <th role="columnheader" scope="col" aria-colindex="4" class="text-center">
-                                        <div>Комментарий</div>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody role="rowgroup">
-                                <tr v-for="item in exportErrors" :key="item.name" role="row">
-                                    <td aria-colindex="1" role="cell">{{ item.row }}</td>
-                                    <td aria-colindex="2" role="cell">{{ item.field }}</td>
-                                    <td aria-colindex="3" role="cell">{{ item.value }}</td>
-                                    <td aria-colindex="4" role="cell">{{ item.comment }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn" data-dismiss="modal" data-bs-dismiss="modal"><i
-                            class="flaticon-cancel-12"></i>Отмена</button>
-                    <button type="button" class="btn btn-primary" @click.prevent="updateVisit">
-                        Изменить
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div> -->
 </template>

@@ -135,6 +135,7 @@ export const VisitsModule = {
                         checked_out: v.checked_out ? new Date(v.checked_out) : v.checked_out,
                         driver_name: v.driver_name,
                         destination: v.destination,
+                        frozen: v.frozen,
                         status: v.status
                     }
                 )
@@ -206,6 +207,9 @@ export const VisitsModule = {
         },
         async bulk_tonars_update({ commit }, data) {
             return await VisitsAPI.bulk_tonars_update(data);
+        },
+        async bulk_update({ commit }, data) {
+            return await VisitsAPI.bulk_update(data);
         },
         async upload_tonars_data({ commit }, file) {
             return await VisitsAPI.upload_tonars_data(file);
