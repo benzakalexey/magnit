@@ -283,6 +283,7 @@ class Visit:
     contract: Optional[Contract] = None
     is_deleted: Optional[bool] = False
     delete_reason: Optional[str] = None
+    frozen: bool = False
     id: Optional[int] = None
 
     @property

@@ -92,14 +92,16 @@ export const VisitsAPI = {
      */
     bulk_tonars_update(data) {
         const url = 'visits/bulk_tonars_update'
-        // const data = {
-        //     weight_in,
-        //     weight_out,
-        //     visit_id,
-        //     driver_id,
-        //     contract_id,
-        // };
-        // console.log(data)
+        return DefaultAPIInstance.post(url, data);
+    },
+    /**Добавить визит
+     *      
+     * @param {number} id 
+     * @param {string} reason 
+     * @returns {Promise<AxiosResponse<any>>}
+     */
+    bulk_update(data) {
+        const url = 'visits/bulk_update'
         return DefaultAPIInstance.post(url, data);
     },
     upload_tonars_data(file) {

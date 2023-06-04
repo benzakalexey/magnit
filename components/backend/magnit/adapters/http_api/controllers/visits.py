@@ -147,6 +147,7 @@ class Visits:
                 'checked_in': v.checked_in,
                 'weight_out': v.weight_out,
                 'checked_out': v.checked_out,
+                'frozen': v.frozen,
                 'driver_name': f'{v.driver.surname} {v.driver.name}'
                 if v.driver else None,
                 # 'driver_phone': v.driver.phone
@@ -195,6 +196,12 @@ class Visits:
     @authenticate
     def on_post_bulk_tonars_update(self, request, response):
         self.service.bulk_tonars_update(request.media)
+        response.media = SUCCESS_TRUE
+
+    @join_point
+    @authenticate
+    def on_post_bulk_update(self, request, response):
+        self.service.bulk_update(request.media)
         response.media = SUCCESS_TRUE
 
     @join_point
