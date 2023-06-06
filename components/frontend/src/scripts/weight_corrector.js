@@ -8,13 +8,13 @@ function set_netto(visits, netto, tonar = true) {
     }
     let targetWeight = netto / visits.length;
     let currentTotal = visits.reduce((acc, c) => acc + c.netto, 0);
-
+    for (let i = 0; i < visits.length; i += CHUNK_SIZE) {
+        const chunk = visits.slice(i, i + CHUNK_SIZE);
+        bulk_update(chunk, targetWeight * chunk.length, tonar);
+    };
     var c = 0
     while (netto != currentTotal && c < 10) {
-        for (let i = 0; i < visits.length; i += CHUNK_SIZE) {
-            const chunk = visits.slice(i, i + CHUNK_SIZE);
-            bulk_update(chunk, targetWeight * chunk.length, tonar);
-        };
+
         let diff = netto - currentTotal;
         let rIndex = Math.floor(Math.random() * visits.length);
         let visit = visits[rIndex];
@@ -42,7 +42,7 @@ function bulk_update(visits, targetWeight, tonar = true) {
         } else {
             netto = getRNetto(maxNetto - NETTO_DELTA, maxNetto + NETTO_DELTA)
         };
-        updateVisit(visit, netto, tonar);
+        visit = updateVisit(visit, netto, tonar);
     }
 }
 
