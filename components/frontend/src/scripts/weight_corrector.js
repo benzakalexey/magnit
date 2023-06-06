@@ -36,10 +36,8 @@ function bulk_update(visits, targetWeight, tonar = true) {
         let maxNetto = visit.max_weight - visit.tara;
         // if (visit.netto >= maxNetto) continue
 
-        // let netto = getRNetto(visit.netto + useStep - NETTO_DELTA, visit.netto + useStep + NETTO_DELTA)
-        if ((visit.netto + useStep) <= maxNetto) {
-            netto = getRNetto(visit.netto + useStep - NETTO_DELTA, visit.netto + useStep + NETTO_DELTA)
-        } else {
+        let netto = getRNetto(visit.netto + useStep - NETTO_DELTA, visit.netto + useStep + NETTO_DELTA)
+        if (visit.netto > maxNetto) {
             netto = getRNetto(maxNetto - NETTO_DELTA, maxNetto + NETTO_DELTA)
         };
         visit = updateVisit(visit, netto, tonar);
