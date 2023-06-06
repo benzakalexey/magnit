@@ -13,7 +13,7 @@ function set_netto(visits, netto, tonar = true) {
         bulk_update(chunk, targetWeight * chunk.length, tonar);
     };
     var c = 0
-    while (netto != currentTotal && c < 10) {
+    while (netto != currentTotal && c < 200) {
 
         let diff = netto - currentTotal;
         let rIndex = Math.floor(Math.random() * visits.length);
