@@ -187,7 +187,7 @@ const excel_columns = () => {
 };
 const excel_items = () => {
     let items = []
-    for (var row of store.state.VisitsModule.garbage_truck_visits) {
+    for (var row of table.value.filteredData) {
         items.push({
             'Пропуск': row.permit,
             'Контрагент': row.carrier,
@@ -220,6 +220,12 @@ const bulkPrintAkt = () => {
     winPrint.onafterprint = winPrint.close;
 }
 
+let detailModal = null;
+const visitDetailsModal = ref(null)
+const initDetailsModal = () => {
+    detailModal = new Modal(visitDetailsModal.value)
+    // visitDetailsModal.value.addEventListener("hidden.bs.modal", onHidden)
+};
 const updateVisitsModal = ref(null)
 const updateVisits = ref([]);
 let exportModal = null;
@@ -376,6 +382,7 @@ onMounted(
     () => {
         bind_data();
         initupdateVisitsModal();
+        initDetailsModal();
     }
 );
 const polygons = [
@@ -434,8 +441,7 @@ const polygons = [
                                     <svg xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 24px" width="24"
                                         height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                         stroke-linecap="round" stroke-linejoin="round"
-                                        class="feather feather-more-horizontal"
-                                        :class="changed_visits ? 'text-danger': ''">
+                                        class="feather feather-more-horizontal" :class="changed_visits ? 'text-danger' : ''">
                                         <circle cx="12" cy="12" r="1"></circle>
                                         <circle cx="19" cy="12" r="1"></circle>
                                         <circle cx="5" cy="12" r="1"></circle>
@@ -581,6 +587,7 @@ const polygons = [
             </div>
         </div>
     </div>
+
     <div class="modal fade" ref="visitDetailsModal" tabindex="-1" role="dialog" aria-labelledby="visitDetailsModalLable"
         aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
@@ -637,24 +644,6 @@ const polygons = [
                             <input v-model="visitDetails.weight_out" type="number" class="form-control" id="weight_out" />
                         </div>
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="col-form-label" for="direction">Направление</label>
-                            <select class="form-select form-select" v-model="visitDetails.contract_id">
-                                <option selected disabled>Выберите значение</option>
-                                <option v-for="t in directions" :value="t.id">{{ t.name }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="col-form-label" for="driver">Водитель</label>
-                            <select class="form-select form-select" v-model="visitDetails.driver_id">
-                                <option selected disabled>Выберите значение</option>
-                                <option v-for="t in drivers" :value="t.id">{{ t.name }}
-                                </option>
-                            </select>
-                        </div>
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <button :disabled="item.is_deleted" type="button" class="btn btn-danger me-auto"
@@ -680,21 +669,9 @@ const polygons = [
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="btndefault">
                             <li>
-                                <a @click="printTonarPack()" href="javascript:void(0);" class="dropdown-item"><i
-                                        class="flaticon-home-fill-1 me-1"></i>
-                                    Пакет документов
-                                </a>
-                            </li>
-                            <li>
                                 <a @click="printAkt()" href="javascript:void(0);" class="dropdown-item"><i
                                         class="flaticon-gear-fill me-1"></i>
                                     Акт взвешивания
-                                </a>
-                            </li>
-                            <li>
-                                <a @click="printInvoice()" href="javascript:void(0);" class="dropdown-item"><i
-                                        class="flaticon-bell-fill-2 me-1"></i>
-                                    Транспортная накладная
                                 </a>
                             </li>
                         </ul>
@@ -706,8 +683,6 @@ const polygons = [
             </div>
         </div>
     </div>
-    <visitDetails :item="item" :isOpen="isOpen" @closed="closeDetails" @deleted="deleteItem" @print_akt="printAkt">
-    </visitDetails>
 
 
     <div class="modal fade" ref="updateVisitsModal" tabindex="-1" role="dialog" aria-labelledby="updateVisitsModalLable"
@@ -752,10 +727,10 @@ const polygons = [
                                     <div>Вес После, кг</div>
                                 </th>
                                 <th role="columnheader" scope="col" aria-colindex="2">
-                                    <div>Перегруз До, %</div>
+                                    <div>Загрузка До, %</div>
                                 </th>
                                 <th role="columnheader" scope="col" aria-colindex="3">
-                                    <div>Перегруз После, %</div>
+                                    <div>Загрузка После, %</div>
                                 </th>
                             </tr>
                         </thead>
