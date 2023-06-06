@@ -77,7 +77,7 @@ function incNetto(visits, target = null) {
                         netto = getRNetto(netto - 10, netto + 10)
                     } else continue
                 }
-                updateVisit(visit, netto, false);
+                visit = updateVisit(visit, netto, false);
                 f.push(visit)
             }
         }
@@ -100,6 +100,8 @@ function updateVisit(visit, netto, tonar = true) {
     } else {
         visit.weight_in = visit.brutto
     }
+
+    return visit
 };
 
 module.exports = { set_netto, incNetto }
