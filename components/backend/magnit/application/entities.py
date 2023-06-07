@@ -230,7 +230,7 @@ class Permission:
                    f'{self.permit.truck.model.name.split()[0]}, ' \
                    f'Прицеп: {self.trailer.model} ' \
                    f'{self.permit.truck.body_volume} м³, ' \
-                   f'{max_netto} т.'
+                   f'{max_netto} тонн'
         else:
             max_netto = (
                             self.permit.truck.max_weight -
@@ -239,7 +239,7 @@ class Permission:
             return f'{self.permit.truck.type.value.capitalize()} ' \
                    f'{self.permit.truck.model.name.split()[0]}, ' \
                    f'{self.permit.truck.body_volume} м³, ' \
-                   f'{max_netto} т.'
+                   f'{max_netto} тонн'
 
     @property
     def truck_number(self) -> str:
