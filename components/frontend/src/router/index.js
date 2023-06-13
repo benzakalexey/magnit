@@ -123,6 +123,20 @@ const routes = [
         meta: { layout: 'auth' },
         beforeEnter: setAuthLayout,
     },
+    {
+        path: '/doc/bulk_invoice',
+        name: 'bulk_invoice',
+        component: () => import(/* webpackChunkName: "components-tabs" */ '../views/magnit/doc/bulk_invoice.vue'),
+        meta: { layout: 'auth' },
+        beforeEnter: setAuthLayout,
+    },
+    {
+        path: '/doc/bulk_pack',
+        name: 'bulk_pack',
+        component: () => import(/* webpackChunkName: "components-tabs" */ '../views/magnit/doc/bulk_pack.vue'),
+        meta: { layout: 'auth' },
+        beforeEnter: setAuthLayout,
+    },
 
 
     //auth
