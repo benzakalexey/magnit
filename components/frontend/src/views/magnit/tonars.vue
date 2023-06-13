@@ -357,6 +357,22 @@ const bulkPrintAkt = () => {
     winPrint.focus();
     winPrint.onafterprint = winPrint.close;
 }
+const bulkPrintInvoice = () => {
+    store.dispatch('VisitsModule/setAkts', table.value.filteredData);
+    let winPrint = window.open(
+        '/doc/bulk_invoice?print=true', 'fullscreen=yes,toolbar=0,scrollbars=0,status=0'
+    );
+    winPrint.focus();
+    winPrint.onafterprint = winPrint.close;
+}
+const bulkPrintPack = () => {
+    store.dispatch('VisitsModule/setAkts', table.value.filteredData);
+    let winPrint = window.open(
+        '/doc/bulk_pack?print=true', 'fullscreen=yes,toolbar=0,scrollbars=0,status=0'
+    );
+    winPrint.focus();
+    winPrint.onafterprint = winPrint.close;
+}
 const deleteItem = (id, reason) => {
     store.dispatch('VisitsModule/delete', {
         visit_id: id,
@@ -494,6 +510,16 @@ onMounted(
                                             Сохранить
                                         </a>
                                     </li> -->
+                                    <li>
+                                        <a href="javascript:void(0);" class="dropdown-item" @click="bulkPrintPack">
+                                            Печать пакетов
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0);" class="dropdown-item" @click="bulkPrintInvoice">
+                                            Печать ТН
+                                        </a>
+                                    </li>
                                     <li>
                                         <a href="javascript:void(0);" class="dropdown-item" @click="bulkPrintAkt">
                                             Печать актов
