@@ -128,19 +128,19 @@ const pretty_num = (n) => {
                 </tr>
                 <tr style="height: 24px">
                     <td colspan="2"></td>
-                    <td class="bordered text-center fs-5" colspan="6">
+                    <td class="bordered text-center fs-6" colspan="6">
                         {{ akt.permit_number }}
                     </td>
-                    <td class="bordered text-center fs-5" colspan="10">
+                    <td class="bordered text-center fs-6" colspan="10">
                         {{ akt.service_type }}
                     </td>
-                    <td class="bordered text-center fs-5" colspan="4">
+                    <td class="bordered text-center fs-6" colspan="4">
                         {{ akt.tara / 1000 }}
                     </td>
-                    <td class="bordered text-center fs-5" colspan="4">
+                    <td class="bordered text-center fs-6" colspan="4">
                         {{ akt.brutto / 1000 }}
                     </td>
-                    <td class="bordered text-center fs-5" colspan="4">
+                    <td class="bordered text-center fs-6" colspan="4">
                         {{ akt.netto / 1000 }}
                     </td>
                     <td colspan="2"></td>
@@ -237,19 +237,19 @@ const pretty_num = (n) => {
                 </tr>
                 <tr style="height: 24px">
                     <td colspan="2"></td>
-                    <td class="bordered text-center fs-5" colspan="6">
+                    <td class="bordered text-center fs-6" colspan="6">
                         {{ akt.permit_number }}
                     </td>
-                    <td class="bordered text-center fs-5" colspan="10">
+                    <td class="bordered text-center fs-6" colspan="10">
                         {{ akt.service_type }}
                     </td>
-                    <td class="bordered text-center fs-5" colspan="4">
+                    <td class="bordered text-center fs-6" colspan="4">
                         {{ akt.tara / 1000 }}
                     </td>
-                    <td class="bordered text-center fs-5" colspan="4">
+                    <td class="bordered text-center fs-6" colspan="4">
                         {{ akt.brutto / 1000 }}
                     </td>
-                    <td class="bordered text-center fs-5" colspan="4">
+                    <td class="bordered text-center fs-6" colspan="4">
                         {{ akt.netto / 1000 }}
                     </td>
                     <td colspan="2"></td>
@@ -346,19 +346,19 @@ const pretty_num = (n) => {
                 </tr>
                 <tr style="height: 24px">
                     <td colspan="2"></td>
-                    <td class="bordered text-center fs-5" colspan="6">
+                    <td class="bordered text-center fs-6" colspan="6">
                         {{ akt.permit_number }}
                     </td>
-                    <td class="bordered text-center fs-5" colspan="10">
+                    <td class="bordered text-center fs-6" colspan="10">
                         {{ akt.service_type }}
                     </td>
-                    <td class="bordered text-center fs-5" colspan="4">
+                    <td class="bordered text-center fs-6" colspan="4">
                         {{ akt.tara / 1000 }}
                     </td>
-                    <td class="bordered text-center fs-5" colspan="4">
+                    <td class="bordered text-center fs-6" colspan="4">
                         {{ akt.brutto / 1000 }}
                     </td>
-                    <td class="bordered text-center fs-5" colspan="4">
+                    <td class="bordered text-center fs-6" colspan="4">
                         {{ akt.netto / 1000 }}
                     </td>
                     <td colspan="2"></td>
