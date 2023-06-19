@@ -1,6 +1,7 @@
 const NETTO_DELTA = 30;
 const WEIGHT_STEP = 20;
 const CHUNK_SIZE = 20;
+const TOTAL_DIFF = 20000;
 
 function set_netto(visits, netto, tonar = true) {
     if (netto % 20 !== 0) {
@@ -13,8 +14,20 @@ function set_netto(visits, netto, tonar = true) {
         bulk_update(chunk, targetWeight * chunk.length, tonar);
     };
     var c = 0
-    while (netto != currentTotal && c < 200) {
+    while (netto != currentTotal && c < 20) {
+        for (let i = 0; i < visits.length; i += CHUNK_SIZE) {
+            const chunk = visits.slice(i, i + CHUNK_SIZE);
+            bulk_update(chunk, targetWeight * chunk.length, tonar);
+        };
+        c++
+        console.log(c)
+        currentTotal = visits.reduce((acc, v) => acc + v.netto, 0);
+    }
+    console.log(netto)
+    console.log(currentTotal)
 
+    c = 0
+    while (netto != currentTotal && c < 400) {
         let diff = netto - currentTotal;
         let rIndex = Math.floor(Math.random() * visits.length);
         let visit = visits[rIndex];
@@ -22,6 +35,7 @@ function set_netto(visits, netto, tonar = true) {
         bulk_update([visit,], visit.netto + diff, tonar);
         if (currentTotal == visits.reduce((acc, c) => acc + c.netto, 0)) {
             c++
+            console.log(c)
             continue
         }
         currentTotal = visits.reduce((acc, c) => acc + c.netto, 0);
@@ -34,10 +48,10 @@ function bulk_update(visits, targetWeight, tonar = true) {
     let useStep = (targetWeight - currentTotalWeight) / visits.length;
     for (let visit of visits) {
         let maxNetto = visit.max_weight - visit.tara;
-        // if (visit.netto >= maxNetto) continue
 
         let netto = getRNetto(visit.netto + useStep - NETTO_DELTA, visit.netto + useStep + NETTO_DELTA)
-        if (visit.netto > maxNetto) {
+
+        if (netto > maxNetto) {
             netto = getRNetto(maxNetto - NETTO_DELTA, maxNetto + NETTO_DELTA)
         };
         visit = updateVisit(visit, netto, tonar);
