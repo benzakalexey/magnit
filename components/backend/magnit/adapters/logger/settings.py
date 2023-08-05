@@ -1,6 +1,6 @@
 import os
 
-from pydantic import BaseSettings, BaseConfig
+from pydantic import BaseConfig, BaseSettings
 
 
 class Settings(BaseSettings):

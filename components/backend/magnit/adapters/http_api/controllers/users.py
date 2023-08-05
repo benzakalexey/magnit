@@ -27,9 +27,7 @@ class Users:
     @join_point
     def on_get_get_by_contragent(self, request, response):
         drivers = self.service.get_by_contragent(**request.params)
-        response.media = [
-            {
-                'id': d.id,
-                'name': d.full_name,
-            } for d in drivers
-        ]
+        response.media = [{
+            'id': d.id,
+            'name': d.full_name,
+        } for d in drivers]

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Optional, List
+from typing import List, Optional
 
 from magnit.application import entities
 
@@ -350,4 +350,29 @@ class ExcelParser(ABC):
 
     @abstractmethod
     def get_data(self, file):
+        ...
+
+
+class ServiceContractRepo(ABC):
+
+    @abstractmethod
+    def get_last_by_permit_number(
+        self,
+        number: int,
+    ) -> Optional[entities.ServiceContract]:
+        """Возвращает последний Договор по номеру пропуска"""
+
+    @abstractmethod
+    def get_by_id(self, id_: int) -> Optional[entities.ServiceContract]:
+        ...
+
+
+class ServiceContractVisitRepo(ABC):
+
+    @abstractmethod
+    def add(self, instance: entities.ServiceContractVisit):
+        ...
+
+    @abstractmethod
+    def save(self):
         ...

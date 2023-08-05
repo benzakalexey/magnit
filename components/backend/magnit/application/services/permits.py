@@ -2,66 +2,67 @@ import logging
 from datetime import datetime
 from typing import List, Optional
 
-from classic.app import validate_with_dto, DTO
+from classic.app import DTO, validate_with_dto
 from classic.components import component
-from pydantic import validate_arguments, conint
+from pydantic import conint, validate_arguments
 
-from magnit.application import interfaces, entities, errors, constants
+from magnit.application import constants, entities, errors, interfaces
 from magnit.application.dto import PermitInfo, PermitLogInfo
 from magnit.application.services.join_point import join_point
 
 
 class PermissionInfo(DTO):
     contragent_name: str
-    expired_at: datetime
     days_before_exp: int
-    truck_model: str
-    truck_type: constants.TruckType
-    tara: int
-    max_weight: int
-    reg_number: str
-    permit_num: int
-    permission_id: int
-    permit_status: constants.PermitStatus
+    expired_at: datetime
+    is_tonar: bool = False
     is_valid: bool
-    is_tonar: bool
+    max_weight: int = 100000
+    permission_id: Optional[int] = None
+    service_contract_id: Optional[int] = None
+    permit_num: int
+    permit_status: constants.PermitStatus
+    reg_number: Optional[str] = None
+    tara: int = 0
+    truck_model: Optional[str] = None
+    truck_type: Optional[constants.TruckType] = None
 
 
 class PermissionHistoryData(DTO):
-    contragent_name: str
-    expired_at: datetime
     added_at: datetime
+    contragent_name: str
     days_before_exp: int
+    expired_at: datetime
+    is_tonar: bool
+    is_valid: bool
     permission_id: int
     permit_status: constants.PermitStatus
-    is_valid: bool
-    is_tonar: bool
 
 
 class PermissionUpdateInfo(DTO):
-    permit: int
-    carrier: int
-    trailer: Optional[int]
-    user_id: int
-    permit_exp: datetime
-    is_tonar: bool
-
-    truck_type: constants.TruckType
-    tara: conint(gt=0)
-    max_weight: conint(gt=0)
     body_volume: Optional[conint(gt=0)]
+    carrier: int
+    is_tonar: bool
+    max_weight: conint(gt=0)
+    permit: int
+    permit_exp: datetime
+    tara: conint(gt=0)
+    trailer: Optional[int]
+    truck_type: constants.TruckType
+    user_id: int
 
 
 @component
 class Permit:
     """Класс Пропуск
     """
-    permits_repo: interfaces.PermitRepo
-    users_repo: interfaces.UserRepo
-    trucks_repo: interfaces.TruckRepo
-    trailer_repo: interfaces.TrailerRepo
     partner_repo: interfaces.PartnerRepo
     permission_repo: interfaces.PermissionRepo
+    permits_repo: interfaces.PermitRepo
+    service_contract_repo: interfaces.ServiceContractRepo
+    trailer_repo: interfaces.TrailerRepo
+    trucks_repo: interfaces.TruckRepo
+    users_repo: interfaces.UserRepo
 
     def __attrs_post_init__(self):
         self.logger = logging.getLogger(self.__class__.__name__)
@@ -69,34 +70,50 @@ class Permit:
     @join_point
     @validate_arguments
     def check_by_number(self, number: int) -> PermissionInfo:
-        p = self.permission_repo.get_last_by_permit_number(number)
-        if p is None:
-            raise errors.PermitNumberNotExistError(permit_number=number)
+        permit = self.permission_repo.get_last_by_permit_number(number)
+        if permit:
+            truck = permit.permit.truck
+            permit_status = constants.PermitStatus.EXPIRED
+            if permit.expired_at > datetime.utcnow():
+                permit_status = constants.PermitStatus.VALID
 
-        truck = p.permit.truck
-        permit_status = (
-            constants.PermitStatus.VALID
-            if p.expired_at > datetime.utcnow()
-            else constants.PermitStatus.EXPIRED
-        )
-        is_valid = permit_status == constants.PermitStatus.VALID
-        days_before_exp = (p.expired_at - datetime.utcnow()).days or 0
+            is_valid = permit_status == constants.PermitStatus.VALID
+            days_before_exp = (permit.expired_at - datetime.utcnow()).days or 0
 
-        return PermissionInfo(
-            contragent_name=p.owner.short_name,
-            expired_at=p.expired_at,
-            is_valid=is_valid,
-            is_tonar=p.is_tonar,
-            max_weight=truck.max_weight * constants.MAX_RATIO,
-            permit_num=p.permit.number,
-            permission_id=p.id,
-            permit_status=permit_status,
-            days_before_exp=days_before_exp,
-            reg_number=truck.reg_number,
-            tara=truck.tara,
-            truck_model=truck.model.name,
-            truck_type=truck.type,
-        )
+            return PermissionInfo(
+                contragent_name=permit.owner.short_name,
+                days_before_exp=days_before_exp,
+                expired_at=permit.expired_at,
+                is_tonar=permit.is_tonar,
+                is_valid=is_valid,
+                max_weight=truck.max_weight * constants.MAX_RATIO,
+                permission_id=permit.id,
+                permit_num=permit.permit.number,
+                permit_status=permit_status,
+                reg_number=truck.reg_number,
+                tara=truck.tara,
+                truck_model=truck.model.name,
+                truck_type=truck.type,
+            )
+
+        contract = self.service_contract_repo.get_last_by_permit_number(number)
+        if contract:
+            days_before_exp = (contract.valid_to - datetime.utcnow()).days or 0
+            permit_status = constants.PermitStatus.EXPIRED
+            if contract.valid_to > datetime.utcnow():
+                permit_status = constants.PermitStatus.VALID
+
+            is_valid = permit_status == constants.PermitStatus.VALID
+            return PermissionInfo(
+                contragent_name=contract.customer.short_name,
+                days_before_exp=days_before_exp,
+                expired_at=contract.valid_to,
+                is_valid=is_valid,
+                permit_num=contract.permit.number,
+                permit_status=permit_status,
+                service_contract_id=contract.id,
+            )
+        raise errors.PermitNumberNotExistError(permit_number=number)
 
     @join_point
     @validate_arguments
@@ -104,11 +121,9 @@ class Permit:
         permissions = self.permission_repo.get_by_permit(num)
         history = []
         for p in permissions:
-            permit_status = (
-                constants.PermitStatus.VALID
-                if p.expired_at > datetime.utcnow()
-                else constants.PermitStatus.EXPIRED
-            )
+            permit_status = (constants.PermitStatus.VALID
+                             if p.expired_at > datetime.utcnow() else
+                             constants.PermitStatus.EXPIRED)
             is_valid = permit_status == constants.PermitStatus.VALID
             days_before_exp = (p.expired_at - datetime.utcnow()).days or 0
 
@@ -122,8 +137,7 @@ class Permit:
                     permit_status=permit_status,
                     is_valid=is_valid,
                     is_tonar=p.is_tonar,
-                )
-            )
+                ))
 
         return history
 
@@ -145,14 +159,12 @@ class Permit:
         permit = self.permits_repo.get_by_number(permission_info.permit)
         if permit is None:
             raise errors.PermitIDNotExistError(
-                permit_id=permission_info.permit
-            )
+                permit_id=permission_info.permit)
 
         partner = self.partner_repo.get_by_id(permission_info.carrier)
         if partner is None:
             raise errors.PartnerIDNotExistError(
-                partner_id=permission_info.carrier
-            )
+                partner_id=permission_info.carrier)
 
         permit.truck.tara = permission_info.tara
         permit.truck.max_weight = permission_info.max_weight
@@ -166,8 +178,10 @@ class Permit:
             permit.permission.owner != partner,
             permit.permission.is_tonar != permission_info.is_tonar,
             permit.permission.expired_at.day != permission_info.permit_exp.day,
-            permit.permission.expired_at.month != permission_info.permit_exp.month,
-            permit.permission.expired_at.year != permission_info.permit_exp.year,
+            permit.permission.expired_at.month
+            != permission_info.permit_exp.month,
+            permit.permission.expired_at.year
+            != permission_info.permit_exp.year,
         )
         self.logger.info(permission_info.permit_exp)
         self.logger.info(permit.permission.expired_at)
@@ -180,8 +194,7 @@ class Permit:
                 trailer=trailer,
                 permit=permit,
                 is_tonar=permission_info.is_tonar,
-                added_by=operator
-            )
+                added_by=operator)
             permit.permissions.append(permission)
             self.permits_repo.save()
 
@@ -232,20 +245,16 @@ class PermitLog:
         permit = self.permits_repo.get_by_id(permits_log_info.permit_id)
         if permit is None:
             raise errors.PermitIDNotExistError(
-                permit_id=permits_log_info.permit_id
-            )
+                permit_id=permits_log_info.permit_id)
 
         user = self.users_repo.get_by_id(permits_log_info.user_id)
         if user is None:
-            raise errors.UserIDNotExistError(
-                user_id=permits_log_info.user_id
-            )
+            raise errors.UserIDNotExistError(user_id=permits_log_info.user_id)
 
         permit_log = entities.PermitLog(
             permit=permit,
             user=user,
             operation_type=permits_log_info.operation_type,
-            valid_to=permits_log_info.valid_to
-        )
+            valid_to=permits_log_info.valid_to)
         self.permits_log_repo.add(permit_log)
         self.permits_log_repo.save()

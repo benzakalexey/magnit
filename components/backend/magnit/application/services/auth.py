@@ -1,14 +1,14 @@
 import hashlib
 import re
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from datetime import datetime, timedelta
 
 from classic.app import DTO, validate_with_dto
 from classic.components import component
-from jwt import AbstractJWKBase, JWT, jwk_from_dict
+from jwt import JWT, AbstractJWKBase, jwk_from_dict
 from jwt.exceptions import JWTException
 
-from magnit.application import interfaces, errors
+from magnit.application import errors, interfaces
 from magnit.application.services.join_point import join_point
 
 APP_ISSUER = 'https://magnit.tw1.ru'
@@ -62,9 +62,9 @@ class Auth:
 class Token:
     uid: int
     exp: int = field(default_factory=lambda: int(
-        (datetime.utcnow() + timedelta(hours=TOKEN_LIVE_HOURS)).timestamp()
-    ))
-    iat: int = field(default_factory=lambda: int(datetime.utcnow().timestamp()))
+        (datetime.utcnow() + timedelta(hours=TOKEN_LIVE_HOURS)).timestamp()))
+    iat: int = field(
+        default_factory=lambda: int(datetime.utcnow().timestamp()))
     iss: str = APP_ISSUER
 
     def encode(self, secret: AbstractJWKBase):

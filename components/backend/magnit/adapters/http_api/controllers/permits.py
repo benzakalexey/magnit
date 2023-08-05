@@ -3,7 +3,7 @@ from classic.components import component
 from magnit.adapters.http_api import constants
 from magnit.adapters.http_api.auth import authenticate
 from magnit.adapters.http_api.join_points import join_point
-from magnit.application import services, entities
+from magnit.application import entities, services
 
 
 @component

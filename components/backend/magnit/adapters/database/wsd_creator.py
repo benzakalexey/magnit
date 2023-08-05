@@ -10,6 +10,7 @@ ONE_TO_MANY_RELATION_MARK = '}o--||'
 
 
 def _render_table_description(table, show_comment=True):
+
     def format_col_type(col_):
         if col_.foreign_keys:
             fk = next(iter(col_.foreign_keys))

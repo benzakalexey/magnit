@@ -5,6 +5,7 @@ from sqlalchemy import select
 
 
 class BaseRepo(BaseRepository):
+
     def get_by_id(self, id_: int) -> Optional[Any]:
         query = select(self.dto).where(self.dto.id == id_)
         return self.session.execute(query).scalars().one_or_none()

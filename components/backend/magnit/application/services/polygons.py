@@ -3,9 +3,9 @@ from typing import List
 
 from classic.app import validate_with_dto
 from classic.components import component
-from pydantic import validate_arguments, conint
-from magnit.application import interfaces, entities, errors
+from pydantic import conint, validate_arguments
 
+from magnit.application import entities, errors, interfaces
 from magnit.application.dto import PolygonInfo, SecondaryRouteInfo
 from magnit.application.services.join_point import join_point
 
@@ -39,13 +39,10 @@ class Polygon:
     ):
         contracts = self.contract_repo.get_by_departure_point_id(polygon_id)
         now = datetime.utcnow()
-        return [
-            {
-                'id': c.id,
-                'name': c.destination.name,
-            } for c in contracts
-            if c.valid_to >= now >= c.valid_from
-        ]
+        return [{
+            'id': c.id,
+            'name': c.destination.name,
+        } for c in contracts if c.valid_to >= now >= c.valid_from]
 
     @join_point
     @validate_with_dto
@@ -64,6 +61,8 @@ class Polygon:
         )
         self.polygons_repo.add(polygon)
         self.polygons_repo.save()
+
+
 #
 #
 # @component

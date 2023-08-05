@@ -2,8 +2,12 @@ import { DefaultAPIInstance } from "@/api";
 import { PermitsAPI } from "@/api/permitsAPI";
 
 const pretty_num = (n) => {
-    let r = n.match(/[а-яА-Я]+|[0-9]+/g);
-    return r.join(' ');
+    if (n) {
+        let r = n.match(/[а-яА-Я]+|[0-9]+/g);
+        return r.join(' ');
+    }
+
+    return n
 }
 
 export const PermitsModule = {
@@ -58,6 +62,7 @@ export const PermitsModule = {
                 permit_num: data.permit_num,
                 permit_status: data.permit_status,
                 permission_id: data.permission_id,
+                service_contract_id: data.service_contract_id,
                 truck_model: data.truck_model,
                 truck_type: data.truck_type,
                 reg_number: pretty_num(data.reg_number),
@@ -71,13 +76,16 @@ export const PermitsModule = {
             }
         },
         clearCheckPermitData(state) {
-            state.check_permit.truck_model = null
+            state.check_permit.permit_num = null
             state.check_permit.permit_status = null
             state.check_permit.permission_id = null
+            state.check_permit.service_contract_id = null
+            state.check_permit.truck_model = null
             state.check_permit.truck_type = null
             state.check_permit.reg_number = null
             state.check_permit.contragent = null
             state.check_permit.expired_at = null
+            state.check_permit.days_before_exp = null
             state.check_permit.is_valid = null
             state.check_permit.is_tonar = null
             state.check_permit.tara = null

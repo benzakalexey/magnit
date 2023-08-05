@@ -1,7 +1,8 @@
 from classic.components import component
 
 from magnit.adapters.database.repositories import BaseRepo
-from magnit.application import interfaces, entities
+from magnit.application import entities, interfaces
+
 #
 #
 # @component

@@ -6,7 +6,7 @@ from classic.components import component
 from magnit.adapters.http_api.auth import authenticate
 from magnit.adapters.http_api.constants import SUCCESS_TRUE
 from magnit.adapters.http_api.join_points import join_point
-from magnit.application import services, entities
+from magnit.application import entities, services
 from magnit.application.constants import MAX_RATIO
 
 
@@ -36,40 +36,56 @@ class Visits:
             user_id=request.uid,
             **request.params,
         )
-        response.media = [
-            {
-                'id': v.id,
-                'permit': v.permission.permit.number,
-                'contragent_id': v.permission.owner.id,
-                'polygon': v.polygon.name,
-                'polygon_id': v.polygon.id,
-                'is_deleted': v.is_deleted,
-                'delete_reason': v.delete_reason,
-                'carrier': v.permission.owner.short_name,
-                'invoice_num': v.invoice_num,
-                'tonar': v.permission.is_tonar,
-                'truck_model': (
-                    v.permission.permit.truck.model.name.split(' ')[0]
-                ),
-                'truck_type': v.permission.permit.truck.type.value,
-                'tara': v.tara,
-                'netto': v.netto,
-                'brutto': v.brutto,
-                'max_weight': v.permission.permit.truck.max_weight * MAX_RATIO,
-                'reg_number': v.permission.permit.truck.reg_number,
-                'weight_in': v.weight_in,
-                'checked_in': v.checked_in,
-                'weight_out': v.weight_out,
-                'checked_out': v.checked_out,
-                'driver_name': f'{v.driver.surname} {v.driver.name}'
-                if v.driver else None,
-                # 'driver_phone': v.driver.phone
-                # if v.driver else None,
-                'destination': v.contract.destination.name
-                if v.contract else None,
-                'status': v.status,
-            } for v in visits
-        ]
+        response.media = [{
+            'id':
+            v.id,
+            'permit':
+            v.permission.permit.number,
+            'contragent_id':
+            v.permission.owner.id,
+            'polygon':
+            v.polygon.name,
+            'polygon_id':
+            v.polygon.id,
+            'is_deleted':
+            v.is_deleted,
+            'delete_reason':
+            v.delete_reason,
+            'carrier':
+            v.permission.owner.short_name,
+            'invoice_num':
+            v.invoice_num,
+            'tonar':
+            v.permission.is_tonar,
+            'truck_model':
+            (v.permission.permit.truck.model.name.split(' ')[0]),
+            'truck_type':
+            v.permission.permit.truck.type.value,
+            'tara':
+            v.tara,
+            'netto':
+            v.netto,
+            'brutto':
+            v.brutto,
+            'max_weight':
+            v.permission.permit.truck.max_weight * MAX_RATIO,
+            'reg_number':
+            v.permission.permit.truck.reg_number,
+            'weight_in':
+            v.weight_in,
+            'checked_in':
+            v.checked_in,
+            'weight_out':
+            v.weight_out,
+            'checked_out':
+            v.checked_out,
+            'driver_name':
+            f'{v.driver.surname} {v.driver.name}' if v.driver else None,
+            'destination':
+            v.contract.destination.name if v.contract else None,
+            'status':
+            v.status
+        } for v in visits]
 
     @join_point
     @authenticate
@@ -78,42 +94,60 @@ class Visits:
             user_id=request.uid,
             **request.params,
         )
-        response.media = [
-            {
-                'id': v.id,
-                'permit': v.permission.permit.number,
-                'contragent_id': v.permission.owner.id,
-                'polygon': v.polygon.name,
-                'polygon_id': v.polygon.id,
-                'is_deleted': v.is_deleted,
-                'delete_reason': v.delete_reason,
-                'carrier': v.permission.owner.short_name,
-                'invoice_num': v.invoice_num,
-                'tonar': v.permission.is_tonar,
-                'truck_model': (
-                    v.permission.permit.truck.model.name.split(' ')[0]
-                ),
-                'truck_type': v.permission.permit.truck.type.value,
-                'tara': v.tara,
-                'netto': v.netto,
-                'brutto': v.brutto,
-                'max_weight': v.permission.permit.truck.max_weight * MAX_RATIO,
-                'reg_number': v.permission.permit.truck.reg_number,
-                'weight_in': v.weight_in,
-                'checked_in': v.checked_in,
-                'weight_out': v.weight_out,
-                'checked_out': v.checked_out,
-                'driver_name': f'{v.driver.surname} {v.driver.name}'
-                if v.driver else None,
-                'driver_id': v.driver.id
-                if v.driver else None,
-                'contract_id': v.contract.id
-                if v.contract else None,
-                'destination': v.contract.destination.name
-                if v.contract else None,
-                'status': v.status,
-            } for v in visits
-        ]
+        response.media = [{
+            'id':
+            v.id,
+            'permit':
+            v.permission.permit.number,
+            'contragent_id':
+            v.permission.owner.id,
+            'polygon':
+            v.polygon.name,
+            'polygon_id':
+            v.polygon.id,
+            'is_deleted':
+            v.is_deleted,
+            'delete_reason':
+            v.delete_reason,
+            'carrier':
+            v.permission.owner.short_name,
+            'invoice_num':
+            v.invoice_num,
+            'tonar':
+            v.permission.is_tonar,
+            'truck_model':
+            (v.permission.permit.truck.model.name.split(' ')[0]),
+            'truck_type':
+            v.permission.permit.truck.type.value,
+            'tara':
+            v.tara,
+            'netto':
+            v.netto,
+            'brutto':
+            v.brutto,
+            'max_weight':
+            v.permission.permit.truck.max_weight * MAX_RATIO,
+            'reg_number':
+            v.permission.permit.truck.reg_number,
+            'weight_in':
+            v.weight_in,
+            'checked_in':
+            v.checked_in,
+            'weight_out':
+            v.weight_out,
+            'checked_out':
+            v.checked_out,
+            'driver_name':
+            f'{v.driver.surname} {v.driver.name}' if v.driver else None,
+            'driver_id':
+            v.driver.id if v.driver else None,
+            'contract_id':
+            v.contract.id if v.contract else None,
+            'destination':
+            v.contract.destination.name if v.contract else None,
+            'status':
+            v.status,
+        } for v in visits]
 
     @join_point
     @authenticate
@@ -124,37 +158,58 @@ class Visits:
         )
         response.media = [
             {
-                'id': v.id,
-                'permit': v.permission.permit.number,
-                'contragent_id': v.permission.owner.id,
-                'polygon': v.polygon.name,
-                'polygon_id': v.polygon.id,
-                'is_deleted': v.is_deleted,
-                'delete_reason': v.delete_reason,
-                'carrier': v.permission.owner.short_name,
-                'invoice_num': v.invoice_num,
-                'tonar': v.permission.is_tonar,
-                'truck_model': (
-                    v.permission.permit.truck.model.name.split(' ')[0]
-                ),
-                'truck_type': v.permission.permit.truck.type.value,
-                'tara': v.tara,
-                'netto': v.netto,
-                'brutto': v.brutto,
-                'max_weight': v.permission.permit.truck.max_weight * MAX_RATIO,
-                'reg_number': v.permission.permit.truck.reg_number,
-                'weight_in': v.weight_in,
-                'checked_in': v.checked_in,
-                'weight_out': v.weight_out,
-                'checked_out': v.checked_out,
-                'frozen': v.frozen,
-                'driver_name': f'{v.driver.surname} {v.driver.name}'
-                if v.driver else None,
+                'id':
+                v.id,
+                'permit':
+                v.permission.permit.number,
+                'contragent_id':
+                v.permission.owner.id,
+                'polygon':
+                v.polygon.name,
+                'polygon_id':
+                v.polygon.id,
+                'is_deleted':
+                v.is_deleted,
+                'delete_reason':
+                v.delete_reason,
+                'carrier':
+                v.permission.owner.short_name,
+                'invoice_num':
+                v.invoice_num,
+                'tonar':
+                v.permission.is_tonar,
+                'truck_model':
+                (v.permission.permit.truck.model.name.split(' ')[0]),
+                'truck_type':
+                v.permission.permit.truck.type.value,
+                'tara':
+                v.tara,
+                'netto':
+                v.netto,
+                'brutto':
+                v.brutto,
+                'max_weight':
+                v.permission.permit.truck.max_weight * MAX_RATIO,
+                'reg_number':
+                v.permission.permit.truck.reg_number,
+                'weight_in':
+                v.weight_in,
+                'checked_in':
+                v.checked_in,
+                'weight_out':
+                v.weight_out,
+                'checked_out':
+                v.checked_out,
+                'frozen':
+                v.frozen,
+                'driver_name':
+                f'{v.driver.surname} {v.driver.name}' if v.driver else None,
                 # 'driver_phone': v.driver.phone
                 # if v.driver else None,
-                'destination': v.contract.destination.name
-                if v.contract else None,
-                'status': v.status,
+                'destination':
+                v.contract.destination.name if v.contract else None,
+                'status':
+                v.status
             } for v in visits
         ]
 

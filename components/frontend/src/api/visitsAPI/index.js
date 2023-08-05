@@ -55,9 +55,9 @@ export const VisitsAPI = {
      * @param {string} reason 
      * @returns {Promise<AxiosResponse<any>>}
      */
-    add(permission_id, weight) {
+    add(permission_id, weight, truck_number, service_contract_id) {
         const url = 'visits/add'
-        const data = { permission_id, weight };
+        const data = { permission_id, weight, truck_number, service_contract_id };
         return DefaultAPIInstance.post(url, data);
     },
     /**Добавить визит

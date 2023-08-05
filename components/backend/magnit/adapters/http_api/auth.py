@@ -1,10 +1,11 @@
 import functools
 
 from magnit.application import errors
-from magnit.application.services.auth import Token, Authenticator
+from magnit.application.services.auth import Authenticator, Token
 
 
 def authorize():
+
     def decorator(func):
         resource_name = func.__qualname__
 
@@ -24,6 +25,7 @@ def authorize():
 
 
 def authenticate(func):
+
     @functools.wraps(func)
     def wrapper(controller, request, response):
         if request.auth is None:

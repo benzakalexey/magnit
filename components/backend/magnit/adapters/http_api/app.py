@@ -1,8 +1,9 @@
 import json
-from classic.http_api import App
-from falcon import media, CORSMiddleware
 
-from magnit.adapters.http_api import serializer, controllers
+from classic.http_api import App
+from falcon import CORSMiddleware, media
+
+from magnit.adapters.http_api import controllers, serializer
 from magnit.application import services
 
 
@@ -18,14 +19,12 @@ def create_app(
     # truck_model: services.TruckModel,
     visit: services.Visit,
 ) -> App:
-    app = App(
-        prefix='/api',
-        cors_enable=True,
-        middleware=CORSMiddleware(
-            allow_origins=allow_all_origins,
-            allow_credentials='*',
-        )
-    )
+    app = App(prefix='/api',
+              cors_enable=True,
+              middleware=CORSMiddleware(
+                  allow_origins=allow_all_origins,
+                  allow_credentials='*',
+              ))
     app.register(controllers.Auth(service=auth_service))
     app.register(controllers.Partners(service=contragent))
     app.register(controllers.Permits(service=permit))

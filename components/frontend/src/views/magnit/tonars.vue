@@ -510,7 +510,7 @@ onMounted(
                                             Сохранить
                                         </a>
                                     </li> -->
-                                    <li>
+                                    <li class="mt-3">
                                         <a href="javascript:void(0);" class="dropdown-item" @click="bulkPrintPack">
                                             Печать пакетов
                                         </a>

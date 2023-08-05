@@ -70,10 +70,12 @@ class PermitLogInfo(DTO):
 
 
 class VisitInInfo(DTO):
-    permission_id: int
+    permission_id: Optional[conint(gt=0)] = None
+    polygon_id: Optional[conint(gt=0)] = None
+    service_contract_id: Optional[conint(gt=0)] = None
+    truck_number: Optional[str] = None
     user_id: int
     weight: conint(gt=0)
-    polygon_id: Optional[conint(gt=0)] = None
 
 
 class VisitOutInfo(DTO):
