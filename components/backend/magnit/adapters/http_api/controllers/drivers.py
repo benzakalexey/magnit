@@ -13,9 +13,7 @@ class Drivers:
     @authenticate
     def on_get_get_by_partner(self, request, response):
         drivers = self.service.get_by_partner_id(**request.params)
-        response.media = list(
-            {
-                'id': d.id,
-                'name': d.full_name,
-            } for d in drivers
-        )
+        response.media = list({
+            'id': d.id,
+            'name': d.full_name,
+        } for d in drivers)

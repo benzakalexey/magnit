@@ -188,8 +188,8 @@ export const VisitsModule = {
             return await VisitsAPI.finish(visit_id, weight_out, driver_id, contract_id);
             // commit('deleteItem', id, reason);
         },
-        async add({ commit }, { permission_id, weight }) {
-            return await VisitsAPI.add(permission_id, weight);
+        async add({ commit }, { permission_id, weight, truck_number, service_contract_id }) {
+            return await VisitsAPI.add(permission_id, weight, truck_number, service_contract_id);
             // commit('deleteItem', id, reason);
         },
         async update_tonar_visit({ commit }, { weight_in,

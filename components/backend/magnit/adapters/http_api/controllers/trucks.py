@@ -79,11 +79,8 @@ class Trucks:
                 if t.permit.permission.expired_at < datetime.utcnow():
                     days_before_exp = 0
                 else:
-                    days_before_exp = (
-                        (
-                            t.permit.permission.expired_at - datetime.utcnow()
-                        ).days or 0
-                    )
+                    days_before_exp = ((t.permit.permission.expired_at -
+                                        datetime.utcnow()).days or 0)
 
             resp.append({
                 'id': t.id,
@@ -101,8 +98,10 @@ class Trucks:
                 'days_before_exp': days_before_exp,
                 'body_volume': t.body_volume,
             })
-        response.media = sorted(resp, key=lambda x: x.get(
-            'started_at') or datetime.fromtimestamp(0), reverse=True)
+        response.media = sorted(
+            resp,
+            key=lambda x: x.get('started_at') or datetime.fromtimestamp(0),
+            reverse=True)
         # response.media = sorted(resp, key=lambda x: x.get(
         #     'started_at') or datetime.fromtimestamp(0), reverse=True)
 

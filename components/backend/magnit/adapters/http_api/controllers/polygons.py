@@ -19,7 +19,8 @@ class Polygons:
     @join_point
     @authenticate
     def on_get_directions(self, request, response):
-        response.media = self.service.get_receivers_by_source_id(**request.params)
+        response.media = self.service.get_receivers_by_source_id(
+            **request.params)
 
     @join_point
     def on_get_get_all(self, request, response):

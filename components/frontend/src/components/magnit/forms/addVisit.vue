@@ -2,7 +2,7 @@
 import '@/assets/sass/visits/visits.scss';
 import { ref, computed } from 'vue'
 import { useVuelidate } from '@vuelidate/core'
-import { minLength, required, numeric, minValue, maxValue } from '@vuelidate/validators';
+import { minLength, required, numeric, minValue, maxValue, helpers } from '@vuelidate/validators';
 import { useStore } from 'vuex';
 import rightSideModal from '@/components/magnit/modals/rightSideModal';
 
@@ -11,8 +11,11 @@ const modalTitle = 'Новый заезд';
 
 const permit_num = ref('')
 const weight = ref('')
+const truck_number = ref('')
 const permit_error = ref(false)
 const weight_error = ref(false)
+const truck_number_error = ref(false)
+const truck_number_validator = helpers.regex(/^[АВЕКМНОРСТУХ]\d{3}(?<!000)[АВЕКМНОРСТУХ]{2}\d{2,3}$/ui)
 const rules = computed(() => ({
     permit_num: {
         required,
@@ -25,16 +28,24 @@ const rules = computed(() => ({
         minValueRef: minValue(store.state.PermitsModule.check_permit.tara || 0),
         maxValueRef: maxValue(store.state.PermitsModule.check_permit.max_weight * 1.2)
     },
+    truck_number: {
+        required: false,
+        pattern: truck_number_validator,
+        $lazy: true,
+        $autoDirty: true
+    },
 }))
 
-const v$ = useVuelidate(rules, { permit_num, weight })
+const v$ = useVuelidate(rules, { permit_num, weight, truck_number })
 
 
 const isOpen = ref(null);
 const createVisit = () => {
     store.dispatch('VisitsModule/add', {
         permission_id: store.state.PermitsModule.check_permit.permission_id,
-        weight: weight.value
+        service_contract_id: store.state.PermitsModule.check_permit.service_contract_id,
+        weight: weight.value,
+        truck_number: store.state.PermitsModule.check_permit.reg_number || truck_number.value,
     })
         .then(() => {
             console.log(store.state.PermitsModule.check_permit.days_before_exp)
@@ -59,6 +70,11 @@ const checkPermit = (x) => {
         .catch(() => permit_error.value = true)
 }
 const checkWeight = () => {
+    let minWeight = store.state.PermitsModule.check_permit.tara || 0
+    let maxWeight = store.state.PermitsModule.check_permit.max_weight
+    weight_error.value = !(minWeight <= weight.value && weight.value <= maxWeight)
+}
+const checkTrackNumber = () => {
     let minWeight = store.state.PermitsModule.check_permit.tara || 0
     let maxWeight = store.state.PermitsModule.check_permit.max_weight
     weight_error.value = !(minWeight <= weight.value && weight.value <= maxWeight)
@@ -99,6 +115,18 @@ const closeAndClean = () => {
                     <div class="invalid-feedback">Недопустимый вес</div>
                 </div>
             </div>
+            <div class="mb-3 pt-3"
+                v-show="store.state.PermitsModule.check_permit.permit_num && store.state.PermitsModule.check_permit.reg_number === null">
+
+                <label for="truck_number" class="col-form-label">Номер ТС</label>
+                <div>
+                    <input v-model="truck_number" id="truck_number" type="text" class="form-control" placeholder="Номер ТС"
+                        :class="[v$.truck_number.$invalid ? 'is-invalid' : '']" />
+                    <div class="invalid-feedback" v-if="v$.truck_number.$error">
+                        Введите номер в формате а555аа55(5)
+                    </div>
+                </div>
+            </div>
             <button
                 :disabled="v$.$invalid || Array(null, 0, undefined).includes(store.state.PermitsModule.check_permit.permit_status)"
                 @click.prevent="createVisit" class="btn btn-primary my-4">
@@ -106,7 +134,7 @@ const closeAndClean = () => {
             </button>
         </form>
 
-        <div v-show="store.state.PermitsModule.check_permit.reg_number" class="permit-info-list pt-5">
+        <div v-show="!permit_error && store.state.PermitsModule.check_permit.reg_number" class="permit-info-list pt-5">
             <h5 class="rs-modal-title">
                 Пропуск
                 <text v-html="statuses[store.state.PermitsModule.check_permit.permit_status]" />
@@ -160,6 +188,36 @@ const closeAndClean = () => {
                     </svg>
                     Макс. масса:
                     {{ store.state.PermitsModule.check_permit.max_weight }}
+                </li>
+                <li class="info-block__item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="feather feather-camera" data-v-5522efca="">
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    Истекает:
+                    {{ new Date(store.state.PermitsModule.check_permit.expired_at).toLocaleDateString('RU') }}
+                </li>
+            </ul>
+        </div>
+
+        <div v-show="store.state.PermitsModule.check_permit.permit_num && !store.state.PermitsModule.check_permit.reg_number"
+            class="permit-info-list pt-5">
+            <h5 class="rs-modal-title">
+                Пропуск
+                <text v-html="statuses[store.state.PermitsModule.check_permit.permit_status]" />
+            </h5>
+
+
+            <ul class="info-block list-inline">
+                <li class="info-block__item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="feather feather-camera" data-v-5522efca="">
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <!-- Контрагент -->
+                    {{ store.state.PermitsModule.check_permit.contragent }}
                 </li>
                 <li class="info-block__item">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"

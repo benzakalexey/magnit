@@ -9,6 +9,7 @@ from openpyxl import Workbook, load_workbook
 
 @component
 class ExcelParser:
+
     def __attrs_post_init__(self):
         self.logger = logging.getLogger(self.__class__.__name__)
 
@@ -18,8 +19,8 @@ class ExcelParser:
         return load_workbook(file_data)
 
     def _read_file_data(  # noqa
-        self,
-        file: media.multipart.BodyPart,
+            self,
+            file: media.multipart.BodyPart,
     ) -> Optional[BytesIO]:
         file_data = BytesIO()
         while True:

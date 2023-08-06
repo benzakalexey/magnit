@@ -4,30 +4,14 @@ import pathlib
 parent_dir = pathlib.Path(__file__).parent.resolve()
 
 # paths
-trailers_data = pathlib.PurePath(
-    parent_dir, 'trailers_data.json'
-)
-trucks_data = pathlib.PurePath(
-    parent_dir, 'trucks_data.json'
-)
-contracts_data = pathlib.PurePath(
-    parent_dir, 'contracts_data.json'
-)
-partners_data = pathlib.PurePath(
-    parent_dir, 'partners_data.json'
-)
-polygon_details_data = pathlib.PurePath(
-    parent_dir, 'polygon_details.json'
-)
-permits_data = pathlib.PurePath(
-    parent_dir, 'permits_data.json'
-)
-drivers_data = pathlib.PurePath(
-    parent_dir, 'drivers_data.json'
-)
-visits_data = pathlib.PurePath(
-    parent_dir, 'visits.json'
-)
+trailers_data = pathlib.PurePath(parent_dir, 'trailers_data.json')
+trucks_data = pathlib.PurePath(parent_dir, 'trucks_data.json')
+contracts_data = pathlib.PurePath(parent_dir, 'contracts_data.json')
+partners_data = pathlib.PurePath(parent_dir, 'partners_data.json')
+polygon_details_data = pathlib.PurePath(parent_dir, 'polygon_details.json')
+permits_data = pathlib.PurePath(parent_dir, 'permits_data.json')
+drivers_data = pathlib.PurePath(parent_dir, 'drivers_data.json')
+visits_data = pathlib.PurePath(parent_dir, 'visits.json')
 
 # json
 trailers = json.load(open(trailers_data))

@@ -35,6 +35,16 @@ class TruckType(Enum):
     TRACTOR = "ТЯГАЧ"
 
 
+class ServiceContractType(Enum):
+    """Тип договора на оказание услуг"""
+
+    WOOD_WASTE = "РДО"
+    """РАСТИТЕЛЬНЫЕ И ДРЕВЕСНЫЕ ОТХОДЫ"""
+
+    CONSTRUCTION_WASTE = "ОСР"
+    """ОТХОДЫ СТРОИТЕЛЬНЫХ И РЕМОНТНЫХ РАБОТ"""
+
+
 class PermitStatus(Enum):
     """Статус пропуска"""
 

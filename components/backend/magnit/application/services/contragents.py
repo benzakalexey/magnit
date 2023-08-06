@@ -1,11 +1,11 @@
 from classic.app import validate_with_dto
 from classic.components import component
-from pydantic import validate_arguments, conint
+from pydantic import conint, validate_arguments
 
-from magnit.application import interfaces, entities, errors
-
+from magnit.application import entities, errors, interfaces
 from magnit.application.dto import PartnerInfo
 from magnit.application.services.join_point import join_point
+
 
 @component
 class Partner:
@@ -13,7 +13,6 @@ class Partner:
     Класс Контрагенты
     """
     contragents_repo: interfaces.PartnerRepo
-
 
     @join_point
     @validate_arguments

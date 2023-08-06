@@ -121,6 +121,11 @@ class ContractIDNotFound(AppError):
     code = 'magnit.contract.contract_id_not_exist_error'
 
 
+class ServiceContractIDNotExistError(AppError):
+    msg_template = 'Договор на оказание услуг с id = {contract_id} не найден'
+    code = 'magnit.contract.service_contract_id_not_exist_error'
+
+
 class VisitIDNotExistError(AppError):
     msg_template = 'Визит с id = {visit_id} не найден'
     code = 'magnit.visits.visit_id_not_exist_error'
