@@ -68,6 +68,7 @@ mapper.map_imperatively(
             lazy='select',
             cascade='all, delete, delete-orphan',
             backref=backref('driver'),
+            order_by='desc(entities.DriverDetails.added_at)'
         )
     },
 )
