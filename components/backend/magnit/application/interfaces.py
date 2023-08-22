@@ -329,6 +329,23 @@ class VisitRepo(ABC):
         """
 
     @abstractmethod
+    def get_between(
+        self,
+        after: datetime,
+        before: datetime,
+    ) -> List[entities.Visit]:
+        """Возвращает визиты в диапазоне дат.
+
+        Args:
+            after: после
+            before: до
+
+        Returns:
+            список Визитов
+
+        """
+
+    @abstractmethod
     def get_garbage_trucks(
         self,
         after: datetime,

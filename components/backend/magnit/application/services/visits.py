@@ -347,6 +347,17 @@ class Visit:
 
     @join_point
     @validate_arguments
+    def get_visits(
+        self,
+        user_id: int,
+        after: datetime,
+        before: datetime,
+    ) -> List[entities.Visit]:
+        self.logger.info('\nafter: %s\nbefore: %s', after, before)
+        return self.visits_repo.get_between(after, before)
+
+    @join_point
+    @validate_arguments
     def get_garbage_trucks(
         self,
         user_id: int,

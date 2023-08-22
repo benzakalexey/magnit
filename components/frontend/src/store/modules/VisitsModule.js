@@ -27,7 +27,7 @@ export const VisitsModule = {
                 let r = n.match(/[а-яА-Я]+|[0-9]+/g);
                 return r.join(' ');
             }
-            state.polygon = data[0].polygon + ' полигон'
+            if (data.length > 0) state.polygon = data[0].polygon + ' полигон'
 
             for (var v of data) {
 
@@ -38,6 +38,7 @@ export const VisitsModule = {
                         is_deleted: v.is_deleted,
                         delete_reason: v.delete_reason,
                         contragent_id: v.contragent_id,
+                        polygon: v.polygon,
                         polygon_id: v.polygon_id,
                         tonar: v.tonar,
                         carrier: v.carrier,
@@ -157,6 +158,15 @@ export const VisitsModule = {
         async update({ commit }) {
             try {
                 const res = await VisitsAPI.get_all();
+                commit('setVisits', res.data);
+            } catch (err) {
+                throw err;
+            }
+        },
+        async get_visits({ commit }, { after, before }) {
+
+            try {
+                const res = await VisitsAPI.get_visits(after, before);
                 commit('setVisits', res.data);
             } catch (err) {
                 throw err;

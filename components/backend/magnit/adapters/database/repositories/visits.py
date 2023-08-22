@@ -7,6 +7,7 @@ from sqlalchemy import asc, desc, select
 from magnit.adapters.database.repositories import BaseRepo
 from magnit.application import entities, interfaces
 
+# yapf: disable
 
 @component
 class VisitRepo(BaseRepo, interfaces.VisitRepo):
@@ -18,13 +19,13 @@ class VisitRepo(BaseRepo, interfaces.VisitRepo):
     ) -> List[entities.Visit]:
         last50 = (select(
             self.dto).where(self.dto.polygon_id == polygon_id).order_by(
-                desc(self.dto.checked_in)).limit(50))
+            desc(self.dto.checked_in)).limit(50))
         last50_r = self.session.execute(last50).scalars().all()
         on_polygon = (select(
             self.dto).where(self.dto.checked_out == None).where(
-                self.dto.is_deleted == False).where(
-                    self.dto.polygon_id == polygon_id).order_by(
-                        desc(self.dto.checked_in)))
+            self.dto.is_deleted == False).where(
+            self.dto.polygon_id == polygon_id).order_by(
+            desc(self.dto.checked_in)))
         on_polygon_r = self.session.execute(on_polygon).scalars().all()
         visits = [*on_polygon_r, *last50_r]
         visits_map = {v.id: v for v in visits}
@@ -35,12 +36,29 @@ class VisitRepo(BaseRepo, interfaces.VisitRepo):
         after: datetime,
         before: datetime,
     ) -> List[entities.Visit]:
-        query = (select(self.dto).join(
-            entities.Permission).where(self.dto.is_deleted == False).where(
-                entities.Permission.is_tonar == True).where(
-                    self.dto.checked_out >= str(after)).where(
-                        self.dto.checked_out <= str(before)).order_by(
-                            asc(self.dto.checked_out)))
+        query = (
+            select(self.dto)
+            .join(entities.Permission)
+            .where(self.dto.is_deleted == False)
+            .where(entities.Permission.is_tonar == True)
+            .where(self.dto.checked_out >= str(after))
+            .where(self.dto.checked_out <= str(before))
+            .order_by(asc(self.dto.checked_out))
+        )
+        return self.session.execute(query).scalars().all()
+
+    def get_between(
+        self,
+        after: datetime,
+        before: datetime,
+    ) -> List[entities.Visit]:
+        query = (
+            select(self.dto)
+            .join(entities.Permission)
+            .where(self.dto.checked_out >= str(after))
+            .where(self.dto.checked_out <= str(before))
+            .order_by(asc(self.dto.checked_out))
+        )
         return self.session.execute(query).scalars().all()
 
     def get_garbage_trucks(
@@ -50,12 +68,14 @@ class VisitRepo(BaseRepo, interfaces.VisitRepo):
     ) -> List[entities.Visit]:
         query = (select(self.dto).join(
             entities.Permission).where(self.dto.is_deleted == False).where(
-                entities.Permission.is_tonar == False).where(
-                    self.dto.checked_out >= str(after)).where(
-                        self.dto.checked_out <= str(before)).order_by(
-                            asc(self.dto.checked_out)))
+            entities.Permission.is_tonar == False).where(
+            self.dto.checked_out >= str(after)).where(
+            self.dto.checked_out <= str(before)).order_by(
+            asc(self.dto.checked_out)))
         return self.session.execute(query).scalars().all()
 
     def get_by_invoice_num(self, invoice_num: str) -> Optional[entities.Visit]:
         query = (select(self.dto).where(self.dto.invoice_num == invoice_num))
         return self.session.execute(query).scalars().one_or_none()
+
+# yapf: enable
