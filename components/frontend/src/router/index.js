@@ -27,7 +27,7 @@ const setAuthLayout = function (to, from, next) {
 
 const roleRouter = () => {
     const start_page_match = {
-        'Супервайзер': import('../views/magnit/polygon.vue'),
+        'Супервайзер': import('../views/magnit/visits.vue'),
         'Логист': import('../views/magnit/catalogs/trucks.vue'),
         'Контролер': import('../views/magnit/polygon.vue'),
         'Аналитик тонаров': import('../views/magnit/tonars.vue'),
@@ -51,6 +51,12 @@ const routes = [
         path: '/polygon',
         name: 'polygon',
         component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/polygon.vue'),
+        beforeEnter: authGuard
+    },
+    {
+        path: '/visits',
+        name: 'visits',
+        component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/visits.vue'),
         beforeEnter: authGuard
     },
     {

@@ -8,6 +8,11 @@ import { PolygonsAPI } from '@/api/polygonsAPI';
 import { DriversAPI } from '@/api/driversAPI';
 import { set_netto } from '@/scripts/weight_corrector'
 
+import { EventBus } from 'v-tables-3';
+
+import Multiselect from '@suadelabs/vue3-multiselect';
+import '@suadelabs/vue3-multiselect/dist/vue3-multiselect.css';
+
 import { utils, writeFile } from 'xlsx';
 
 //flatpickr
@@ -21,7 +26,7 @@ import { Russian } from "flatpickr/dist/l10n/ru.js"
 flatpickr.localize(Russian); // default locale is now Russian
 
 const store = useStore();
-useMeta({ title: 'Тонары' });
+useMeta({ title: 'Визиты' });
 
 const columns = ref([
     'permit',
@@ -37,11 +42,10 @@ const columns = ref([
     'invoice_num',
     'destination',
     'driver_name',
+    'tonar',
+    'status',
+    'actions'
 ]);
-
-if (store.state.AuthModule.credentials.user_role !== 'Аналитик тонаров') {
-    columns.value.push('actions')
-}
 const table = ref(null)
 const isOpen = ref(null);
 const item = ref(
@@ -68,6 +72,10 @@ const item = ref(
         status: ''
     }
 );
+const polygons = ref([]);
+const carriers = ref([]);
+const driver_names = ref([]);
+const destinations = ref([]);
 const table_option = ref({
     perPage: 10000000,
     perPageValues: [10000000,],
@@ -110,9 +118,80 @@ const table_option = ref({
         limit: 'Показать:',
         noResults: "Нет данных",
         filterBy: "Фильтр",
+        defaultOption: "Все", //{column}",
     },
     resizableColumns: false,
+    filterByColumn: true,
+    filterable: [
+        'permit',
+        'carrier',
+        'reg_number',
+        'polygon',
+        'netto',
+        'invoice_num',
+        'destination',
+        'driver_name',
+        'tonar',
+        'status',
+    ],
+    listColumns: {
+        polygon: polygons,
+        carrier: carriers,
+        driver_name: driver_names,
+        destination: destinations,
+        status: [
+            { id: 0, text: 'На полигоне' },
+            { id: 1, text: 'Выехал' },
+            { id: 2, text: 'Удален' },
+        ],
+        tonar: [
+            { id: true, text: 'Да' },
+            { id: false, text: 'Нет' },
+        ],
+    },
+    customFilters: [
+        {
+            name: 'polygon',
+            callback: (row, polygon) => row.polygon == polygon,
+        },
+        {
+            name: 'clearPolygon',
+            callback: (row, polygon) => row.polygon == polygon || row.polygon != polygon,
+        },
+    ],
 });
+const polygonFilter = ref(null)
+const filterByPolygon = (polygon, _) => {
+    EventBus.emit('vue-tables.filter::polygon', polygon)
+    // }
+    // else {
+    //     showTable.value = !showTable.value;
+
+    //     nextTick(() => showTable.value = !showTable.value)
+    // }
+};
+const removeFilterByPolygon = (polygon, _) => {
+    console.log(polygon)
+    table.value.refresh()
+    // EventBus.emit('vue-tables.remove-filter::clearPolygon', polygon)
+    // }
+    // else {
+    //     showTable.value = !showTable.value;
+
+    //     nextTick(() => showTable.value = !showTable.value)
+    // }
+};
+
+const statuses = {
+    0: `<span class="badge inv-status badge-warning">На полигоне</span>`,
+    1: `<span class="badge inv-status badge-success">Выехал</span>`,
+    2: `<span class="badge inv-status badge-dark">Удален</span>`,
+};
+const tonar = {
+    true: `<span class="badge inv-status outline-badge-warning">Tонар</span>`,
+    false: '',
+};
+
 const printTonarPack = (visit_id = visitDetails.value.id) => {
     let winPrint = window.open(
         '/doc/tonar_pack?print=true&visit_id=' + visit_id,
@@ -150,17 +229,17 @@ const updateVisit = () => {
         if (res.data.success) {
             new window.Swal('Успешно!', 'Данные сохранены.', 'success');
             detailModal.hide();
-            store.dispatch('VisitsModule/update_tonars', { after, before });
+            store.dispatch('VisitsModule/get_visits', { after, before });
         }
     }).catch((error) => new window.Swal('Ошибка!', error.message, 'error'))
 };
 
 const interval = ref([]);
 const bind_data = () => {
-    if (store.state.VisitsModule.tonar_visits.length != 0) {
+    if (store.state.VisitsModule.visits.length != 0) {
         interval.value = [
-            Math.min(...store.state.VisitsModule.tonar_visits.map(o => o.checked_out)),
-            Math.max(...store.state.VisitsModule.tonar_visits.map(o => o.checked_out))
+            Math.min(...store.state.VisitsModule.visits.map(o => o.checked_out)),
+            Math.max(...store.state.VisitsModule.visits.map(o => o.checked_out))
         ]
         return
     };
@@ -173,7 +252,7 @@ const bind_data = () => {
     // resetData();
 };
 const excel_items = () => {
-    const rows = table.value ? table.value.filteredData : store.state.VisitsModule.tonar_visits
+    const rows = table.value ? table.value.filteredData : store.state.VisitsModule.visits
     let items = []
     for (var row of rows) {
         items.push({
@@ -308,11 +387,11 @@ const updateNetto = async () => {
                 console.log('HERE')
                 changed_visits.value = set_netto(table.value.filteredData, result.value)
                 for (let visit of changed_visits.value) {
-                    let i = store.state.VisitsModule.tonar_visits.findIndex((v) => v.id === visit.id)
+                    let i = store.state.VisitsModule.visits.findIndex((v) => v.id === visit.id)
 
                     if (i === -1) continue
 
-                    store.state.VisitsModule.tonar_visits[i] = visit
+                    store.state.VisitsModule.visits[i] = visit
                 }
             };
             continue;
@@ -320,25 +399,16 @@ const updateNetto = async () => {
 
     };
 };
-const resetData = () => store.dispatch('VisitsModule/update_tonars', { after, before });
-const saveNettoChanges = () => {
-    let data = []
-    for (let visit of changed_visits.value) {
-        data.push({
-            id: visit.id,
-            weight_in: visit.weight_in,
-            weight_out: visit.weight_out,
-        })
-    };
-    store.dispatch('VisitsModule/bulk_tonars_update', data)
-        .then((res) => {
-            if (res.data.success) {
-                new window.Swal('Сохранено!', 'Данные успешно сохранены.', 'success');
-                resetData();
-            }
-        })
-        .catch((error) => new window.Swal('Ошибка!', error.message, 'error'));
+const resetData = () => {
+    store.dispatch('VisitsModule/get_visits', { after, before })
+        .then(() => {
+            polygons.value = [...new Set(store.state.VisitsModule.visits.map(item => item.polygon))].map(item => ({ text: item }));
+            carriers.value = [...new Set(store.state.VisitsModule.visits.map(item => item.carrier))].map(item => ({ text: item }));
+            driver_names.value = [...new Set(store.state.VisitsModule.visits.map(item => item.driver_name))].map(item => ({ text: item }));
+            destinations.value = [...new Set(store.state.VisitsModule.visits.map(item => item.destination))].map(item => ({ text: item }));
+        });
 };
+
 const bulkPrintAkt = () => {
     store.dispatch('VisitsModule/setAkts', table.value.filteredData);
     let winPrint = window.open(
@@ -383,21 +453,6 @@ const initExportErrorModal = () => {
     exportErrorModal.value.addEventListener("hidden.bs.modal", () => fileXlsx.value = null)
 };
 const fileInputKey = ref(0)
-const fileUpload = (event) => {
-    fileXlsx.value = URL.createObjectURL(event.target.files[0]);
-    store.dispatch('VisitsModule/upload_tonars_data', event.target.files[0]).then(
-        (res) => {
-            if (res.data.success == true) {
-                showMessage('Данные сохранены.');
-                resetData();
-            } else {
-                exportModal.show();
-                exportErrors.value = res.data;
-            }
-        }
-    );
-    fileInputKey.value++
-};
 const save = () => {
     showMessage('Settings saved successfully.');
 };
@@ -419,14 +474,10 @@ const showMessage = (msg = '', type = 'success') => {
 const download = () => {
     const data = utils.json_to_sheet(excel_items())
     const wb = utils.book_new()
-    utils.book_append_sheet(wb, data, 'Визиты тонаров')
-    writeFile(wb, 'Визиты тонаров.xlsx')
+    utils.book_append_sheet(wb, data, `Все визиты`)
+    writeFile(wb, 'Все визиты.xlsx')
 };
 
-const polygons = [
-    'Кировский',
-    'Ленинский',
-]
 onMounted(
     () => {
         bind_data();
@@ -435,6 +486,41 @@ onMounted(
     }
 );
 </script>
+<style>
+.multiselect__option--highlight {
+    background: #fff;
+    color: #4361ee;
+}
+
+.multiselect__option--selected {
+    background-color: rgba(27, 85, 226, 0.23921568627450981);
+    color: #4361ee;
+    font-weight: normal;
+}
+
+.multiselect__option--disabled {
+    background: inherit !important;
+}
+
+.multiselect__tags {
+    width: 18em;
+    height: 2.5em;
+}
+
+.multiselect__tag {
+    color: #000;
+    background: #e4e4e4;
+}
+
+.multiselect__tag-icon:after {
+    color: #000 !important;
+}
+
+.multiselect__tag-icon:focus,
+.multiselect__tag-icon:hover {
+    background: inherit;
+}
+</style>
 
 <template>
     <div class="layout-px-spacing">
@@ -445,7 +531,7 @@ onMounted(
                         <nav class="breadcrumb-one" aria-label="breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item active" aria-current="page">
-                                    <span>{{ $t('tonars') }}</span>
+                                    <span>{{ $t('visits') }}</span>
                                 </li>
                             </ol>
                         </nav>
@@ -457,153 +543,22 @@ onMounted(
             </div>
         </teleport>
         <div class="row layout-top-spacing">
-            <div v-show="store.state.VisitsModule.tonar_visits.length > 0"
-                class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing pb-4">
-                <div class="widget widget-statistics">
-                    <div class="widget-heading pb-0">
-                        <h5>Статистика</h5>
-                        <div class="task-action">
-                            <div class="mb-4 me-2 custom-dropdown btn-group">
-                                <a class="btn dropdown-toggle btn-icon-only" href="#" role="button" id="pendingTask"
-                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 24px" width="24"
-                                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="feather feather-more-horizontal"
-                                        :class="changed_visits ? 'text-danger' : ''">
-                                        <circle cx="12" cy="12" r="1"></circle>
-                                        <circle cx="19" cy="12" r="1"></circle>
-                                        <circle cx="5" cy="12" r="1"></circle>
-                                    </svg>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="pendingTask">
-                                    <li>
-                                        <input ref="fl_profile" type="file" class="d-none"
-                                            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                                            @change="fileUpload" :key="fileInputKey" />
-                                        <a href="javascript:void(0);" class="dropdown-item"
-                                            @click="$refs.fl_profile.click()">
-                                            Экспорт
-                                        </a>
-                                    </li>
-                                    <!-- <li>
-                                        <a href="javascript:void(0);" class="dropdown-item" @click="updateNetto">
-                                            Изменить
-                                        </a>
-                                    </li>
-                                    <li v-show="changed_visits">
-                                        <a href="javascript:void(0);" class="dropdown-item" @click="saveNettoChanges">
-                                            Сохранить
-                                        </a>
-                                    </li> -->
-                                    <li class="mt-3">
-                                        <a href="javascript:void(0);" class="dropdown-item" @click="bulkPrintPack">
-                                            Печать пакетов
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);" class="dropdown-item" @click="bulkPrintInvoice">
-                                            Печать ТН
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);" class="dropdown-item" @click="bulkPrintAkt">
-                                            Печать актов
-                                        </a>
-                                    </li>
-                                    <li class="mt-3 text-danger">
-                                        <a href="javascript:void(0);" class="dropdown-item text-danger" @click="resetData">
-                                            Сбросить
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="widget-content pt-0">
-                        <table role="table" aria-busy="false" aria-colcount="5" class="w-detail table b-table my-4">
-                            <thead role="rowgroup" class="w-title">
-                                <tr role="row">
-                                    <th role="columnheader" scope="col" aria-colindex="1">
-                                        <p class="w-title">Полигон</p>
-                                    </th>
-                                    <th role="columnheader" scope="col" aria-colindex="3">
-                                        <p class="w-title">Визитов</p>
-                                    </th>
-                                    <th role="columnheader" scope="col" aria-colindex="3">
-                                        <p class="w-title">Сум. нетто</p>
-                                    </th>
-                                    <th role="columnheader" scope="col" aria-colindex="3">
-                                        <p class="w-title">Мин. нетто</p>
-                                    </th>
-                                    <th role="columnheader" scope="col" aria-colindex="3">
-                                        <p class="w-title">Среднее нетто</p>
-                                    </th>
-                                    <th role="columnheader" scope="col" aria-colindex="3">
-                                        <p class="w-title">Макс. нетто</p>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody role="rowgroup" class="w-stats">
-                                <tr v-for="polygon in polygons">
-                                    <td>{{ polygon }}</td>
-                                    <td>{{ table ? table.filteredData.reduce(
-                                        (acc, visit) => acc + (visit.polygon == polygon ? 1 : 0), 0
-                                    ).toLocaleString('ru') : 0 }}</td>
-                                    <td>{{ Math.round(table ? table.filteredData.reduce(
-                                        (acc, visit) => acc + (visit.polygon == polygon ? visit.netto : 0), 0
-                                    ) : 0).toLocaleString('ru') }}</td>
-                                    <td>
-                                        {{ Math.min(
-                                            ...(table ? table.filteredData
-                                                .filter(o => o.polygon == polygon)
-                                                .map(o => o.netto) :
-                                                [])).toLocaleString('ru') }}</td>
-                                    <td>{{ Math.round(table ? table.filteredData
-                                        .filter(o => o.polygon == polygon)
-                                        .reduce(
-                                            (acc, visit) => acc + visit.netto / table.filteredData
-                                                .filter(o => o.polygon == polygon).length, 0) :
-                                        0).toLocaleString('ru') }}
-                                    </td>
-                                    <td>{{ Math.max(
-                                        ...(table ? table.filteredData
-                                            .filter(o => o.polygon == polygon)
-                                            .map(o => o.netto) :
-                                            [])).toLocaleString('ru') }}</td>
-                                </tr>
-                            </tbody>
-                            <tfoot class="mt-2">
-                                <tr>
-                                    <td class="fw-bold w-stat-sum">ОБЩЕЕ</td>
-                                    <td class="fw-bold w-stat-sum">{{ table ? table.filteredData.length.toLocaleString('ru')
-                                        : 0 }}</td>
-                                    <td class="fw-bold w-stat-sum">{{ Math.round(table ? table.filteredData.reduce(
-                                        (acc, visit) => acc + visit.netto, 0) : 0).toLocaleString('ru') }}</td>
-                                    <td class="fw-bold w-stat-sum">{{ Math.min(...(table ? table.filteredData.map(o =>
-                                        o.netto) :
-                                        [])).toLocaleString('ru') }}</td>
-                                    <td class="fw-bold w-stat-sum">{{ Math.round(table ? table.filteredData.reduce(
-                                        (acc, visit) => acc + visit.netto / table.filteredData.length, 0) :
-                                        0).toLocaleString('ru') }}</td>
-                                    <td class="fw-bold w-stat-sum">{{ Math.max(...(table ? table.filteredData.map(o =>
-                                        o.netto) :
-                                        [])).toLocaleString('ru') }}</td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                </div>
-            </div>
             <div class="col-xl-12 col-lg-12 col-sm-12 layout-spacing">
                 <div class="panel br-6 p-0">
                     <div class="custom-table">
-                        <v-client-table :data="store.state.VisitsModule.tonar_visits" :columns="columns"
-                            :options="table_option" ref="table">
-                            <template #beforeFilter>
+                        <v-client-table :data="store.state.VisitsModule.visits" :columns="columns" :options="table_option"
+                            ref="table">
+                            <template #afterFilterWrapper>
+                                <!-- <div class="me-4">
+                                    <multiselect v-model="polygonFilter" :options="polygons" :multiple="false"
+                                        :taggable="true" :searchable="true" placeholder="Полигон" selected-label=""
+                                        select-label="" deselect-label="" @select="filterByPolygon"
+                                        @remove="removeFilterByPolygon"></multiselect>
+                                </div> -->
                                 <flat-pickr v-model="interval" :config="{ dateFormat: 'd.m.Y', mode: 'range' }"
                                     class="form-control flatpickr active me-4 width-100 text-center"
                                     style="width: 18em; height: 2.5em;" @on-change="change"></flat-pickr>
+
                             </template>
                             <template #checked_out="props">
                                 <div :data_sort="props.row.checked_out">{{ props.row.checked_out.toLocaleString('ru') }}
@@ -613,7 +568,7 @@ onMounted(
                                 <div v-html="statuses[props.row.status]"></div>
                             </template>
                             <template #tonar="props">
-                                <div v-html="tonar[props.row.tonar]"></div>
+                                <div :data_sort="props.row.tonar" v-html="tonar[props.row.tonar]"></div>
                             </template>
                             <template #actions="props">
                                 <div class="actions text-center">

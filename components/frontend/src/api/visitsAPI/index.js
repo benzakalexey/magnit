@@ -22,6 +22,15 @@ export const VisitsAPI = {
      * 
      * @returns {Promise<AxiosResponse<any>>}
      */
+    get_visits(after, before) {
+        const url = 'visits/get_visits';
+        const data = { after, before };
+        return DefaultAPIInstance.get(url, { params: data });
+    },
+    /**
+     * 
+     * @returns {Promise<AxiosResponse<any>>}
+     */
     get_garbage_trucks(after, before) {
         const url = 'visits/get_garbage_trucks';
         const data = { after, before };
