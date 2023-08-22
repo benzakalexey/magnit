@@ -61,7 +61,8 @@ def run_migrations_online():
             return True
 
     connectable = create_engine(
-        config.get_main_option('sqlalchemy.url'), poolclass=pool.NullPool
+        config.get_main_option('sqlalchemy.url'),
+        poolclass=pool.NullPool,
     )
 
     with connectable.connect() as connection:
@@ -70,13 +71,12 @@ def run_migrations_online():
             target_metadata=target_metadata,
             include_schemas=True,
             version_table_schema=target_metadata.schema,
-            include_name=include_name
+            include_name=include_name,
         )
 
         with context.begin_transaction():
             connection.execute(
-                f"CREATE SCHEMA IF NOT EXISTS {target_metadata.schema}"
-            )
+                f"CREATE SCHEMA IF NOT EXISTS {target_metadata.schema}")
             context.run_migrations()
 
 

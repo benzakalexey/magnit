@@ -1,12 +1,11 @@
 import re
+from typing import List
 
 from classic.app import validate_with_dto
 from classic.components import component
 from pydantic import conint, validate_arguments
-from typing import List
 
-from magnit.application import interfaces, entities, errors, constants
-
+from magnit.application import constants, entities, errors, interfaces
 from magnit.application.dto import UserAddInfo
 from magnit.application.services.auth import hash_it
 from magnit.application.services.join_point import join_point
@@ -19,14 +18,12 @@ class Driver:
     @join_point
     @validate_arguments
     def get_by_partner_id(
-        self,
-        partner_id: conint(gt=0),
+            self,
+            partner_id: conint(gt=0),
     ) -> List[entities.Driver]:
         all_drivers = self.driver_repo.get_all()
-        partner_drivers = (
-            d for d in all_drivers
-            if d.details[0].employer.id == partner_id
-        )
+        partner_drivers = (d for d in all_drivers
+                           if d.details[0].employer.id == partner_id)
         return sorted(partner_drivers, key=lambda x: x.full_name)
 
 
@@ -48,8 +45,8 @@ class User:
     @join_point
     @validate_arguments
     def get_by_contragent(
-        self,
-        contragent_id: conint(gt=0),
+            self,
+            contragent_id: conint(gt=0),
     ) -> List[entities.User]:
         contragent = self.contragents_repo.get_by_id(contragent_id)
         if contragent is None:

@@ -22,6 +22,15 @@ export const VisitsAPI = {
      * 
      * @returns {Promise<AxiosResponse<any>>}
      */
+    get_visits(after, before) {
+        const url = 'visits/get_visits';
+        const data = { after, before };
+        return DefaultAPIInstance.get(url, { params: data });
+    },
+    /**
+     * 
+     * @returns {Promise<AxiosResponse<any>>}
+     */
     get_garbage_trucks(after, before) {
         const url = 'visits/get_garbage_trucks';
         const data = { after, before };
@@ -55,9 +64,9 @@ export const VisitsAPI = {
      * @param {string} reason 
      * @returns {Promise<AxiosResponse<any>>}
      */
-    add(permission_id, weight) {
+    add(permission_id, weight, truck_number, service_contract_id) {
         const url = 'visits/add'
-        const data = { permission_id, weight };
+        const data = { permission_id, weight, truck_number, service_contract_id };
         return DefaultAPIInstance.post(url, data);
     },
     /**Добавить визит

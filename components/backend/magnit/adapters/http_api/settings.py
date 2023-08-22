@@ -1,7 +1,7 @@
 import os
 from typing import Tuple, Union
 
-from pydantic import BaseSettings, Field, BaseConfig
+from pydantic import BaseConfig, BaseSettings, Field
 
 
 class Settings(BaseSettings):

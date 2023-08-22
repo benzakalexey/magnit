@@ -29,10 +29,11 @@ const toggleMobileMenu = () => {
     }
 };
 const links = {
-    polygon: ['Супервайзер', 'Контролер'],
+    polygon: ['Контролер'],
     trucks: ['Супервайзер', 'Логист'],
     tonars: ['Супервайзер', 'Аналитик тонаров', 'Редактор тонаров'],
     garbage_trucks: ['Супервайзер', 'Аналитик мусоровозов'],
+    visits: ['Супервайзер'],
 };
 
 </script>
@@ -56,6 +57,20 @@ const links = {
                                 <circle cx="12" cy="10" r="3"></circle>
                             </svg>
                             <span>{{ $t('polygon') }}</span>
+                        </div>
+                    </router-link>
+                </li>
+
+                <li v-show="links.visits.includes(store.state.AuthModule.credentials.user_role)" class="menu">
+                    <router-link to="/visits" class="dropdown-toggle" @click="toggleMobileMenu">
+                        <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="feather feather-home" data-v-5522efca="">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            </svg>
+                            <span>{{ $t('visits') }}</span>
                         </div>
                     </router-link>
                 </li>
@@ -106,7 +121,7 @@ const links = {
                             <span>{{ $t('garbage_trucks') }}</span>
                         </div>
                     </router-link>
-            </li>
+                </li>
 
         </perfect-scrollbar>
     </nav>

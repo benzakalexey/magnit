@@ -1,7 +1,8 @@
 from .base_repo import BaseRepo
-from .contragents import PartnerRepo, ContractRepo
-from .permits import PermitRepo, PermissionRepo
+from .contragents import ContractRepo, PartnerRepo
+from .permits import PermissionRepo, PermitRepo
 from .polygons import PolygonRepo
-from .users import UserRepo, StaffRepo, DriverRepo
-from .vehicles import TruckRepo, TruckModelRepo, TrailerRepo
+from .service_contracts import ServiceContractRepo, ServiceContractVisitRepo
+from .users import DriverRepo, StaffRepo, UserRepo
+from .vehicles import TrailerRepo, TruckModelRepo, TruckRepo
 from .visits import VisitRepo

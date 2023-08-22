@@ -2,10 +2,10 @@ from typing import List
 
 from classic.app import validate_with_dto
 from classic.components import component
-from pydantic import validate_arguments, conint
+from pydantic import conint, validate_arguments
 
-from magnit.application import interfaces, entities, errors, constants
-from magnit.application.dto import TruckModelInfo, TruckInfo
+from magnit.application import constants, entities, errors, interfaces
+from magnit.application.dto import TruckInfo, TruckModelInfo
 from magnit.application.services.join_point import join_point
 
 
@@ -18,22 +18,18 @@ class TruckModel:
 
     @join_point
     @validate_arguments
-    def get_by_id(self,
-                  truck_model_id: conint(gt=0)) -> entities.TruckModel:
+    def get_by_id(self, truck_model_id: conint(gt=0)) -> entities.TruckModel:
         truck_model = self.truck_models_repo.get_by_id(truck_model_id)
         if truck_model is None:
             raise errors.TruckModelIDNotExistError(
-                truck_model_id=truck_model_id
-            )
+                truck_model_id=truck_model_id)
 
         return truck_model
 
     @join_point
     @validate_with_dto
     def add_model(self, truck_models_info: TruckModelInfo):
-        truck_model = entities.TruckModel(
-            name=truck_models_info.name,
-        )
+        truck_model = entities.TruckModel(name=truck_models_info.name)
         self.truck_models_repo.add(truck_model)
         self.truck_models_repo.save()
 
@@ -82,8 +78,7 @@ class Truck:
         model = self.truck_models_repo.get_by_id(truck_info.model)
         if model is None:
             raise errors.TruckModelIDNotExistError(
-                truck_model_id=truck_info.model
-            )
+                truck_model_id=truck_info.model)
 
         truck = entities.Truck(
             reg_number=truck_info.reg_number,
@@ -93,7 +88,7 @@ class Truck:
             tara=truck_info.tara,
             max_weight=truck_info.max_weight,
             production_year=truck_info.production_year,
-            permit=None
+            permit=None,
         )
         self.trucks_repo.add(truck)
         self.trucks_repo.save()
@@ -117,7 +112,7 @@ class Truck:
             trailer=trailer,
             permit=permit,
             is_tonar=truck_info.is_tonar,
-            added_by=operator
+            added_by=operator,
         )
         permit.permissions.append(permission)
         self.permit_repo.save()

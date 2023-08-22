@@ -1,13 +1,13 @@
 import logging
 from datetime import datetime, timedelta
 from random import randint
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
 from classic.app import validate_with_dto
 from classic.components import component
-from pydantic import validate_arguments, conint
+from pydantic import conint, validate_arguments
 
-from magnit.application import interfaces, entities, errors, dto
+from magnit.application import dto, entities, errors, interfaces
 from magnit.application.services.join_point import join_point
 
 
@@ -17,6 +17,8 @@ class Visit:
     Класс Визиты на полигон
     """
     contract_repo: interfaces.ContractRepo
+    service_contract_repo: interfaces.ServiceContractRepo
+    service_contract_visit_repo: interfaces.ServiceContractVisitRepo
     driver_repo: interfaces.DriverRepo
     permission_repo: interfaces.PermissionRepo
     permits_repo: interfaces.PermitRepo
@@ -45,14 +47,19 @@ class Visit:
     def get_all(self):
         return self.visits_repo.get_all()
 
-    @join_point
     @validate_with_dto
     def create_visit(self, visit_info: dto.VisitInInfo):
+        if visit_info.permission_id:
+            self._create_permission_visit(visit_info)
+        else:
+            self._create_service_contract_visit(visit_info)
+
+    @join_point
+    def _create_permission_visit(self, visit_info: dto.VisitInInfo):
         permission = self.permission_repo.get_by_id(visit_info.permission_id)
         if permission is None:
             raise errors.PermitIDNotExistError(
-                permit_id=visit_info.permission_id
-            )
+                permit_id=visit_info.permission_id)
 
         staff = self.staff_repo.get_by_user_id(visit_info.user_id)
         if staff is None:
@@ -72,6 +79,34 @@ class Visit:
         visit.generate_invoice()
 
         self.visits_repo.save()
+
+    @join_point
+    def _create_service_contract_visit(self, visit_info: dto.VisitInInfo):
+        contract = self.service_contract_repo.get_by_id(
+            visit_info.service_contract_id, )
+        if contract is None:
+            raise errors.ServiceContractIDNotExistError(
+                contract_id=visit_info.service_contract_id, )
+
+        staff = self.staff_repo.get_by_user_id(visit_info.user_id)
+        if staff is None:
+            raise errors.UserIDNotExistError(user_id=visit_info.user_id)
+
+        if staff.polygon is None:
+            raise errors.PolygonIDNotExistError()
+
+        visit = entities.ServiceContractVisit(
+            contract=contract,
+            operator_in=staff.user,
+            polygon=staff.polygon,
+            truck_number=visit_info.truck_number,
+            weight_in=visit_info.weight,
+        )
+        self.service_contract_visit_repo.add(visit)
+
+        visit.generate_invoice()
+
+        self.service_contract_visit_repo.save()
 
     @join_point
     @validate_with_dto
@@ -178,40 +213,44 @@ class Visit:
         for row, v in enumerate(visits_info):
             visit = self.visits_repo.get_by_invoice_num(v.invoice_num)
             if visit is None:
-                err.append(dto.TonarXlsError(
-                    row=row + 2,
-                    field='Номер ТН',
-                    value=v.invoice_num,
-                    comment='Визит не найден'
-                ))
+                err.append(
+                    dto.TonarXlsError(
+                        row=row + 2,
+                        field='Номер ТН',
+                        value=v.invoice_num,
+                        comment='Визит не найден',
+                    ))
                 continue
 
             surname, name = v.driver.split()
             driver = self.driver_repo.get_by_name(surname, name)
             if driver is None:
-                err.append(dto.TonarXlsError(
-                    row=row + 2,
-                    field='Водитель',
-                    value=v.driver,
-                    comment='Водитель не найден'
-                ))
+                err.append(
+                    dto.TonarXlsError(
+                        row=row + 2,
+                        field='Водитель',
+                        value=v.driver,
+                        comment='Водитель не найден',
+                    ))
 
             if visit.weight_in > v.weight_out:
-                err.append(dto.TonarXlsError(
-                    row=row + 2,
-                    field='Брутто',
-                    value=v.weight_out,
-                    comment='Брутто меньше веса въезда'
-                ))
+                err.append(
+                    dto.TonarXlsError(
+                        row=row + 2,
+                        field='Брутто',
+                        value=v.weight_out,
+                        comment='Брутто меньше веса въезда',
+                    ))
 
             destination = self.polygons_repo.get_by_name(v.destination)
             if destination is None:
-                err.append(dto.TonarXlsError(
-                    row=row + 2,
-                    field='Направление',
-                    value=v.destination,
-                    comment='Направление не найдено'
-                ))
+                err.append(
+                    dto.TonarXlsError(
+                        row=row + 2,
+                        field='Направление',
+                        value=v.destination,
+                        comment='Направление не найдено',
+                    ))
                 continue
 
             contracts = self.contract_repo.get_by_destination_and_departure(
@@ -223,19 +262,23 @@ class Visit:
                 if c.valid_to >= visit.checked_out >= c.valid_from
             ]
             if not active_contracts:
-                err.append(dto.TonarXlsError(
-                    row=row + 2,
-                    field='Направление',
-                    value=v.destination,
-                    comment='Договор для направления "%s" не найден' % v.destination
-                ))
+                err.append(
+                    dto.TonarXlsError(
+                        row=row + 2,
+                        field='Направление',
+                        value=v.destination,
+                        comment='Договор для направления "%s" не найден' %
+                        v.destination,
+                    ))
             if len(active_contracts) != 1:
-                err.append(dto.TonarXlsError(
-                    row=row + 2,
-                    field='Направление',
-                    value=v.destination,
-                    comment='Для направления "%s" больше одного договора.' % v.destination
-                ))
+                err.append(
+                    dto.TonarXlsError(
+                        row=row + 2,
+                        field='Направление',
+                        value=v.destination,
+                        comment='Для направления "%s" больше одного договора.'
+                        % v.destination,
+                    ))
 
         return err
 
@@ -283,9 +326,7 @@ class Visit:
 
         polygon = staff.polygon
         if polygon is None:
-            raise errors.PolygonIDNotExistError(
-                polygon_id=staff.polygon.id
-            )
+            raise errors.PolygonIDNotExistError(polygon_id=staff.polygon.id)
 
         return self.visits_repo.get_last_50(polygon.id)
 
@@ -303,6 +344,17 @@ class Visit:
             raise errors.UserIDNotExistError(user_id=user_id)
 
         return self.visits_repo.get_tonars(after, before)
+
+    @join_point
+    @validate_arguments
+    def get_visits(
+        self,
+        user_id: int,
+        after: datetime,
+        before: datetime,
+    ) -> List[entities.Visit]:
+        self.logger.info('\nafter: %s\nbefore: %s', after, before)
+        return self.visits_repo.get_between(after, before)
 
     @join_point
     @validate_arguments
@@ -331,50 +383,28 @@ class Visit:
             raise errors.CantCreateNotTonarInvoice()
 
         cargo_type = 'Остатки сортировки ТКО'
-        receiver = visit.contract.receiver.get_full_name(visit.checked_out)
         carrier = visit.contract.carrier.get_full_name(visit.checked_out)
-        direction = (
-            visit.contract.destination.get_details(visit.checked_out).address
-        )
+        direction = visit.contract.destination.get_details(visit.checked_out)
         planned_date = visit.checked_out - timedelta(minutes=randint(20, 30))
+        receiver = visit.contract.receiver.get_full_name(visit.checked_out)
 
         return {
-            'date': visit.checked_out,
-            'planned_date': planned_date,
-            'number': visit.invoice_num,
-            'receiver': receiver,
             'cargo_type': cargo_type,
-            'direction': direction,
-            'volume': visit.permission.permit.truck.body_volume,
             'carrier': carrier,
+            'contract': visit.contract.number,
+            'date': visit.checked_out,
+            'direction': direction.address,
             'driver': visit.driver.full_name,
             'driver_licence': visit.driver.details[0].license,
+            'number': visit.invoice_num,
+            'planned_date': planned_date,
+            'polygon': visit.polygon.get_details(visit.checked_in).address,
+            'receiver': receiver,
             'truck': visit.permission.truck_description,
             'truck_number': visit.permission.truck_number,
             'truck_volume': visit.permission.permit.truck.body_volume,
             'truck_weight': visit.permission.permit.truck.tara,
-            'contract': visit.contract.number,
-            'polygon': visit.polygon.get_details(visit.checked_in).address,
-
-            # 'invoice_num': visit.invoice_num,
-            # 'reg_number': truck.reg_number,
-            # 'truck_model': truck.model.name,
-            # 'truck_type': truck.truck_type.value,
-            # 'contragent_name': visit.permission.contragent.name,
-            # 'tara': visit.tara,
-            # 'netto': visit.netto,
-            # 'brutto': visit.brutto,
-            # 'body_volume': truck.body_volume,
-            # 'polygon_name': visit.polygon.name,
-            # 'polygon_address': visit.polygon.address,
-            # 'date': visit.checked_in,
-            # 'destination_name': visit.destination.name,
-            # # TODO это полигон или владелец
-            # 'destination_address': visit.destination.address,  # TODO
-            # 'destination_inn': visit.destination.owner.inn,
-            # 'driver_name': visit.driver.full_name,
-            # 'driver_phone': visit.driver.phone,
-            # 'permit_num': visit.permission.permit.number,
+            'volume': visit.permission.permit.truck.body_volume,
         }
 
     @join_point
@@ -385,21 +415,21 @@ class Visit:
         if visit is None:
             raise errors.VisitIDNotExistError(visit_id=visit_id)
 
-        # if not visit.permission.is_tonar:
-        #     raise errors.CantCreateNotTonarInvoice()
-
         carrier = visit.permission.owner.short_name
+        permit_number = visit.permission.permit.number
+        truck_mark = visit.permission.permit.truck.model.name
+        truck_number = visit.permission.truck_number
 
         return {
-            'date': visit.checked_out,
-            'polygon': visit.polygon.name,
-            'number': visit.invoice_num,
-            'carrier': carrier,
-            'truck_mark': visit.permission.permit.truck.model.name,
-            'truck_number': visit.permission.truck_number,
-            'permit_number': visit.permission.permit.number,
-            'service_type': 'Транспортирование ТКО (IV-V)',
-            'netto': visit.netto,
-            'tara': visit.tara,
             'brutto': visit.brutto,
+            'carrier': carrier,
+            'date': visit.checked_out,
+            'netto': visit.netto,
+            'number': visit.invoice_num,
+            'permit_number': permit_number,
+            'polygon': visit.polygon.name,
+            'service_type': 'Транспортирование ТКО (IV-V)',
+            'tara': visit.tara,
+            'truck_mark': truck_mark,
+            'truck_number': truck_number,
         }

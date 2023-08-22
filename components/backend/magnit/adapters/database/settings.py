@@ -24,15 +24,13 @@ class Settings(BaseSettings):
     ALEMBIC_VERSION_LOCATIONS: str = 'magnit.adapters.' \
                                      'database:migrations'
 
-    ALEMBIC_MIGRATION_FILENAME_TEMPLATE: str = (
-        '%%(year)d_'
-        '%%(month).2d_'
-        '%%(day).2d_'
-        '%%(hour).2d_'
-        '%%(minute).2d_'
-        '%%(second).2d_'
-        '%%(slug)s'
-    )
+    ALEMBIC_MIGRATION_FILENAME_TEMPLATE: str = ('%%(year)d_'
+                                                '%%(month).2d_'
+                                                '%%(day).2d_'
+                                                '%%(hour).2d_'
+                                                '%%(minute).2d_'
+                                                '%%(second).2d_'
+                                                '%%(slug)s')
 
     class Config:
         env_file_encoding = 'utf-8'
@@ -40,7 +38,7 @@ class Settings(BaseSettings):
         env_prefix = 'DATABASE_'
 
     @property
-    def DATABASE_URL(self):    # noqa
+    def DATABASE_URL(self):  # noqa
         port_url = 'postgresql://{db_user}:{db_pass}@' \
                    '{db_host}:{db_port}/{db_name}'
 

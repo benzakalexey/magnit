@@ -27,7 +27,7 @@ export const VisitsModule = {
                 let r = n.match(/[а-яА-Я]+|[0-9]+/g);
                 return r.join(' ');
             }
-            state.polygon = data[0].polygon + ' полигон'
+            if (data.length > 0) state.polygon = data[0].polygon + ' полигон'
 
             for (var v of data) {
 
@@ -38,6 +38,7 @@ export const VisitsModule = {
                         is_deleted: v.is_deleted,
                         delete_reason: v.delete_reason,
                         contragent_id: v.contragent_id,
+                        polygon: v.polygon,
                         polygon_id: v.polygon_id,
                         tonar: v.tonar,
                         carrier: v.carrier,
@@ -162,6 +163,15 @@ export const VisitsModule = {
                 throw err;
             }
         },
+        async get_visits({ commit }, { after, before }) {
+
+            try {
+                const res = await VisitsAPI.get_visits(after, before);
+                commit('setVisits', res.data);
+            } catch (err) {
+                throw err;
+            }
+        },
         async update_tonars({ commit }, { after, before }) {
 
             try {
@@ -188,8 +198,8 @@ export const VisitsModule = {
             return await VisitsAPI.finish(visit_id, weight_out, driver_id, contract_id);
             // commit('deleteItem', id, reason);
         },
-        async add({ commit }, { permission_id, weight }) {
-            return await VisitsAPI.add(permission_id, weight);
+        async add({ commit }, { permission_id, weight, truck_number, service_contract_id }) {
+            return await VisitsAPI.add(permission_id, weight, truck_number, service_contract_id);
             // commit('deleteItem', id, reason);
         },
         async update_tonar_visit({ commit }, { weight_in,

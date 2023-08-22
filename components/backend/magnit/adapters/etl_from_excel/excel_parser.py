@@ -4,13 +4,14 @@ from classic.components import component
 from falcon import media
 from openpyxl.worksheet.worksheet import Worksheet
 
-from magnit.application import dto
-from magnit.application import interfaces
+from magnit.application import dto, interfaces
+
 from .base_excel_parser import ExcelParser
 
 
 @component
 class TonarsExcelParser(ExcelParser, interfaces.ExcelParser):
+
     def get_data(
         self,
         file: media.multipart.BodyPart,
@@ -41,18 +42,9 @@ class TonarsExcelParser(ExcelParser, interfaces.ExcelParser):
         ws: Worksheet,
     ) -> List[Dict[Any, Any]]:
         column_names = [
-            'Пропуск',
-            'Контрагент',
-            'Рег.номер',
-            'Марка ТС',
-            'Полигон',
-            'Время выезда',
-            'Брутто',
-            'Тара',
-            'Нетто',
-            'Номер ТН',
-            'Направление',
-            'Водитель'
+            'Пропуск', 'Контрагент', 'Рег.номер', 'Марка ТС', 'Полигон',
+            'Время выезда', 'Брутто', 'Тара', 'Нетто', 'Номер ТН',
+            'Направление', 'Водитель'
         ]
 
         data = []

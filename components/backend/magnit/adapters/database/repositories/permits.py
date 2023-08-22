@@ -1,10 +1,10 @@
-from typing import Optional, List
+from typing import List, Optional
 
 from classic.components import component
-from sqlalchemy import desc, select, func
+from sqlalchemy import desc, func, select
 
 from magnit.adapters.database.repositories import BaseRepo
-from magnit.application import interfaces, entities
+from magnit.application import entities, interfaces
 
 
 @component
@@ -16,9 +16,7 @@ class PermitRepo(BaseRepo, interfaces.PermitRepo):
         return self.session.execute(query).scalars().one_or_none()
 
     def get_max_num(self) -> Optional[int]:
-        stmt = (
-            select(func.max(self.dto.number))
-        )
+        stmt = (select(func.max(self.dto.number)))
         return self.session.execute(stmt).scalar_one()
 
 
@@ -30,23 +28,16 @@ class PermissionRepo(BaseRepo, interfaces.PermissionRepo):
         self,
         number: int,
     ) -> Optional[entities.Permission]:
-        query = (
-            select(self.dto)
-            .join(entities.Permit)
-            .where(entities.Permit.number == number)
-            .order_by(desc(self.dto.added_at))
-            .limit(1)
-        )
+        query = (select(self.dto).join(
+            entities.Permit).where(entities.Permit.number == number).order_by(
+                desc(self.dto.added_at)).limit(1))
         return self.session.execute(query).scalars().one_or_none()
 
     def get_by_permit(
         self,
         number: int,
     ) -> List[entities.Permission]:
-        query = (
-            select(self.dto)
-            .join(entities.Permit)
-            .where(entities.Permit.number == number)
-            .order_by(desc(self.dto.added_at))
-        )
+        query = (select(self.dto).join(
+            entities.Permit).where(entities.Permit.number == number).order_by(
+                desc(self.dto.added_at)))
         return self.session.execute(query).scalars().all()

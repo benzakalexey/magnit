@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import decimal
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional, List
+from typing import List, Optional
 
 from magnit.application import constants
 
@@ -110,9 +111,41 @@ class Partner:
 
 
 @dataclass
+class PartnerDetails:
+    partner: Partner
+    valid_from: datetime
+
+    kpp: str
+    "КПП"
+
+    address: str
+    "Адрес"
+
+    phone: Optional[str]
+    "Телефон"
+
+    bank: Optional[str] = None
+    "Банк"
+
+    settlement_account: Optional[str] = None
+    "Расчетный счет"
+
+    correspondent_account: Optional[str] = None
+    "Корреспондентский счет"
+
+    e_mail: Optional[str] = None
+    "Электронная почта"
+
+    valid_to: Optional[datetime] = None
+    id: Optional[int] = None
+
+
+@dataclass
 class Contract:
     """Договор"""
     number: str
+    valid_from: datetime
+
     sender: Partner
     'Отправитель'
 
@@ -122,7 +155,6 @@ class Contract:
     destination: Polygon
     'Полигон назначения'
 
-    valid_from: datetime
     carrier: Optional[Partner] = None
     'Перевозчик'
 
@@ -143,17 +175,6 @@ class DriverDetails:
     employer: Partner
     added_by: Optional[User] = None
     added_at: datetime = field(default_factory=datetime.utcnow)
-    id: Optional[int] = None
-
-
-@dataclass
-class PartnerDetails:
-    partner: Partner
-    kpp: str
-    address: str
-    phone: Optional[str]
-    valid_from: datetime
-    valid_to: Optional[datetime]
     id: Optional[int] = None
 
 
@@ -221,21 +242,16 @@ class Permission:
     @property
     def truck_description(self) -> str:
         if self.trailer:
-            max_netto = (
-                            self.permit.truck.max_weight -
-                            self.permit.truck.tara -
-                            self.trailer.tara
-                        ) / 1000
+            max_netto = (self.permit.truck.max_weight -
+                         self.permit.truck.tara - self.trailer.tara) / 1000
             return f'{self.permit.truck.type.value.capitalize()} ' \
                    f'{self.permit.truck.model.name.split()[0]}, ' \
                    f'Прицеп: {self.trailer.model} ' \
                    f'{self.permit.truck.body_volume} м³, ' \
                    f'{max_netto} тонн'
         else:
-            max_netto = (
-                            self.permit.truck.max_weight -
-                            self.permit.truck.tara
-                        ) / 1000
+            max_netto = (self.permit.truck.max_weight -
+                         self.permit.truck.tara) / 1000
             return f'{self.permit.truck.type.value.capitalize()} ' \
                    f'{self.permit.truck.model.name.split()[0]}, ' \
                    f'{self.permit.truck.body_volume} м³, ' \
@@ -254,7 +270,7 @@ class Permission:
 class Permit:
     """Пропуск"""
     number: int
-    truck: Truck
+    truck: Optional[Truck]
     permissions: List[Permission] = field(default_factory=list)
     id: Optional[int] = None
 
@@ -313,9 +329,8 @@ class Visit:
     @property
     def netto(self) -> int:
         """Масса груза"""
-        return abs(
-            self.weight_in - self.weight_out
-        ) if self.weight_out else None
+        return abs(self.weight_in -
+                   self.weight_out) if self.weight_out else None
 
     @property
     def tara(self) -> int:
@@ -332,3 +347,169 @@ class Visit:
             return self.weight_in
         else:
             return self.weight_out
+
+
+@dataclass
+class WasteCatalog:
+    """Федеральный каталог классификации отходов."""
+
+    name: str
+    """Наименование отхода по ФККО"""
+
+    code: str
+    """Код отхода по ФККО"""
+
+    hazard_class: str
+    """Класс опасности отхода"""
+
+    id: Optional[int] = None
+
+
+@dataclass
+class ContractService:
+    """Услуга по договору на оказание услуг."""
+
+    name: str
+    """Наименование услуги"""
+
+    type: constants.ServiceContractType
+    """Тип услуги"""
+
+    source_id: Optional[int] = None
+    """ИД номенклатуры  в 1С"""
+
+    id: Optional[int] = None
+
+
+@dataclass
+class ServicePrice:
+    """Прайс на услуги."""
+
+    contract_service: ContractService
+    """Услуга"""
+
+    price: decimal.Decimal
+    """Цена"""
+
+    valid_from: datetime
+    """Действует с"""
+
+    valid_to: Optional[datetime] = None
+    """Действует до"""
+
+    id: Optional[int] = None
+
+
+@dataclass
+class ExecutorStorageArea:
+    """Площадки накопления Исполнителя по договору на оказание услуг."""
+
+    polygon: Polygon
+    """Полигон"""
+
+    contract: 'ServiceContract'
+    """Договор на оказание услуг"""
+
+    id: Optional[int] = None
+
+
+@dataclass
+class ServiceContract:
+    """Договор на оказание услуг."""
+
+    number: str
+    """Номер"""
+
+    valid_from: datetime
+    """Действует с"""
+
+    valid_to: datetime
+    """Действует до"""
+
+    permit: Permit
+    """Пропуск"""
+
+    contract_service: ContractService
+    """Услуга"""
+
+    tariff: decimal.Decimal
+    """Тариф, руб./тонн"""
+
+    total_cost: decimal.Decimal
+    """Стоимость договора"""
+
+    balance_limit: decimal.Decimal
+    """Лимит по договору"""
+
+    # Исполнитель
+    executor: Partner
+    """Исполнитель"""
+
+    executor_person: str
+    """Представитель Исполнителя"""
+
+    executor_acts_basis: str
+    """Основания для полномочий Исполнителя"""
+
+    executor_storage_areas: List[Polygon]
+    """Площадки накопления"""
+
+    # Заказчик
+    customer: Partner
+    """Заказчик"""
+
+    customer_person: str
+    """Представитель Заказчика"""
+
+    customer_acts_basis: str
+    """Основания для полномочий Заказчика"""
+
+    id: Optional[int] = None
+
+
+@dataclass
+class ServiceContractVisit:
+    """Визит по Договору на оказание услуг."""
+
+    contract: ServiceContract
+    """ИД договора"""
+
+    polygon: Polygon
+    """ИД полигона"""
+
+    truck_number: str
+    """Номер ТС"""
+
+    # Въезд
+    operator_in: User
+    """ИД оператора въезда"""
+
+    weight_in: int
+    """Вес въезда"""
+
+    checked_in: datetime = field(default_factory=datetime.utcnow)
+    """Время въезда"""
+
+    # Выезд
+    checked_out: Optional[datetime] = None
+    """Время выезда"""
+
+    operator_out: Optional[User] = None
+    """ИД оператора выезда"""
+
+    weight_out: Optional[int] = None
+    """Вес выезда"""
+
+    invoice_num: Optional[str] = None
+    """Номер накладной"""
+
+    id: Optional[int] = None
+
+    def generate_invoice(self):
+        """Номер документа о визите"""
+        p = self.polygon.name[:3].upper()
+        m = constants.months_translator.get(self.checked_in.month)
+        y = self.checked_in.year
+        num = self.id
+        service_type = self.contract.contract_service.type.value
+        self.invoice_num = f'{p}-{m}.{y}-{num}-{service_type}'
