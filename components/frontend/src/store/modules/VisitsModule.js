@@ -56,6 +56,8 @@ export const VisitsModule = {
                         checked_out: v.checked_out ? new Date(v.checked_out) : v.checked_out,
                         driver_name: v.driver_name,
                         destination: v.destination,
+                        driver_id: v.driver_id,
+                        contract_id: v.contract_id,
                         status: v.status
                     }
                 )

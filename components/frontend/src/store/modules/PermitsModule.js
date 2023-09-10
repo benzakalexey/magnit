@@ -140,6 +140,9 @@ export const PermitsModule = {
                     throw err;
                 });
         },
+        async clear_check({ commit }) {
+            commit('clearCheckPermitData');
+        },
         async add_permission({ commit }, {
             permit,
             permit_exp,
