@@ -21,7 +21,10 @@ class Logger:
 
 
 class DB:
-    engine = create_engine(Settings.db.DATABASE_URL)
+    engine = create_engine(
+        Settings.db.DATABASE_URL,
+        connect_args={"options": "-c timezone=utc"}
+    )
     context = TransactionContext(bind=engine, expire_on_commit=False)
 
     # repos

@@ -453,6 +453,10 @@ onMounted(
                 </li>
             </ul>
             <div class="navbar-nav d-flex justify-content-end align-items-center">
+                <!-- <h6 class="mb-0 me-2">Данные&nbspза:</h6> -->
+                <flat-pickr v-model="interval" :config="{ dateFormat: 'd.m.Y', mode: 'range' }"
+                    class="form-control flatpickr active me-4 width-100 text-center" style="width: 18em; height: 2.5em;"
+                    @on-change="change"></flat-pickr>
                 <button type="button" class="btn btn-primary me-4" v-on:click="download">Выгрузить&nbspв&nbspExcel</button>
             </div>
         </teleport>
@@ -600,11 +604,6 @@ onMounted(
                     <div class="custom-table">
                         <v-client-table :data="store.state.VisitsModule.tonar_visits" :columns="columns"
                             :options="table_option" ref="table">
-                            <template #beforeFilter>
-                                <flat-pickr v-model="interval" :config="{ dateFormat: 'd.m.Y', mode: 'range' }"
-                                    class="form-control flatpickr active me-4 width-100 text-center"
-                                    style="width: 18em; height: 2.5em;" @on-change="change"></flat-pickr>
-                            </template>
                             <template #checked_out="props">
                                 <div :data_sort="props.row.checked_out">{{ props.row.checked_out.toLocaleString('ru') }}
                                 </div>

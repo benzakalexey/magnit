@@ -132,16 +132,22 @@ class Visit:
         if visit is None:
             raise errors.VisitIDNotExistError(visit_id=visit_info.visit_id)
 
-        driver = self.driver_repo.get_by_id(visit_info.driver_id)
-        if driver is None:
-            raise errors.UserIDNotExistError(user_id=visit_info.driver_id)
+        if visit_info.driver_id:
+            driver = self.driver_repo.get_by_id(visit_info.driver_id)
+            if driver is None:
+                raise errors.UserIDNotExistError(user_id=visit_info.driver_id)
 
-        contract = self.contract_repo.get_by_id(visit_info.contract_id)
-        if contract is None:
-            raise errors.ContractIDNotFound(contract_id=visit_info.contract_id)
+            visit.driver = driver
 
-        visit.contract = contract
-        visit.driver = driver
+        if visit_info.contract_id:
+            contract = self.contract_repo.get_by_id(visit_info.contract_id)
+            if contract is None:
+                raise errors.ContractIDNotFound(
+                    contract_id=visit_info.contract_id
+                )
+
+            visit.contract = contract
+
         visit.weight_in = visit_info.weight_in
         visit.weight_out = visit_info.weight_out
         self.visits_repo.save()

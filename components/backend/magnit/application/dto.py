@@ -87,12 +87,12 @@ class VisitOutInfo(DTO):
 
 
 class TonarUpdateInfo(DTO):
-    weight_in: conint(gt=0)
-    weight_out: conint(gt=0)
+    contract_id: Optional[conint(gt=0)] = None
+    driver_id: Optional[conint(gt=0)] = None
     user_id: int
     visit_id: int
-    driver_id: Optional[conint(gt=0)] = None
-    contract_id: Optional[conint(gt=0)] = None
+    weight_in: conint(gt=0)
+    weight_out: Optional[conint(gt=0)] = None
 
 
 class TonarXls(DTO):

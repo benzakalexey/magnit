@@ -17,15 +17,20 @@ class VisitRepo(BaseRepo, interfaces.VisitRepo):
         self,
         polygon_id: int,
     ) -> List[entities.Visit]:
-        last50 = (select(
-            self.dto).where(self.dto.polygon_id == polygon_id).order_by(
-            desc(self.dto.checked_in)).limit(50))
+        last50 = (
+            select(self.dto)
+            .where(self.dto.polygon_id == polygon_id)
+            .order_by(desc(self.dto.checked_in))
+            .limit(50)
+        )
         last50_r = self.session.execute(last50).scalars().all()
-        on_polygon = (select(
-            self.dto).where(self.dto.checked_out == None).where(
-            self.dto.is_deleted == False).where(
-            self.dto.polygon_id == polygon_id).order_by(
-            desc(self.dto.checked_in)))
+        on_polygon = (
+            select(self.dto)
+            .where(self.dto.checked_out == None)
+            .where(self.dto.is_deleted == False)
+            .where(self.dto.polygon_id == polygon_id)
+            .order_by(desc(self.dto.checked_in))
+        )
         on_polygon_r = self.session.execute(on_polygon).scalars().all()
         visits = [*on_polygon_r, *last50_r]
         visits_map = {v.id: v for v in visits}
@@ -41,8 +46,8 @@ class VisitRepo(BaseRepo, interfaces.VisitRepo):
             .join(entities.Permission)
             .where(self.dto.is_deleted == False)
             .where(entities.Permission.is_tonar == True)
-            .where(self.dto.checked_out >= str(after))
-            .where(self.dto.checked_out <= str(before))
+            .where(self.dto.checked_out >= after)
+            .where(self.dto.checked_out <= before)
             .order_by(asc(self.dto.checked_out))
         )
         return self.session.execute(query).scalars().all()
@@ -55,9 +60,9 @@ class VisitRepo(BaseRepo, interfaces.VisitRepo):
         query = (
             select(self.dto)
             .join(entities.Permission)
-            .where(self.dto.checked_out >= str(after))
-            .where(self.dto.checked_out <= str(before))
-            .order_by(asc(self.dto.checked_out))
+            .where(self.dto.checked_in >= after)
+            .where(self.dto.checked_in <= before)
+            .order_by(desc(self.dto.checked_in))
         )
         return self.session.execute(query).scalars().all()
 
@@ -66,12 +71,15 @@ class VisitRepo(BaseRepo, interfaces.VisitRepo):
         after: datetime,
         before: datetime,
     ) -> List[entities.Visit]:
-        query = (select(self.dto).join(
-            entities.Permission).where(self.dto.is_deleted == False).where(
-            entities.Permission.is_tonar == False).where(
-            self.dto.checked_out >= str(after)).where(
-            self.dto.checked_out <= str(before)).order_by(
-            asc(self.dto.checked_out)))
+        query = (
+            select(self.dto)
+            .join(entities.Permission)
+            .where(self.dto.is_deleted == False)
+            .where(entities.Permission.is_tonar == False)
+            .where(self.dto.checked_out >= after)
+            .where(self.dto.checked_out <= before)
+            .order_by(asc(self.dto.checked_out))
+        )
         return self.session.execute(query).scalars().all()
 
     def get_by_invoice_num(self, invoice_num: str) -> Optional[entities.Visit]:
