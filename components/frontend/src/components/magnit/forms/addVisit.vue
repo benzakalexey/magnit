@@ -63,11 +63,15 @@ const createVisit = () => {
 }
 
 const checkPermit = (x) => {
-    store.dispatch('PermitsModule/check', {
-        number: permit_num.value
-    })
-        .then(() => permit_error.value = false)
-        .catch(() => permit_error.value = true)
+    store.dispatch('PermitsModule/clear_check');
+    if (String(permit_num.value).length > 2) {
+        store.dispatch('PermitsModule/check', {
+            number: permit_num.value
+        })
+            .then(() => permit_error.value = false)
+            .catch(() => permit_error.value = true)
+    };
+
 }
 const checkWeight = () => {
     let minWeight = store.state.PermitsModule.check_permit.tara || 0

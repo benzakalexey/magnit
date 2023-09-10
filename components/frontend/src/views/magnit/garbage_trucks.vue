@@ -420,7 +420,7 @@ const polygons = [
                 </li>
             </ul>
             <div class="navbar-nav d-flex justify-content-end align-items-center">
-                <h6 class="mb-0 me-2">Данные&nbspза:</h6>
+                <!-- <h6 class="mb-0 me-2">Данные&nbspза:</h6> -->
                 <flat-pickr v-model="interval" :config="{ dateFormat: 'd.m.Y', mode: 'range' }"
                     class="form-control flatpickr active me-4 width-100 text-center" style="width: 18em; height: 2.5em;"
                     @on-change="change"></flat-pickr>

@@ -23,6 +23,8 @@ import '@/assets/sass/forms/custom-flatpickr.css';
 
 import { Russian } from "flatpickr/dist/l10n/ru.js"
 
+import finishVisit from '@/components/magnit/forms/finishVisit';
+
 flatpickr.localize(Russian); // default locale is now Russian
 
 const store = useStore();
@@ -31,18 +33,12 @@ useMeta({ title: 'Визиты' });
 const columns = ref([
     'permit',
     'carrier',
-    'reg_number',
-    // 'truck_model',
     'polygon',
-    // 'checked_in',
-    'checked_out',
-    // 'brutto',
-    // 'tara',
+    'reg_number',
+    'checked_in',
     'netto',
-    'invoice_num',
-    'destination',
-    'driver_name',
     'tonar',
+    'invoice_num',
     'status',
     'actions'
 ]);
@@ -129,16 +125,16 @@ const table_option = ref({
         'polygon',
         'netto',
         'invoice_num',
-        'destination',
-        'driver_name',
+        // 'destination',
+        // 'driver_name',
         'tonar',
         'status',
     ],
     listColumns: {
         polygon: polygons,
         carrier: carriers,
-        driver_name: driver_names,
-        destination: destinations,
+        // driver_name: driver_names,
+        // destination: destinations,
         status: [
             { id: 0, text: 'На полигоне' },
             { id: 1, text: 'Выехал' },
@@ -292,6 +288,8 @@ const visitDetails = ref(
         expired_at: '',
         days_before_exp: '',
         body_volume: '',
+        driver_id: '',
+        contract_id: '',
     }
 );
 const visitDetailsModal = ref(null)
@@ -301,10 +299,13 @@ const initDetailsModal = () => {
     detailModal = new Modal(visitDetailsModal.value)
     visitDetailsModal.value.addEventListener("hidden.bs.modal", onHidden)
 };
+
+const finishModal = ref(false)
 const openDetails = (i) => {
     DriversAPI.get(i.contragent_id).then((ref) => (drivers.value = ref.data));
     PolygonsAPI.get_directions(i.polygon_id).then((ref) => (directions.value = ref.data));
     visitDetails.value = i;
+    finishModal.value = false;
     detailModal.show();
 };
 const onHidden = () => {
@@ -398,6 +399,26 @@ const updateNetto = async () => {
         };
 
     };
+};
+const finishModalShow = () => {
+    detailModal.hide();
+    finishModal.value = true;
+
+}
+
+const getOut = (data) => {
+    store.dispatch('VisitsModule/finish', {
+        visit_id: data.visit_id,
+        weight_out: data.out_weight,
+        driver_id: data.driver,
+        contract_id: data.direction,
+    }).then((res) => {
+        if (res.data.success) {
+            new window.Swal('Успешно!', 'Автомобиль выехал.', 'success');
+            resetData();
+        }
+    })
+        .catch((error) => new window.Swal('Ошибка!', error.data, 'error'))
 };
 const resetData = () => {
     store.dispatch('VisitsModule/get_visits', { after, before })
@@ -539,6 +560,10 @@ onMounted(
                 </li>
             </ul>
             <div class="navbar-nav d-flex justify-content-end align-items-center">
+                <!-- <h6 class="mb-0 me-2">Данные&nbspза:</h6> -->
+                <flat-pickr v-model="interval" :config="{ dateFormat: 'd.m.Y', mode: 'range' }"
+                    class="form-control flatpickr active me-4 width-100 text-center" style="width: 18em; height: 2.5em;"
+                    @on-change="change"></flat-pickr>
                 <button type="button" class="btn btn-primary me-4" v-on:click="download">Выгрузить&nbspв&nbspExcel</button>
             </div>
         </teleport>
@@ -548,20 +573,8 @@ onMounted(
                     <div class="custom-table">
                         <v-client-table :data="store.state.VisitsModule.visits" :columns="columns" :options="table_option"
                             ref="table">
-                            <template #afterFilterWrapper>
-                                <!-- <div class="me-4">
-                                    <multiselect v-model="polygonFilter" :options="polygons" :multiple="false"
-                                        :taggable="true" :searchable="true" placeholder="Полигон" selected-label=""
-                                        select-label="" deselect-label="" @select="filterByPolygon"
-                                        @remove="removeFilterByPolygon"></multiselect>
-                                </div> -->
-                                <flat-pickr v-model="interval" :config="{ dateFormat: 'd.m.Y', mode: 'range' }"
-                                    class="form-control flatpickr active me-4 width-100 text-center"
-                                    style="width: 18em; height: 2.5em;" @on-change="change"></flat-pickr>
-
-                            </template>
-                            <template #checked_out="props">
-                                <div :data_sort="props.row.checked_out">{{ props.row.checked_out.toLocaleString('ru') }}
+                            <template #checked_in="props">
+                                <div :data_sort="props.row.checked_in">{{ props.row.checked_in.toLocaleString('ru') }}
                                 </div>
                             </template>
                             <template #status="props">
@@ -638,7 +651,7 @@ onMounted(
                             <input v-model="visitDetails.weight_out" type="number" class="form-control" id="weight_out" />
                         </div>
                     </div>
-                    <div class="row mb-3">
+                    <div v-show="visitDetails.tonar" class="row mb-3">
                         <div class="col-md-6">
                             <label class="col-form-label" for="direction">Направление</label>
                             <select class="form-select form-select" v-model="visitDetails.contract_id">
@@ -656,15 +669,23 @@ onMounted(
                             </select>
                         </div>
                     </div>
+                    <div v-show="visitDetails.is_deleted" class="row mb-3">
+                        <div class="col-md-12">
+                            <label class="col-form-label" for="delete_reason">Причина удаления</label>
+                            <input v-model="visitDetails.delete_reason" type="text" readonly="true" class="form-control"
+                                id="delete_reason" />
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button :disabled="item.is_deleted" type="button" class="btn btn-danger me-auto"
+                    <button :disabled="visitDetails.is_deleted" type="button" class="btn btn-danger me-auto"
                         @click.prevent="deleteVisit">Удалить</button>
                     <button type="button" class="btn" data-dismiss="modal" data-bs-dismiss="modal"><i
                             class="flaticon-cancel-12"></i>Отмена</button>
                     <div class="btn-group custom-dropdown" role="group">
-                        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
+                        <button :disabled="visitDetails.is_deleted || !visitDetails.checked_out" type="button"
+                            class="btn btn-outline-info dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                 class="feather feather-printer me-3">
@@ -672,7 +693,6 @@ onMounted(
                                 <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
                                 <rect x="6" y="14" width="12" height="8"></rect>
                             </svg>
-                            Печать
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                 class="feather feather-chevron-down">
@@ -700,8 +720,25 @@ onMounted(
                             </li>
                         </ul>
                     </div>
-                    <button type="button" class="btn btn-primary" @click.prevent="updateVisit">
-                        Сохранить
+                    <button type="button" :disabled="visitDetails.is_deleted" class="btn btn-outline-success"
+                        @click.prevent="updateVisit">
+                        <!-- Сохранить -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="feather feather-save" data-v-5522efca="">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                            <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                    </button>
+                    <button v-if="visitDetails.status == 0" type="button" class="btn btn-primary" @click="finishModalShow">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="feather feather-arrow-up-right">
+                            <line x1="7" y1="17" x2="17" y2="7"></line>
+                            <polyline points="7 7 17 7 17 17"></polyline>
+                        </svg>
+                        <!-- Выпустить -->
                     </button>
                 </div>
             </div>
@@ -751,4 +788,6 @@ onMounted(
             </div>
         </div>
     </div>
+
+    <finishVisit :item="visitDetails" :isOpen="finishModal" @closed="closeFinish" @get_out="getOut"></finishVisit>
 </template>
