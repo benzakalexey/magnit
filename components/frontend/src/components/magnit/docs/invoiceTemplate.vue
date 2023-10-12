@@ -550,8 +550,7 @@ const pretty_num = (n) => {
                 </tr>
                 <tr style="height: 20px">
                     <td class="bordered px-2 text-center" colspan="111">
-                        Масса согласно акту взвешивания К-АПР.22-474-Т от
-                        07.04.2022
+                        Масса согласно акту взвешивания {{ invoice.number }} от {{ invoice.date }}
                         способ - разница между массой ТС перед погрузкой и после
                         погрузки
                     </td>
