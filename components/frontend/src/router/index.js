@@ -84,6 +84,18 @@ const routes = [
         beforeEnter: authGuard
     },
     {
+        path: '/drivers',
+        name: 'drivers',
+        component: () => import(/* webpackChunkName: "drivers" */ '../views/magnit/catalogs/drivers.vue'),
+        beforeEnter: authGuard
+    },
+    {
+        path: '/contracts',
+        name: 'contracts',
+        component: () => import(/* webpackChunkName: "contracts" */ '../views/magnit/catalogs/contracts.vue'),
+        beforeEnter: authGuard
+    },
+    {
         path: '/tonars',
         name: 'tonars',
         component: () => import(/* webpackChunkName: "tonars" */ '../views/magnit/tonars.vue'),

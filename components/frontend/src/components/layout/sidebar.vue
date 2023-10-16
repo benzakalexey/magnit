@@ -34,6 +34,11 @@ const links = {
     tonars: ['Супервайзер', 'Аналитик тонаров', 'Редактор тонаров'],
     garbage_trucks: ['Супервайзер', 'Аналитик мусоровозов'],
     visits: ['Супервайзер'],
+    users: ['Супервайзер'],
+    contragents: ['Супервайзер'],
+    polygons: ['Супервайзер'],
+    drivers: ['Супервайзер'],
+    contracts: ['Супервайзер'],
 };
 
 </script>
@@ -123,7 +128,81 @@ const links = {
                     </router-link>
                 </li>
 
-        </perfect-scrollbar>
+                <li v-show="links.users.includes(store.state.AuthModule.credentials.user_role)" class="menu">
+                    <router-link to="/users" class="dropdown-toggle" @click="toggleMobileMenu">
+                        <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="feather feather-users" data-v-5522efca="">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                            <span>{{ $t('users') }}</span>
+                        </div>
+                    </router-link>
+                </li>
+
+                <!-- <li v-show="links.contragents.includes(store.state.AuthModule.credentials.user_role)" class="menu">
+                    <router-link to="/contragents" class="dropdown-toggle" @click="toggleMobileMenu">
+                        <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="feather feather-shield" data-v-5522efca="">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                            <span>{{ $t('contragents') }}</span>
+                        </div>
+                    </router-link>
+                </li>
+
+                <li v-show="links.polygons.includes(store.state.AuthModule.credentials.user_role)" class="menu">
+                    <router-link to="/polygons" class="dropdown-toggle" @click="toggleMobileMenu">
+                        <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="feather feather-grid" data-v-5522efca="">
+                                <rect x="3" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="14" width="7" height="7"></rect>
+                                <rect x="3" y="14" width="7" height="7"></rect>
+                            </svg>
+                            <span>{{ $t('polygons') }}</span>
+                        </div>
+                    </router-link>
+                </li>
+
+                <li v-show="links.drivers.includes(store.state.AuthModule.credentials.user_role)" class="menu">
+                    <router-link to="/drivers" class="dropdown-toggle" @click="toggleMobileMenu">
+                        <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="feather feather-github" data-v-5522efca="">
+                                <path
+                                    d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+                                </path>
+                            </svg>
+                            <span>{{ $t('drivers') }}</span>
+                        </div>
+                    </router-link>
+                </li>
+
+                <li v-show="links.contracts.includes(store.state.AuthModule.credentials.user_role)" class="menu">
+                    <router-link to="/contracts" class="dropdown-toggle" @click="toggleMobileMenu">
+                        <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="feather feather-clipboard" data-v-5522efca="">
+                                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                            </svg>
+                            <span>{{ $t('contracts') }}</span>
+                        </div>
+                    </router-link>
+                </li> -->
+
+            </perfect-scrollbar>
     </nav>
 </div>
 <!--  END SIDEBAR  --></template>
