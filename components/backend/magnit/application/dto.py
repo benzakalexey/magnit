@@ -8,11 +8,25 @@ from magnit.application import constants
 
 
 class UserAddInfo(DTO):
-    phone_number: str
+    operator_id: int
+    polygon_id: Optional[int] = None
+    phone: str
     password: str
-    user_role: constants.UserRole
+    role: Optional[constants.UserRole] = None
+    is_staff: bool
+    is_active: bool
+    surname: str
     first_name: str
-    last_name: str
+    patronymic: str
+
+
+class UserUpdateInfo(DTO):
+    id: int
+    operator_id: int
+    is_active: bool
+    is_staff: bool
+    polygon_id: Optional[int]
+    role: Optional[constants.UserRole]
 
 
 class PartnerInfo(DTO):

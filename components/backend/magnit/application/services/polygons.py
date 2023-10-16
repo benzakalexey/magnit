@@ -1,12 +1,11 @@
 from datetime import datetime
-from typing import List
 
 from classic.app import validate_with_dto
 from classic.components import component
 from pydantic import conint, validate_arguments
 
 from magnit.application import entities, errors, interfaces
-from magnit.application.dto import PolygonInfo, SecondaryRouteInfo
+from magnit.application.dto import PolygonInfo
 from magnit.application.services.join_point import join_point
 
 
@@ -30,7 +29,20 @@ class Polygon:
 
     @join_point
     def get_all(self):
-        return self.polygons_repo.get_all()
+        now = datetime.utcnow()
+        polygons = self.polygons_repo.get_all()
+        polygons_data = []
+        for polygon in polygons:
+            polygon_details = polygon.get_details(now)
+            polygon_data = {
+                'id': polygon.id,
+                'name': polygon.name,
+                'address': polygon_details.address,
+                'valid_from': polygon_details.valid_from,
+            }
+            polygons_data.append(polygon_data)
+
+        return polygons_data
 
     @join_point
     def get_receivers_by_source_id(
@@ -61,7 +73,6 @@ class Polygon:
         )
         self.polygons_repo.add(polygon)
         self.polygons_repo.save()
-
 
 #
 #

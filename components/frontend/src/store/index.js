@@ -5,6 +5,7 @@ import { PermitsModule } from './modules/PermitsModule';
 import { InvoiceModule } from './modules/InvoiceModule';
 import { TrucksModule } from './modules/TrucksModule';
 import { PartnersModule } from './modules/PartnersModule';
+import { UsersModule } from './modules/UsersModule';
 import i18n from '../i18n';
 
 export default new createStore({
@@ -108,5 +109,6 @@ export default new createStore({
         InvoiceModule,
         PartnersModule,
         TrucksModule,
+        UsersModule,
     },
 });

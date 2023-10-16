@@ -23,6 +23,7 @@ class Polygons:
             **request.params)
 
     @join_point
+    @authenticate
     def on_get_get_all(self, request, response):
         polygons = self.service.get_all(**request.params)
         response.media = polygons

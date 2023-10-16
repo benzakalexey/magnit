@@ -13,12 +13,12 @@ class User:
     """Пользователь"""
     phone: int
     password_hash: str
-    user_role: constants.UserRole
     is_staff: bool
     is_active: bool
     surname: str
     name: str
     patronymic: Optional[str] = None
+    staff: Optional[Staff] = None
     id: Optional[int] = None
 
     @property
