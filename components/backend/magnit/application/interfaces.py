@@ -41,7 +41,7 @@ class UserRepo(ABC):
 class DriverRepo(ABC):
 
     @abstractmethod
-    def get_by_id(self, id_: int) -> Optional[entities.User]:
+    def get_by_id(self, id_: int) -> Optional[entities.Driver]:
         ...
 
     @abstractmethod
@@ -50,6 +50,14 @@ class DriverRepo(ABC):
 
     @abstractmethod
     def get_by_name(self, surname, name) -> Optional[entities.Driver]:
+        ...
+
+    @abstractmethod
+    def add(self, instance: entities.Driver):
+        ...
+
+    @abstractmethod
+    def save(self):
         ...
 
 

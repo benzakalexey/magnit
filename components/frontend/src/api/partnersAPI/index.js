@@ -55,4 +55,20 @@ export const PartnersAPI = {
             }
         });
     },
+    /** Обновить данные водителя
+     * 
+     * @returns {Promise<AxiosResponse<any>>}
+     */
+    update(data) {
+        const url = 'partners/update';
+        return DefaultAPIInstance.post(url, data);
+    },
+    /** Обновить данные пользователя
+     * 
+     * @returns {Promise<AxiosResponse<any>>}
+     */
+    create(data) {
+        const url = 'partners/add';
+        return DefaultAPIInstance.post(url, data);
+    },
 }

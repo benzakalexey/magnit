@@ -143,8 +143,7 @@ class Visit:
             contract = self.contract_repo.get_by_id(visit_info.contract_id)
             if contract is None:
                 raise errors.ContractIDNotFound(
-                    contract_id=visit_info.contract_id
-                )
+                    contract_id=visit_info.contract_id)
 
             visit.contract = contract
 

@@ -29,6 +29,19 @@ class Polygons:
         response.media = polygons
 
     @join_point
+    @authenticate
     def on_post_add(self, request, response):
-        self.service.add_polygon(**request.media)
+        self.service.add_polygon(
+            operator_id=request.uid,
+            **request.media,
+        )
+        response.media = constants.SUCCESS_TRUE
+
+    @join_point
+    @authenticate
+    def on_post_update(self, request, response):
+        self.service.update(
+            operator_id=request.uid,
+            **request.media,
+        )
         response.media = constants.SUCCESS_TRUE

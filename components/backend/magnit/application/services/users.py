@@ -6,7 +6,8 @@ from classic.components import component
 from pydantic import conint, validate_arguments
 
 from magnit.application import constants, entities, errors, interfaces
-from magnit.application.dto import UserAddInfo, UserUpdateInfo
+from magnit.application.dto import UserAddInfo, UserUpdateInfo, DriverAddData, \
+    DriverUpdData
 from magnit.application.entities import Staff
 from magnit.application.services.auth import hash_it
 from magnit.application.services.join_point import join_point
@@ -15,6 +16,8 @@ from magnit.application.services.join_point import join_point
 @component
 class Driver:
     driver_repo: interfaces.DriverRepo
+    partner_repo: interfaces.PartnerRepo
+    user_repo: interfaces.UserRepo
 
     @join_point
     @validate_arguments
@@ -26,6 +29,67 @@ class Driver:
         partner_drivers = (d for d in all_drivers
                            if d.details[0].employer.id == partner_id)
         return sorted(partner_drivers, key=lambda x: x.full_name)
+
+    @join_point
+    def get_all(self) -> List[entities.Driver]:
+        return self.driver_repo.get_all()
+
+    @join_point
+    @validate_with_dto
+    def add(self, driver_data: DriverAddData):
+        employer = self.partner_repo.get_by_id(driver_data.employer_id)
+        if employer is None:
+            raise errors.PartnerIDNotExistError(
+                contragent_id=driver_data.employer_id, )
+
+        operator = self.user_repo.get_by_id(driver_data.operator_id)
+        if operator is None:
+            raise errors.UserIDNotExistError(user_id=driver_data.operator_id)
+
+        driver = entities.Driver(
+            surname=driver_data.last_name,
+            name=driver_data.first_name,
+            patronymic=driver_data.patronymic,
+        )
+        driver_details = entities.DriverDetails(
+            driver=driver,
+            added_by=operator,
+            employer=employer,
+            license=driver_data.license,
+        )
+        driver.details.append(driver_details)
+        self.driver_repo.add(driver)
+
+    @join_point
+    @validate_with_dto
+    def update(self, driver_data: DriverUpdData):
+        operator = self.user_repo.get_by_id(driver_data.operator_id)
+        if operator is None:
+            raise errors.UserIDNotExistError(user_id=driver_data.operator_id)
+
+        driver = self.driver_repo.get_by_id(driver_data.driver_id)
+        if driver is None:
+            raise errors.UserIDNotExistError(user_id=driver_data.driver_id)
+
+        driver_details = driver.details[0]
+
+        if (driver_details.license == driver_data.license
+                and driver_details.employer.id == driver_data.employer_id):
+            return
+
+        employer = self.partner_repo.get_by_id(driver_data.employer_id)
+        if employer is None:
+            raise errors.PartnerIDNotExistError(
+                contragent_id=driver_data.employer_id)
+
+        driver_details = entities.DriverDetails(
+            driver=driver,
+            added_by=operator,
+            employer=employer,
+            license=driver_data.license,
+        )
+        driver.details.append(driver_details)
+        self.driver_repo.save()
 
 
 @component
@@ -100,8 +164,7 @@ class User:
             polygon = self.polygons_repo.get_by_id(user_info.polygon_id)
             if polygon is None:
                 raise errors.PolygonIDNotExistError(
-                    user_id=user_info.polygon_id
-                )
+                    user_id=user_info.polygon_id)
 
             operator = self.users_repo.get_by_id(user_info.operator_id)
             if operator is None:
@@ -144,7 +207,6 @@ class User:
                 user=user,
                 added_by=operator,
             )
-
 
         self.users_repo.save()
 

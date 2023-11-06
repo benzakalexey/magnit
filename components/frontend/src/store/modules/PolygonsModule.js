@@ -18,19 +18,11 @@ export const PolygonsModule = {
             for (var u of data) {
                 polygons.push(
                     {
-                        'added_at': u.added_at ? new Date(u.added_at) : '',
-                        'added_by': u.added_by,
-                        'full_name': u.full_name,
-                        'id': u.id,
-                        'is_active': u.is_active,
-                        'is_staff': u.is_staff,
-                        'first_name': u.name,
-                        'patronymic': u.patronymic,
-                        'phone': formatPhoneNumber(u.phone),
-                        'polygon': u.polygon,
-                        'polygon_id': u.polygon_id,
-                        'role': u.role,
-                        'surname': u.surname,
+                        polygon_id: u.id,
+                        name: u.name,
+                        address: u.address,
+                        valid_from: u.valid_from ? new Date(u.valid_from) : null,
+                        valid_to: u.valid_to ? new Date(u.valid_to) : null,
                     }
                 )
             };
@@ -57,7 +49,7 @@ export const PolygonsModule = {
         },
         async get({ commit }) {
             try {
-                const res = await PolygonsAPI.get();
+                const res = await PolygonsAPI.get_all();
                 commit('setPolygons', res.data);
             } catch (err) {
                 throw err;

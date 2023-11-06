@@ -36,18 +36,19 @@ class Users:
                 'role': None,
             }
             if user.staff:
-                user_data.update(
-                    {
-                        'added_at': user.staff.added_at,
-                        'added_by': user.staff.added_by.full_name
-                        if user.staff.added_by else '-',
-                        'polygon': user.staff.polygon.name
-                        if user.staff.polygon else '-',
-                        'polygon_id': user.staff.polygon.id
-                        if user.staff.polygon else None,
-                        'role': user.staff.role,
-                    }
-                )
+                user_data.update({
+                    'added_at':
+                    user.staff.added_at,
+                    'added_by':
+                    user.staff.added_by.full_name
+                    if user.staff.added_by else '-',
+                    'polygon':
+                    user.staff.polygon.name if user.staff.polygon else '-',
+                    'polygon_id':
+                    user.staff.polygon.id if user.staff.polygon else None,
+                    'role':
+                    user.staff.role,
+                })
             users_data.append(user_data)
 
         response.media = users_data

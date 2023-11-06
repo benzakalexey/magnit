@@ -5,7 +5,7 @@ from classic.components import component
 from pydantic import conint, validate_arguments
 
 from magnit.application import entities, errors, interfaces
-from magnit.application.dto import PolygonInfo
+from magnit.application.dto import PolygonAddInfo, PolygonUpdInfo
 from magnit.application.services.join_point import join_point
 
 
@@ -17,6 +17,7 @@ class Polygon:
     polygons_repo: interfaces.PolygonRepo
     partner_repo: interfaces.PartnerRepo
     contract_repo: interfaces.ContractRepo
+    user_repo: interfaces.UserRepo
 
     @join_point
     @validate_arguments
@@ -32,13 +33,14 @@ class Polygon:
         now = datetime.utcnow()
         polygons = self.polygons_repo.get_all()
         polygons_data = []
-        for polygon in polygons:
+        for polygon in sorted(polygons, key=lambda p: p.name):
             polygon_details = polygon.get_details(now)
             polygon_data = {
                 'id': polygon.id,
                 'name': polygon.name,
                 'address': polygon_details.address,
                 'valid_from': polygon_details.valid_from,
+                'valid_to': polygon_details.valid_to,
             }
             polygons_data.append(polygon_data)
 
@@ -58,66 +60,46 @@ class Polygon:
 
     @join_point
     @validate_with_dto
-    def add_polygon(self, polygon_info: PolygonInfo):
-        owner = self.partner_repo.get_by_id(polygon_info.owner_id)
-        if owner is None:
-            raise errors.OwnerIDNotExistError(
-                contragent_id=polygon_info.owner_id)
+    def add_polygon(self, polygon_info: PolygonAddInfo):
+        operator = self.user_repo.get_by_id(polygon_info.operator_id)
+        if operator is None:
+            raise errors.UserIDNotExistError(user_id=polygon_info.operator_id)
 
-        polygon = entities.Polygon(
-            name=polygon_info.name,
-            location=polygon_info.location,
-            owner=owner,
+        polygon = entities.Polygon(name=polygon_info.name, )
+        polygon_details = entities.PolygonDetails(
+            polygon=polygon,
             address=polygon_info.address,
-            phone_number=polygon_info.phone_number,
+            added_by=operator,
+            valid_from=polygon_info.valid_from,
+            valid_to=polygon_info.valid_to,
         )
+        polygon.details.append(polygon_details)
         self.polygons_repo.add(polygon)
-        self.polygons_repo.save()
 
-#
-#
-# @component
-# class SecondaryRoute:
-#     """
-#     Класс 1, 2 плечо Полигоны
-#     """
-#     secondary_routes_repo: interfaces.SecondaryRouteRepo
-#     polygons_repo: interfaces.PolygonRepo
-#
-#     @join_point
-#     @validate_arguments
-#     def get_by_id(self,
-#                   secondary_route_id: conint(gt=0)) -> entities.SecondaryRoute:
-#         secondary_route = self.secondary_routes_repo.get_by_id(
-#             secondary_route_id)
-#         if secondary_route is None:
-#             raise errors.SecondaryRouteIDNotExistError(
-#                 secondary_route_id=secondary_route_id)
-#
-#         return secondary_route
-#
-#     @join_point
-#     def get_all(self):
-#         return self.secondary_routes_repo.get_all()
-#
-#     @join_point
-#     @validate_with_dto
-#     def add_secondary_route(self, secondary_route_info: SecondaryRouteInfo):
-#         source_polygon = self.polygons_repo.get_by_id(
-#             secondary_route_info.source_polygon_id)
-#         if source_polygon is None:
-#             raise errors.PolygonIDNotExistError(
-#                 polygon_id=secondary_route_info.source_polygon_id)
-#
-#         receiver_polygon = self.polygons_repo.get_by_id(
-#             secondary_route_info.receiver_polygon_id)
-#         if receiver_polygon is None:
-#             raise errors.PolygonIDNotExistError(
-#                 polygon_id=secondary_route_info.receiver_polygon_id)
-#
-#         secondary_route = entities.SecondaryRoute(
-#             source_polygon=source_polygon,
-#             receiver_polygon=receiver_polygon,
-#         )
-#         self.secondary_routes_repo.add(secondary_route)
-#         self.secondary_routes_repo.save()
+    @join_point
+    @validate_with_dto
+    def update(self, polygon_info: PolygonUpdInfo):
+        operator = self.user_repo.get_by_id(polygon_info.operator_id)
+        if operator is None:
+            raise errors.UserIDNotExistError(user_id=polygon_info.operator_id)
+
+        polygon = self.polygons_repo.get_by_id(polygon_info.polygon_id)
+        if polygon is None:
+            raise errors.PolygonIDNotExistError(
+                polygon_id=polygon_info.polygon_id)
+
+        polygon_details = polygon.details[0]
+        if (polygon_details.address == polygon_info.address
+                and polygon_details.valid_to == polygon_info.valid_to
+                and polygon_details.valid_from == polygon_info.valid_from):
+            return
+
+        polygon_details = entities.PolygonDetails(
+            polygon=polygon,
+            added_by=operator,
+            address=polygon_info.address,
+            valid_from=polygon_info.valid_from,
+            valid_to=polygon_info.valid_to,
+        )
+        polygon.details.append(polygon_details)
+        self.polygons_repo.save()

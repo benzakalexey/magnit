@@ -32,6 +32,12 @@ export const PartnersModule = {
                     kpp: p.kpp,
                     address: p.address,
                     phone: p.phone,
+                    bank: p.bank,
+                    settlement_account: p.settlement_account,
+                    correspondent_account: p.correspondent_account,
+                    e_mail: p.e_mail,
+                    valid_from: p.valid_from ? new Date(p.valid_from) : null,
+                    valid_to: p.valid_to ? new Date(p.valid_to) : null,
                 });
             };
             state.partners = partners;
@@ -75,6 +81,17 @@ export const PartnersModule = {
             } catch (err) {
                 throw err;
             }
+        },
+        async get({ commit }) {
+            try {
+                const res = await PartnersAPI.get_all();
+                commit('setPartnersData', res.data);
+            } catch (err) {
+                throw err;
+            }
+        },
+        async create({ commit }, data) {
+            return await PartnersAPI.add(data);
         },
     }
 }

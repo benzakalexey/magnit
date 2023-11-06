@@ -26,12 +26,11 @@ mapper.map_imperatively(
     tables.partners,
     properties={
         'details':
-        relationship(
-            entities.PartnerDetails,
-            lazy='select',
-            cascade='all, delete, delete-orphan',
-            backref=backref('partner'),
-        )
+        relationship(entities.PartnerDetails,
+                     lazy='select',
+                     cascade='all, delete, delete-orphan',
+                     backref=backref('partner'),
+                     order_by='desc(entities.PartnerDetails.added_at)')
     },
 )
 mapper.map_imperatively(
@@ -39,12 +38,11 @@ mapper.map_imperatively(
     tables.polygons,
     properties={
         'details':
-        relationship(
-            entities.PolygonDetails,
-            lazy='select',
-            cascade='all, delete, delete-orphan',
-            backref=backref('polygon'),
-        )
+        relationship(entities.PolygonDetails,
+                     lazy='select',
+                     cascade='all, delete, delete-orphan',
+                     backref=backref('polygon'),
+                     order_by='desc(entities.PolygonDetails.added_at)')
     },
 )
 mapper.map_imperatively(
@@ -68,7 +66,7 @@ mapper.map_imperatively(
             lazy='select',
             cascade='all, delete, delete-orphan',
             backref=backref('driver'),
-            order_by='desc(entities.DriverDetails.added_at)'
+            order_by='desc(entities.DriverDetails.added_at)',
         )
     },
 )

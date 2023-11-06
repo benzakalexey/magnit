@@ -17,4 +17,20 @@ export const PolygonsAPI = {
         const url = 'polygons/get_all';
         return DefaultAPIInstance.get(url);
     },
+    /** Обновить данные водителя
+     * 
+     * @returns {Promise<AxiosResponse<any>>}
+     */
+    update(data) {
+        const url = 'polygons/update';
+        return DefaultAPIInstance.post(url, data);
+    },
+    /** Обновить данные пользователя
+     * 
+     * @returns {Promise<AxiosResponse<any>>}
+     */
+    create(data) {
+        const url = 'polygons/add';
+        return DefaultAPIInstance.post(url, data);
+    },
 }

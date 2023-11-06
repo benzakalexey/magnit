@@ -21,10 +21,8 @@ class Logger:
 
 
 class DB:
-    engine = create_engine(
-        Settings.db.DATABASE_URL,
-        connect_args={"options": "-c timezone=utc"}
-    )
+    engine = create_engine(Settings.db.DATABASE_URL,
+                           connect_args={"options": "-c timezone=utc"})
     context = TransactionContext(bind=engine, expire_on_commit=False)
 
     # repos
@@ -52,12 +50,20 @@ class Application:
         polygons_repo=DB.polygons_repo,
         users_repo=DB.users_repo,
     )
-    driver = services.Driver(driver_repo=DB.driver_repo)
-    contragent = services.Partner(contragents_repo=DB.partners_repo)
+    driver = services.Driver(
+        driver_repo=DB.driver_repo,
+        partner_repo=DB.partners_repo,
+        user_repo=DB.users_repo,
+    )
+    contragent = services.Partner(
+        contragents_repo=DB.partners_repo,
+        user_repo=DB.users_repo,
+    )
     polygon = services.Polygon(
         contract_repo=DB.contract_repo,
         partner_repo=DB.partners_repo,
         polygons_repo=DB.polygons_repo,
+        user_repo=DB.users_repo,
     )
     truck = services.Truck(
         partner_repo=DB.partners_repo,
