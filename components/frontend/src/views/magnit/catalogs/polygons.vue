@@ -5,25 +5,33 @@ import { useMeta } from '@/composables/use-meta';
 import { useStore } from 'vuex';
 import { Modal } from 'bootstrap';
 import { PolygonsAPI } from '@/api/polygonsAPI';
-import { UsersAPI } from '@/api/usersAPI';
 import '@suadelabs/vue3-multiselect/dist/vue3-multiselect.css';
 
 import { utils, writeFile } from 'xlsx';
 
+//flatpickr
+import flatpickr from 'flatpickr';
+import flatPickr from 'vue-flatpickr-component';
+import 'flatpickr/dist/flatpickr.css';
+import '@/assets/sass/forms/custom-flatpickr.css';
+
+import { Russian } from "flatpickr/dist/l10n/ru.js"
+
+flatpickr.localize(Russian); // default locale is now Russian
+const pickr_conf = ref({
+    dateFormat: 'd.m.Y',
+});
+
 const store = useStore();
-useMeta({ title: 'Пользователи' });
+useMeta({ title: 'Полигоны' });
 
 const polygons = ref([]);
 const polygonsFromData = ref([]);
-const userRolesFromData = ref([]);
-const userRoles = ref([]);
+const polygonRolesFromData = ref([]);
+const polygonRoles = ref([]);
 const columns = ref([
     'name',
     'address',
-    'valid_from',
-    // 'is_staff',
-    // 'is_active',
-    // 'role',
     'actions',
 ]);
 const table = ref(null);
@@ -33,14 +41,6 @@ const item = ref(
         address: '',
         valid_from: '',
         id: '',
-        // is_active: '',
-        // is_staff: '',
-        // first_name: '',
-        // patronymic: '',
-        // phone: '',
-        // polygon: '',
-        // role: '',
-        // surname: '',
     }
 );
 const table_option = ref({
@@ -50,16 +50,6 @@ const table_option = ref({
     headings: {
         name: 'Название',
         address: 'Адрес',
-        valid_from: 'Изменено',
-        // id: '',
-        // is_active: 'Активен',
-        // is_staff: 'Сотрудник',
-        // first_name: 'Имя',
-        // patronymic: 'Отчество',
-        // phone: 'Телефон',
-        // polygon: 'Полигон',
-        // role: 'Группа',
-        // surname: 'Фамилия',
         actions: '',
     },
     columnsClasses: { actions: 'actions text-center' },
@@ -87,15 +77,10 @@ const table_option = ref({
     filterable: [
         'name',
         'address',
-        'valid_from',
     ],
 });
-const trueFalseBadge = {
-    false: `<span class="badge inv-status badge-warning">Нет</span>`,
-    true: `<span class="badge inv-status badge-success">Да</span>`,
-};
 const excel_items = () => {
-    const rows = table.value ? table.value.filteredData : store.state.UsersModule.users
+    const rows = table.value ? table.value.filteredData : store.state.PolygonsModule.polygons
     let items = []
     for (var row of rows) {
         items.push({
@@ -115,13 +100,13 @@ const excel_items = () => {
     return items;
 };
 const bindData = () => {
-    store.dispatch('UsersModule/get')
+    store.dispatch('PolygonsModule/get')
         .then(() => {
-            polygonsFromData.value = [...new Set(store.state.UsersModule.users.map(item => item.polygon))].map(item => ({ text: item }));
-            userRolesFromData.value = [...new Set(store.state.UsersModule.users.map(item => item.role))].map(item => ({ text: item }));
+            polygonsFromData.value = [...new Set(store.state.PolygonsModule.polygons.map(item => item.polygon))].map(item => ({ text: item }));
+            polygonRolesFromData.value = [...new Set(store.state.PolygonsModule.polygons.map(item => item.role))].map(item => ({ text: item }));
         });
-    PolygonsAPI.get_all().then((ref) => (polygons.value = ref.data));
-    UsersAPI.get_user_roles().then((ref) => (userRoles.value = ref.data));
+    // PolygonsAPI.get_all().then((ref) => (polygons.value = ref.data));
+    // PolygonsAPI.get_polygon_roles().then((ref) => (polygonRoles.value = ref.data));
 }
 
 // Details Modal
@@ -129,22 +114,15 @@ const bindData = () => {
 let detailModal = null;
 const detailsData = ref(
     {
-        added_at: '',
-        added_by: '',
-        full_name: '',
-        id: '',
-        is_active: '',
-        is_staff: '',
-        first_name: '',
-        patronymic: '',
-        phone: '',
-        polygon: '',
-        role: '',
-        surname: '',
+        polygon_id: null,
+        name: null,
+        address: null,
+        valid_from: null,
+        valid_to: null,
     }
 )
 const detailsDataModal = ref(null);
-const onHidden = () => {};
+const onHidden = () => { };
 const initDetailsModal = () => {
     detailModal = new Modal(detailsDataModal.value)
     detailsDataModal.value.addEventListener("hidden.bs.modal", onHidden)
@@ -154,30 +132,26 @@ const openDetails = (data) => {
     detailModal.show();
 };
 
-// New User Modal
+// New Polygon Modal
 
-let newUserModal = null;
-const newUserData = ref(
+let newPolygonModal = null;
+const newPolygonData = ref(
     {
         polygon_id: '',
-        phone: '',
-        password: '',
-        role: '',
-        is_staff: '',
-        is_active: '',
-        surname: '',
-        first_name: '',
-        patronymic: '',
+        name: '',
+        address: '',
+        valid_from: '',
+        valid_to: '',
     }
 )
-const newUserModalData = ref(null);
-const onHiddenNewUserModal = () => {};
-const initNewUserModal = () => {
-    newUserModal = new Modal(newUserModalData.value)
-    newUserModalData.value.addEventListener("hidden.bs.modal", onHiddenNewUserModal)
+const newPolygonModalData = ref(null);
+const onHiddenNewPolygonModal = () => { };
+const initNewPolygonModal = () => {
+    newPolygonModal = new Modal(newPolygonModalData.value)
+    newPolygonModalData.value.addEventListener("hidden.bs.modal", onHiddenNewPolygonModal)
 };
 const openNewForm = () => {
-    newUserData.value = {
+    newPolygonData.value = {
         polygon_id: null,
         phone: '',
         password: '',
@@ -188,64 +162,29 @@ const openNewForm = () => {
         first_name: '',
         patronymic: '',
     };
-    newUserModal.show();
+    newPolygonModal.show();
 };
-
-const resetPassword = async () => {
-    detailModal.hide();
-    const newPasswordForm = window.Swal.mixin({
-        confirmButtonText: 'Сохранить',
-        showCancelButton: true,
-        input: 'text',
-        inputAttributes: {
-            required: true,
-        },
-        validationMessage: 'Обязательно для заполнения!',
-        padding: '2em',
-    });
-    let newPassword;
-    for (let step = 0; step < 2; step++) {
-        if (step === 0) {
-            const result = await newPasswordForm.fire({
-                title: 'Сброс пароля',
-                text: 'Задайте новый пароль',
-                showCancelButton: true,
-                cancelButtonText: 'Отменить',
-                currentProgressStep: step,
-            });
-            if (result.dismiss === window.Swal.DismissReason.cancel) {
-                break;
-            };
-            if (result.dismiss === window.Swal.DismissReason.backdrop) {
-                break;
-            };
-            newPassword = result.value;
-            if (result.value) {
-                UsersAPI.updp(
-                    {
-                        user_id: detailsData.value.id, 
-                        new_pass: newPassword,
-                    }
-                )
-                    .then((res) => { if (res.data.success) showMessage('Данные сохранены.') })
-                    .then(() => store.dispatch('UsersModule/get').then(() => detailModal.hide()))
-                    .catch((error) => new window.Swal('Ошибка!', error.message, 'error'))
-            };
-            continue;
-        };
-
-    };
+const strToDate = (dateString) => {
+    if (dateString === null) {
+        return dateString
+    }
+    const [day, month, year] = dateString.split('.');
+    return new Date([month, day, year].join('/'));
 };
 const save = () => {
-    UsersAPI.update(detailsData.value)
+    detailsData.value.valid_from = strToDate(detailsData.value.valid_from)
+    detailsData.value.valid_to = strToDate(detailsData.value.valid_to)
+    PolygonsAPI.update(detailsData.value)
         .then((res) => { if (res.data.success) showMessage('Данные сохранены.') })
-        .then(() => store.dispatch('UsersModule/get').then(() => detailModal.hide()))
+        .then(() => store.dispatch('PolygonsModule/get').then(() => detailModal.hide()))
         .catch((error) => new window.Swal('Ошибка!', error.message, 'error'))
 };
 const create = () => {
-    UsersAPI.create(newUserData.value)
-        .then((res) => { if (res.data.success) showMessage('Новый пользователь добавлен.') })
-        .then(() => store.dispatch('UsersModule/get').then(() => newUserModal.hide()))
+    newPolygonData.value.valid_from = strToDate(newPolygonData.value.valid_from)
+    newPolygonData.value.valid_to = strToDate(newPolygonData.value.valid_to)
+    PolygonsAPI.create(newPolygonData.value)
+        .then((res) => { if (res.data.success) showMessage('Новый полигон добавлен.') })
+        .then(() => store.dispatch('PolygonsModule/get').then(() => newPolygonModal.hide()))
         .catch((error) => new window.Swal('Ошибка!', error.message, 'error'))
 };
 
@@ -266,15 +205,15 @@ const showMessage = (msg = '', type = 'success') => {
 const download = () => {
     const data = utils.json_to_sheet(excel_items())
     const wb = utils.book_new()
-    utils.book_append_sheet(wb, data, `Пользователи`)
-    writeFile(wb, 'Пользователи.xlsx')
+    utils.book_append_sheet(wb, data, `Полигоны`)
+    writeFile(wb, 'Полигоны.xlsx')
 };
 
 onMounted(
     () => {
         bindData();
         initDetailsModal();
-        initNewUserModal();
+        initNewPolygonModal();
     }
 );
 </script>
@@ -303,8 +242,8 @@ onMounted(
             <div class="col-xl-12 col-lg-12 col-sm-12 layout-spacing">
                 <div class="panel br-6 p-0">
                     <div class="custom-table">
-                        <v-client-table :data="polygons" :columns="columns" :options="table_option"
-                            ref="table">
+                        <v-client-table :data="store.state.PolygonsModule.polygons" :columns="columns"
+                            :options="table_option" ref="table">
                             <template #afterFilterWrapper>
                                 <button type="button" class="btn btn-primary me-4" @click="openNewForm">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -316,11 +255,6 @@ onMounted(
                                     Новый полигон
                                 </button>
                             </template>
-                            <!-- <template #valid_from="props">
-                                <div :data_sort="props.row.valid_from">
-                                    {{ props.row.valid_from ? props.row.valid_from.toLocaleDateString('ru') : '-' }}
-                                </div>
-                            </template> -->
                             <template #actions="props">
                                 <div class="actions text-center">
                                     <a href="javascript:;" class="btn btn-primary btn-sm"
@@ -339,56 +273,32 @@ onMounted(
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="detailsModalLable">{{ detailsData.full_name }}</h5>
+                    <h5 class="modal-title" id="detailsModalLable">{{ detailsData.name }}</h5>
                     <button type="button" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close"
                         class="btn-close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row mb-3">
-                        <div class="col-md-3">
-                            <div class="checkbox-default custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="is_staff"
-                                    v-model="detailsData.is_staff" />
-                                <label class="custom-control-label" for="is_staff"> Сотрудник </label>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="checkbox-default custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="is_active"
-                                    v-model="detailsData.is_active" />
-                                <label class="custom-control-label" for="is_active"> Активен </label>
-                            </div>
+                        <div class="col-md-12">
+                            <label class="col-form-label" for="address">Адрес</label>
+                            <textarea v-model="detailsData.address" type="text" class="form-control" id="address"
+                                rows="8" />
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="col-form-label" for="phone">Телефон</label>
-                            <input v-model="detailsData.phone" type="text" readonly="true" class="form-control"
-                                id="phone" />
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="col-form-label" for="role">Должность</label>
-                            <select class="form-select form-select" v-model="detailsData.role" id="role">
-                                <option selected value=null>-</option>
-                                <option v-for="p in userRoles" :value="p">{{ p }}
-                                </option>
-                            </select>
+                            <label for="valid_from" class="col-form-label">Действует c:</label>
+                            <flat-pickr v-model="detailsData.valid_from" :config="pickr_conf"
+                                class="form-control flatpickr active" id="valid_from" />
                         </div>
                         <div class="col-md-6">
-                            <label class="col-form-label" for="polygon">Полигон</label>
-                            <select class="form-select form-select" v-model="detailsData.polygon_id" id="polygon">
-                                <option selected value=null>-</option>
-                                <option v-for="p in polygons" :value="p.id">{{ p.name }}
-                                </option>
-                            </select>
+                            <label for="valid_to" class="col-form-label">Действует до:</label>
+                            <flat-pickr v-model="detailsData.valid_to" :config="pickr_conf"
+                                class="form-control flatpickr active" id="valid_to" />
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer mx-2">
-                    <button :disabled="item.is_deleted" type="button" class="btn btn-outline-danger me-auto"
-                        @click.prevent="resetPassword">Установить пароль</button>
                     <button type="button" class="btn" data-dismiss="modal" data-bs-dismiss="modal"><i
                             class="flaticon-cancel-12"></i>Закрыть</button>
                     <button type="button" class="btn btn-primary" @click.prevent="save">
@@ -399,79 +309,39 @@ onMounted(
         </div>
     </div>
 
-    <div class="modal fade" ref="newUserModalData" tabindex="-1" role="dialog" aria-labelledby="newUserModalLable"
+    <div class="modal fade" ref="newPolygonModalData" tabindex="-1" role="dialog" aria-labelledby="newPolygonModalLable"
         aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="newUserModalLable">Новый пользователь</h5>
+                    <h5 class="modal-title" id="newPolygonModalLable">Новый пользователь</h5>
                     <button type="button" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close"
                         class="btn-close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row mb-3">
-                        <div class="col-md-3">
-                            <div class="checkbox-default custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="new_user_is_staff"
-                                    v-model="newUserData.is_staff" />
-                                <label class="custom-control-label" for="new_user_is_staff"> Сотрудник </label>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="checkbox-default custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="new_user_is_active"
-                                    v-model="newUserData.is_active" />
-                                <label class="custom-control-label" for="new_user_is_active"> Активен </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="col-form-label" for="new_user_last_name">Фамилия</label>
-                            <input v-model="newUserData.surname" type="text" class="form-control"
-                                id="new_user_last_name" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="col-form-label" for="new_user_phone">Телефон</label>
-                            <input v-model="newUserData.phone" type="text" class="form-control"
-                                id="new_user_phone" />
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="col-form-label" for="new_user_first_name">Имя</label>
-                            <input v-model="newUserData.first_name" type="text" class="form-control"
-                                id="new_user_first_name" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="col-form-label" for="new_user_role">Должность</label>
-                            <select class="form-select form-select" v-model="newUserData.role" id="new_user_role">
-                                <option selected value=null>-</option>
-                                <option v-for="p in userRoles" :value="p">{{ p }}
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="col-form-label" for="new_user_patronymic">Отчество</label>
-                            <input v-model="newUserData.patronymic" type="text" class="form-control"
-                                id="new_user_patronymic" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="col-form-label" for="new_user_polygon">Полигон</label>
-                            <select class="form-select form-select" v-model="newUserData.polygon_id" id="new_user_polygon">
-                                <option selected value=null>-</option>
-                                <option v-for="p in polygons" :value="p.id">{{ p.name }}
-                                </option>
-                            </select>
+                        <div class="col-md-12">
+                            <label class="col-form-label" for="new_polygon_name">Наименование</label>
+                            <input v-model="newPolygonData.name" type="text" class="form-control" id="new_polygon_name" />
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-12">
-                            <label class="col-form-label" for="new_user_pass">Пароль</label>
-                            <input v-model="newUserData.password" type="text" class="form-control"
-                                id="new_user_pass" />
+                            <label class="col-form-label" for="new_polygon_address">Адрес</label>
+                            <textarea v-model="newPolygonData.address" type="text" class="form-control"
+                                id="new_polygon_address" rows="8" />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="new_polygon_valid_from" class="col-form-label">Действует c:</label>
+                            <flat-pickr v-model="newPolygonData.valid_from" :config="pickr_conf"
+                                class="form-control flatpickr active" id="new_polygon_valid_from" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="new_polygon_valid_to" class="col-form-label">Действует до:</label>
+                            <flat-pickr v-model="newPolygonData.valid_to" :config="pickr_conf"
+                                class="form-control flatpickr active" id="new_polygon_valid_to" />
                         </div>
                     </div>
                 </div>

@@ -137,6 +137,8 @@ class PartnerDetails:
     "Электронная почта"
 
     valid_to: Optional[datetime] = None
+    added_by: Optional[User] = None
+    added_at: datetime = field(default_factory=datetime.utcnow)
     id: Optional[int] = None
 
 
@@ -183,7 +185,7 @@ class PolygonDetails:
     """Данные о полигоне"""
     polygon: Polygon
     address: str
-    valid_from: datetime
+    valid_from: datetime = field(default_factory=datetime.utcnow)
     valid_to: Optional[datetime] = None
     added_by: Optional[User] = None
     added_at: datetime = field(default_factory=datetime.utcnow)

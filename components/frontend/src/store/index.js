@@ -2,9 +2,11 @@ import { createStore } from 'vuex';
 import { AuthModule } from './modules/AuthModule';
 import { VisitsModule } from './modules/VisitsModule';
 import { PermitsModule } from './modules/PermitsModule';
+import { DriversModule } from './modules/DriversModule';
 import { InvoiceModule } from './modules/InvoiceModule';
 import { TrucksModule } from './modules/TrucksModule';
 import { PartnersModule } from './modules/PartnersModule';
+import { PolygonsModule } from './modules/PolygonsModule';
 import { UsersModule } from './modules/UsersModule';
 import i18n from '../i18n';
 
@@ -104,11 +106,13 @@ export default new createStore({
     actions: {},
     modules: {
         AuthModule,
-        VisitsModule,
-        PermitsModule,
+        DriversModule,
         InvoiceModule,
+        PolygonsModule,
         PartnersModule,
+        PermitsModule,
         TrucksModule,
         UsersModule,
+        VisitsModule,
     },
 });

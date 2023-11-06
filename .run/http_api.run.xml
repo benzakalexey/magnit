@@ -25,7 +25,7 @@
       </ENTRIES>
     </EXTENSION>
     <option name="SCRIPT_NAME" value="gunicorn" />
-    <option name="PARAMETERS" value="magnit.composites.api:app --bind=0.0.0.0:8000 --workers=1 --log-level DEBUG --log-file - --forwarded-allow-ip '*' --proxy-allow-from '*' --timeout 300 --access-logfile - --access-logformat &quot;%(h)s %(l)s %(u)s %(t)s [%(r)s] %(s)s %(b)s [%(f)s] [%(a)s] %(L)s&quot;" />
+    <option name="PARAMETERS" value="magnit.composites.api:app --reload --bind=0.0.0.0:8000 --workers=1 --log-level DEBUG --log-file - --forwarded-allow-ip '*' --proxy-allow-from '*' --timeout 300 --access-logfile - --access-logformat &quot;%(h)s %(l)s %(u)s %(t)s [%(r)s] %(s)s %(b)s [%(f)s] [%(a)s] %(L)s&quot;" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="true" />

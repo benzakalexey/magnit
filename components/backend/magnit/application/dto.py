@@ -20,6 +20,22 @@ class UserAddInfo(DTO):
     patronymic: str
 
 
+class DriverAddData(DTO):
+    first_name: str
+    last_name: str
+    patronymic: str
+    license: str
+    operator_id: int
+    employer_id: Optional[int] = None
+
+
+class DriverUpdData(DTO):
+    license: str
+    driver_id: int
+    operator_id: int
+    employer_id: Optional[int] = None
+
+
 class UserUpdateInfo(DTO):
     id: int
     operator_id: int
@@ -29,21 +45,59 @@ class UserUpdateInfo(DTO):
     role: Optional[constants.UserRole]
 
 
-class PartnerInfo(DTO):
+class PartnerAddInfo(DTO):
+    operator_id: int
+
     name: str
     inn: str
-    kpp: Optional[str]
-    contragent_type: constants.PartnerType
-    address: Optional[str]
-    phone_number: Optional[str]
+    ogrn: str
+    short_name: str
 
-
-class PolygonInfo(DTO):
-    name: str
-    location: Optional[str] = None
-    owner_id: conint(gt=0)
-    phone_number: Optional[str] = None
+    valid_from: Optional[datetime] = None
+    kpp: Optional[str] = None
+    valid_to: Optional[datetime] = None
     address: Optional[str] = None
+    phone: Optional[str] = None
+    bank: Optional[str] = None
+    settlement_account: Optional[str] = None
+    correspondent_account: Optional[str] = None
+    e_mail: Optional[str] = None
+
+
+class PartnerUpdInfo(DTO):
+    operator_id: int
+    id: int
+
+    name: str
+    inn: str
+    ogrn: str
+    short_name: str
+
+    valid_from: Optional[datetime] = None
+    kpp: Optional[str] = None
+    valid_to: Optional[datetime] = None
+    address: Optional[str] = None
+    phone: Optional[str] = None
+    bank: Optional[str] = None
+    settlement_account: Optional[str] = None
+    correspondent_account: Optional[str] = None
+    e_mail: Optional[str] = None
+
+
+class PolygonAddInfo(DTO):
+    name: str
+    operator_id: int
+    address: str
+    valid_from: datetime
+    valid_to: Optional[datetime] = None
+
+
+class PolygonUpdInfo(DTO):
+    polygon_id: int
+    operator_id: int
+    address: str
+    valid_from: datetime
+    valid_to: Optional[datetime] = None
 
 
 class TruckModelInfo(DTO):
