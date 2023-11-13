@@ -27,12 +27,8 @@ const columns = ref([
     'permit',
     'carrier',
     'reg_number',
-    // 'truck_model',
     'polygon',
-    // 'checked_in',
     'checked_out',
-    // 'brutto',
-    // 'tara',
     'netto',
     'invoice_num',
     'destination',
@@ -43,7 +39,10 @@ if (store.state.AuthModule.credentials.user_role !== 'Аналитик тона�
     columns.value.push('actions')
 }
 const table = ref(null)
-const isOpen = ref(null);
+const carrierFilter = ref([]);
+const polygonFilter = ref([]);
+const destinationFilter = ref([]);
+const driverNameFilter = ref([]);
 const item = ref(
     {
         id: '',
@@ -93,10 +92,7 @@ const table_option = ref({
         actions: '',
     },
     columnsClasses: { actions: 'actions text-center' },
-    sortable: [
-        'checked_out',
-        'netto',
-    ],
+    sortable: [],
     sortIcon: {
         base: 'sort-icon-none',
         up: 'sort-icon-asc',
@@ -110,8 +106,27 @@ const table_option = ref({
         limit: 'Показать:',
         noResults: "Нет данных",
         filterBy: "Фильтр",
+        defaultOption: "Все", //{column}",
     },
     resizableColumns: false,
+    filterByColumn: true,
+    filterable: [
+        'permit',
+        'carrier',
+        'reg_number',
+        'polygon',
+        'checked_out',
+        'netto',
+        'invoice_num',
+        'destination',
+        'driver_name',
+    ],
+    listColumns: {
+        carrier: carrierFilter,
+        polygon: polygonFilter,
+        destination: destinationFilter,
+        driver_name: driverNameFilter,
+    },
 });
 const printTonarPack = (visit_id = visitDetails.value.id) => {
     let winPrint = window.open(
@@ -137,8 +152,6 @@ const printAkt = (visit_id = visitDetails.value.id) => {
     winPrint.focus();
     winPrint.onafterprint = winPrint.close;
 };
-let after = null;
-let before = null;
 const updateVisit = () => {
     store.dispatch('VisitsModule/update_tonar_visit', {
         weight_in: visitDetails.value.weight_in,
@@ -156,20 +169,42 @@ const updateVisit = () => {
 };
 
 const interval = ref([]);
+let after = null;
+let before = null;
 const bind_data = () => {
-    if (store.state.VisitsModule.tonar_visits.length != 0) {
+    if (store.state.VisitsModule.garbage_truck_visits.length != 0) {
         interval.value = [
-            Math.min(...store.state.VisitsModule.tonar_visits.map(o => o.checked_out)),
-            Math.max(...store.state.VisitsModule.tonar_visits.map(o => o.checked_out))
+            Math.min(...store.state.VisitsModule.garbage_truck_visits.map(o => o.checked_out)),
+            Math.max(...store.state.VisitsModule.garbage_truck_visits.map(o => o.checked_out))
         ]
-        return
+        return;
     };
 
-    // before = new Date();
-    // after = new Date();
     after = (new Date()).setHours(0, 0, 0, 0);
     before = (new Date()).setHours(23, 59, 59, 0);
     interval.value = [after, before]
+
+    resetData();
+
+    // store.dispatch('VisitsModule/update_tonars', { after, before })
+    //     .then(() => {
+    //         if (store.state.VisitsModule.tonar_visits.length == 0) return;
+    //         carrierFilter.value = [...new Set(store.state.VisitsModule.tonar_visits.map(item => item.carrier))].map(item => ({ text: item }));
+    //         polygonFilter.value = [...new Set(store.state.VisitsModule.tonar_visits.map(item => item.polygon))].map(item => ({ text: item }));
+    //         destinationFilter.value = [...new Set(store.state.VisitsModule.tonar_visits.map(item => item.destination))].map(item => ({ text: item }));
+    //         driverNameFilter.value = [...new Set(store.state.VisitsModule.tonar_visits.map(item => item.driver_name))].map(item => ({ text: item }));
+    //     });
+
+    // if (store.state.VisitsModule.tonar_visits.length != 0) {
+    //     interval.value = [
+    //         Math.min(...store.state.VisitsModule.tonar_visits.map(o => o.checked_out)),
+    //         Math.max(...store.state.VisitsModule.tonar_visits.map(o => o.checked_out))
+    //     ]
+    //     return
+    // };
+
+    // // before = new Date();
+    // // after = new Date();
     // resetData();
 };
 const excel_items = () => {
@@ -320,7 +355,17 @@ const updateNetto = async () => {
 
     };
 };
-const resetData = () => store.dispatch('VisitsModule/update_tonars', { after, before });
+const resetData = () => {
+    store.dispatch('VisitsModule/update_tonars', { after, before })
+        .then(() => {
+            if (store.state.VisitsModule.tonar_visits.length == 0) return;
+            carrierFilter.value = [...new Set(store.state.VisitsModule.tonar_visits.map(item => item.carrier))].map(item => ({ text: item }));
+            polygonFilter.value = [...new Set(store.state.VisitsModule.tonar_visits.map(item => item.polygon))].map(item => ({ text: item }));
+            destinationFilter.value = [...new Set(store.state.VisitsModule.tonar_visits.map(item => item.destination))].map(item => ({ text: item }));
+            driverNameFilter.value = [...new Set(store.state.VisitsModule.tonar_visits.map(item => item.driver_name))].map(item => ({ text: item }));
+        });
+
+}
 const saveNettoChanges = () => {
     let data = []
     for (let visit of changed_visits.value) {

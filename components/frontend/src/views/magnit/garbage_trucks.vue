@@ -78,6 +78,8 @@ const item = ref(
     }
 );
 const table = ref(null);
+const carrierFilter = ref([]);
+const polygonFilter = ref([]);
 const table_option = ref({
     perPage: 10000000,
     perPageValues: [10000000,],
@@ -121,7 +123,9 @@ const table_option = ref({
         filter: '',
         filterPlaceholder: 'Поиск...',
         limit: 'Показать:',
-        filterBy: 'Фильтр'
+        noResults: "Нет данных",
+        filterBy: "Фильтр",
+        defaultOption: "Все", //{column}",
     },
     resizableColumns: false,
     filterByColumn: true,
@@ -129,11 +133,13 @@ const table_option = ref({
         'permit',
         'carrier',
         'reg_number',
-        // 'truck_model',
         'polygon',
-        // 'checked_in',
         'invoice_num',
-    ]
+    ],
+    listColumns: {
+        carrier: carrierFilter,
+        polygon: polygonFilter,
+    },
 });
 const statuses = {
     0: `<span class="badge inv-status badge-warning">На полигоне</span>`,
@@ -342,7 +348,12 @@ const saveData = () => {
 let after = null;
 let before = null;
 const resetData = () => {
-    store.dispatch('VisitsModule/update_garbage_trucks', { after, before });
+    store.dispatch('VisitsModule/update_garbage_trucks', { after, before })
+        .then(() => {
+            if (store.state.VisitsModule.garbage_truck_visits == 0) return;
+            carrierFilter.value = [...new Set(store.state.VisitsModule.garbage_truck_visits.map(item => item.carrier))].map(item => ({ text: item }));
+            polygonFilter.value = [...new Set(store.state.VisitsModule.garbage_truck_visits.map(item => item.polygon))].map(item => ({ text: item }));
+        });
     changed_visits.value = null;
 
     visitsStat.value.weight.after.min = ''
@@ -362,11 +373,9 @@ const bind_data = async () => {
             Math.min(...store.state.VisitsModule.garbage_truck_visits.map(o => o.checked_out)),
             Math.max(...store.state.VisitsModule.garbage_truck_visits.map(o => o.checked_out))
         ]
-        return
+        return;
     };
 
-    // before = new Date();
-    // after = new Date();
     after = (new Date()).setHours(0, 0, 0, 0);
     before = (new Date()).setHours(23, 59, 59, 0);
     interval.value = [after, before]
