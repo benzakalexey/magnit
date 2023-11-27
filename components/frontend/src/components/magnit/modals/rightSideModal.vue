@@ -12,25 +12,45 @@ const props = defineProps({
 watch(() => props.isOpen, (n, _) => isOpen.value = false)
 
 const weightingButton = async () => {
-    const steps = ['1', '2'];
+    const steps = ['1', '2', '3'];
 
     const weighingSwal = window.Swal.mixin({
         icon: 'info',
         title: 'Выберите ТС',
         progressSteps: steps,
         html: `<select class="form-select form-select-lg">
-                <option selected disabled>Выберите значение</option>
-                <option>К 479 КЕ 186</option>
-                <option>К 475 МВ 186</option>
-                <option>М 962 АМ 186</option>
-                <option>Е 019 АЕ 186</option>
-                <option>М 975 АМ 186</option>
-                <option>М 964 АМ 186</option>
-                <option>К 500 МР 186</option>
-                <option>Х 348 ЕМ 186</option>
-                <option>У 820 НУ 55</option>
-                <option>У 152 ОВ 55</option>
-            </select>`,
+            <option selected disabled>Выберите значение</option>
+            <option>К 479 КЕ 186</option>
+            <option>К 475 МВ 186</option>
+            <option>М 962 АМ 186</option>
+            <option>Е 019 АЕ 186</option>
+            <option>М 975 АМ 186</option>
+            <option>М 964 АМ 186</option>
+            <option>К 500 МР 186</option>
+            <option>Х 348 ЕМ 186</option>
+            <option>У 820 НУ 55</option>
+            <option>У 152 ОВ 55</option>
+        </select>`,
+        showCloseButton: true,
+        showCancelButton: true,
+        focusConfirm: false,
+        confirmButtonText: '<i class="flaticon-checked-1"></i> Далее →',
+        cancelButtonText: '<i class="flaticon-cancel-circle"></i> Отмена',
+        padding: '2em'
+    });
+
+    const weighingSwal2 = window.Swal.mixin({
+        icon: 'info',
+        title: 'Выберите тип отходов',
+        progressSteps: steps,
+        html: `<select class="form-select form-select-lg">
+            <option selected disabled>Выберите значение</option>
+            <option>Входящие ТКО</option>
+            <option>Остатки сортировки ТКО при совместном сборе 4-й класс (отсев)</option>
+            <option>Остатки сортировки ТКО при совместном сборе практически неопасные 5-й класс (Хвосты)</option>
+            <option>Остатки сортировки ТКО при совместном сборе практически неопасные 5-й класс (ТКО на захоронение)</option>
+            <option>Измельченные КГО</option>
+        </select>`,
         showCloseButton: true,
         showCancelButton: true,
         focusConfirm: false,
@@ -48,7 +68,6 @@ const weightingButton = async () => {
         inputAttributes: {
             required: true,
             min: '0',
-            max: '80000',
         },
         validationMessage: 'Обязательно для заполнения!',
         padding: '2em'
@@ -60,6 +79,15 @@ const weightingButton = async () => {
     for (currentStep = 0; currentStep < steps.length;) {
         if (currentStep == 0) {
             const result = await weighingSwal.fire(
+                {
+                    currentProgressStep: currentStep
+                }
+            );
+            if (result.dismiss === window.Swal.DismissReason.cancel) break;
+            currentStep++
+            continue
+        } else if (currentStep == 1) {
+            const result = await weighingSwal2.fire(
                 {
                     currentProgressStep: currentStep
                 }
