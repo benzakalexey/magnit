@@ -17,7 +17,8 @@ export const InvoiceModule = {
         setInvoice(state, data) {
             state.invoice = {
                 date: new Date(data.date).toLocaleDateString('ru'),
-                planned_time: new Date(data.planned_date).toLocaleString('ru', {timeStyle: 'short'}),
+                checked_in: new Date(data.checked_in).toLocaleString('ru').slice(0,-3),
+                checked_out: new Date(data.checked_out).toLocaleString('ru').slice(0,-3),
                 time: new Date(data.date).toLocaleString('ru', {timeStyle: 'short'}),
                 number: data.number,
                 cargo_type: data.cargo_type,

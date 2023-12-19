@@ -527,13 +527,13 @@ const pretty_num = (n) => {
                 </tr>
                 <tr style="height: 20px">
                     <td class="bordered px-2 text-center" colspan="37">
-                        {{ invoice.date }} {{ invoice.planned_time }}
+                        {{ invoice.checked_in }}
                     </td>
                     <td class="bordered px-2 text-center" colspan="37">
-                        {{ invoice.date }} {{ invoice.planned_time }}
+                        {{ invoice.checked_in }}
                     </td>
                     <td class="bordered px-2 text-center" colspan="37">
-                        {{ invoice.date }} {{ invoice.time }}
+                        {{ invoice.checked_out }}
                     </td>
                 </tr>
                 <tr style="height: 12px">

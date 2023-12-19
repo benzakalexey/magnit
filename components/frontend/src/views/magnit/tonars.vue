@@ -364,7 +364,6 @@ const resetData = () => {
             destinationFilter.value = [...new Set(store.state.VisitsModule.tonar_visits.map(item => item.destination))].map(item => ({ text: item }));
             driverNameFilter.value = [...new Set(store.state.VisitsModule.tonar_visits.map(item => item.driver_name))].map(item => ({ text: item }));
         });
-
 }
 const saveNettoChanges = () => {
     let data = []
