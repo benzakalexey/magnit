@@ -20,16 +20,34 @@ const weightingButton = async () => {
         progressSteps: steps,
         html: `<select class="form-select form-select-lg">
             <option selected disabled>Выберите значение</option>
-            <option>К 479 КЕ 186</option>
-            <option>К 475 МВ 186</option>
-            <option>М 962 АМ 186</option>
-            <option>Е 019 АЕ 186</option>
-            <option>М 975 АМ 186</option>
-            <option>М 964 АМ 186</option>
-            <option>К 500 МР 186</option>
-            <option>Х 348 ЕМ 186</option>
-            <option>У 820 НУ 55</option>
-            <option>У 152 ОВ 55</option>
+            <option>Корнет (К 479 КЕ 186)</option>
+            <option>Корнет (К 475 МВ 186)</option>
+            <option>Самосвал (М 962 АМ 186)</option>
+            <option>Самосвал (Е 019 АЕ 186)</option>
+            <option>Самосвал (М 975 АМ 186)</option>
+            <option>Самосвал (М 964 АМ 186)</option>
+            <option>Мультилифт (К 500 МР 186) + № 1</option>
+            <option>Мультилифт (К 500 МР 186) + № 2</option>
+            <option>Мультилифт (К 500 МР 186) + № 3</option>
+            <option>Мультилифт (К 500 МР 186) + № 4</option>
+            <option>Мультилифт (К 500 МР 186) + КГО</option>
+            <option>Мультилифт (Х 348 ЕМ 186) + № 1</option>
+            <option>Мультилифт (Х 348 ЕМ 186) + № 2</option>
+            <option>Мультилифт (Х 348 ЕМ 186) + № 3</option>
+            <option>Мультилифт (Х 348 ЕМ 186) + № 4</option>
+            <option>Мультилифт (Х 348 ЕМ 186) + КГО</option>
+            <option>Мультилифт (У 820 НУ 55) + № 1</option>
+            <option>Мультилифт (У 820 НУ 55) + № 2</option>
+            <option>Мультилифт (У 820 НУ 55) + № 3</option>
+            <option>Мультилифт (У 820 НУ 55) + № 4</option>
+            <option>Мультилифт (У 820 НУ 55) + № 6</option>
+            <option>Мультилифт (У 820 НУ 55) + КГО</option>
+            <option>Мультилифт (У 152 ОВ 55) + № 1</option>
+            <option>Мультилифт (У 152 ОВ 55) + № 2</option>
+            <option>Мультилифт (У 152 ОВ 55) + № 3</option>
+            <option>Мультилифт (У 152 ОВ 55) + № 4</option>
+            <option>Мультилифт (У 152 ОВ 55) + № 6</option>
+            <option>Мультилифт (У 152 ОВ 55) + КГО</option>
         </select>`,
         showCloseButton: true,
         showCancelButton: true,
@@ -45,7 +63,6 @@ const weightingButton = async () => {
         progressSteps: steps,
         html: `<select class="form-select form-select-lg">
             <option selected disabled>Выберите значение</option>
-            <option>Входящие ТКО</option>
             <option>Остатки сортировки ТКО при совместном сборе 4-й класс (отсев)</option>
             <option>Остатки сортировки ТКО при совместном сборе практически неопасные 5-й класс (Хвосты)</option>
             <option>Остатки сортировки ТКО при совместном сборе практически неопасные 5-й класс (ТКО на захоронение)</option>

@@ -187,6 +187,11 @@ class Visit:
 
         for row, v in enumerate(visits_info):
             visit = self.visits_repo.get_by_invoice_num(v.invoice_num)
+            if visit is None:
+                visit_info = dto.VisitInInfo(
+
+                )
+                visit = self._create_permission_visit()
 
             surname, name = v.driver.split()
             driver = self.driver_repo.get_by_name(surname, name)
@@ -396,6 +401,8 @@ class Visit:
         return {
             'cargo_type': cargo_type,
             'carrier': carrier,
+            'checked_in': visit.checked_in,
+            'checked_out': visit.checked_out,
             'contract': visit.contract.number,
             'date': visit.checked_out,
             'direction': direction.address,
