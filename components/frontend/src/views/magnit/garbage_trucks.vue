@@ -3,7 +3,7 @@ import { onMounted, ref } from 'vue';
 import { useMeta } from '@/composables/use-meta';
 import { useStore } from 'vuex';
 import visitDetails from '@/components/magnit/forms/visitDetails';
-import { incNetto } from '@/scripts/weight_corrector'
+import { incNetto, lessEffectInc } from '@/scripts/weight_corrector'
 import { Modal } from 'bootstrap';
 
 //flatpickr
@@ -240,10 +240,12 @@ const initupdateVisitsModal = () => {
     exportModal = new Modal(updateVisitsModal.value)
     updateVisitsModal.value.addEventListener("hidden.bs.modal", () => fileXlsx.value = null)
 };
-const analyticMethod = ref("max");
+const analyticMethod = ref("minEffect");
+const updatedCount = ref(0);
 const totalWeight = ref();
 const changed_visits = ref(null);
 const visitsStat = ref({
+    count: 0,
     weight: {
         before: {
             min: '',
@@ -278,6 +280,7 @@ const calculateBeforeData = () => {
         loadings.push(visit.brutto / visit.max_weight * 100)
         totalNettos.push(parseInt(visit.netto))
     }
+    visitsStat.value.count = table.value.filteredData.length
     visitsStat.value.weight.before.min = Math.min(...totalNettos)
     visitsStat.value.weight.before.max = Math.max(...totalNettos)
     visitsStat.value.weight.before.total = totalNettos.reduce((a, b) => a + b, 0)
@@ -309,9 +312,20 @@ const updateNetto = () => {
 };
 const applyMethod = () => {
     if (analyticMethod.value === 'max') {
-        changed_visits.value = incNetto(table.value.filteredData)
-    } else {
-        changed_visits.value = incNetto(table.value.filteredData, totalWeight.value)
+        let v = incNetto(table.value.filteredData)
+        updatedCount.value = v.count
+        changed_visits.value = v.visits
+    } else if (analyticMethod.value === 'def') {
+        let v = incNetto(table.value.filteredData, totalWeight.value)
+        updatedCount.value = v.count
+        changed_visits.value = v.visits
+    } else if (analyticMethod.value === 'minEffect') {
+        let v = lessEffectInc(table.value.filteredData, totalWeight.value)
+        updatedCount.value = v.count
+        changed_visits.value = v.visits
+
+        // console.log(`changed_visits.value = ${changed_visits.value}`)
+        // console.log(`updatedCount.value = ${updatedCount.value}`)
     };
     for (let visit of changed_visits.value) {
         let i = store.state.VisitsModule.garbage_truck_visits.findIndex((v) => v.id === visit.id);
@@ -355,6 +369,7 @@ const resetData = () => {
             polygonFilter.value = [...new Set(store.state.VisitsModule.garbage_truck_visits.map(item => item.polygon))].map(item => ({ text: item }));
         });
     changed_visits.value = null;
+    updatedCount.value = 0;
 
     visitsStat.value.weight.after.min = ''
     visitsStat.value.weight.after.max = ''
@@ -433,7 +448,8 @@ const polygons = [
                 <flat-pickr v-model="interval" :config="{ dateFormat: 'd.m.Y', mode: 'range' }"
                     class="form-control flatpickr active me-4 width-100 text-center" style="width: 18em; height: 2.5em;"
                     @on-change="change"></flat-pickr>
-                <button type="button" class="btn btn-primary me-4" v-on:click="download">Выгрузить&nbspв&nbspExcel</button>
+                <button type="button" class="btn btn-primary me-4"
+                    v-on:click="download">Выгрузить&nbspв&nbspExcel</button>
             </div>
         </teleport>
 
@@ -448,9 +464,10 @@ const polygons = [
                                 <a class="btn dropdown-toggle btn-icon-only" href="#" role="button" id="pendingTask"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <svg xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 24px" width="24"
-                                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="feather feather-more-horizontal" :class="changed_visits ? 'text-danger' : ''">
+                                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                        class="feather feather-more-horizontal"
+                                        :class="changed_visits ? 'text-danger' : ''">
                                         <circle cx="12" cy="12" r="1"></circle>
                                         <circle cx="19" cy="12" r="1"></circle>
                                         <circle cx="5" cy="12" r="1"></circle>
@@ -517,10 +534,10 @@ const polygons = [
                                     ) : 0).toLocaleString('ru') }}</td>
                                     <td>
                                         {{ Math.min(
-                                            ...(table ? table.filteredData
-                                                .filter(o => o.polygon == polygon)
-                                                .map(o => o.netto) :
-                                                [])).toLocaleString('ru') }}</td>
+                                        ...(table ? table.filteredData
+                                            .filter(o => o.polygon == polygon)
+                                            .map(o => o.netto) :
+                                            [])).toLocaleString('ru') }}</td>
                                     <td>{{ Math.round(table ? table.filteredData
                                         .filter(o => o.polygon == polygon)
                                         .reduce(
@@ -538,7 +555,8 @@ const polygons = [
                             <tfoot class="mt-2">
                                 <tr>
                                     <td class="fw-bold w-stat-sum">ОБЩЕЕ</td>
-                                    <td class="fw-bold w-stat-sum">{{ table ? table.filteredData.length.toLocaleString('ru')
+                                    <td class="fw-bold w-stat-sum">{{ table ?
+                                        table.filteredData.length.toLocaleString('ru')
                                         : 0 }}</td>
                                     <td class="fw-bold w-stat-sum">{{ Math.round(table ? table.filteredData.reduce(
                                         (acc, visit) => acc + visit.netto, 0) : 0).toLocaleString('ru') }}</td>
@@ -572,9 +590,10 @@ const polygons = [
                             <template #print="props">
                                 <div class="actions text-center">
                                     <a href="javascript:;" class="print" @click="printAkt(props.row.id)">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                            stroke-linejoin="round" class="feather feather-printer me-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="feather feather-printer me-3">
                                             <polyline points="6 9 6 2 18 2 18 9"></polyline>
                                             <path
                                                 d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2">
@@ -639,7 +658,8 @@ const polygons = [
                         </div>
                         <div class="col-md-6">
                             <label class="col-form-label" for="checked_out">Дата выезда</label>
-                            <input :value="visitDetails.checked_out ? visitDetails.checked_out.toLocaleString('ru') : ''"
+                            <input
+                                :value="visitDetails.checked_out ? visitDetails.checked_out.toLocaleString('ru') : ''"
                                 type="text" readonly="true" class="form-control" id="checked_out" />
                         </div>
                     </div>
@@ -650,7 +670,8 @@ const polygons = [
                         </div>
                         <div class="col-md-6">
                             <label class="col-form-label" for="weight_out">Вес выезда</label>
-                            <input v-model="visitDetails.weight_out" type="number" class="form-control" id="weight_out" />
+                            <input v-model="visitDetails.weight_out" type="number" class="form-control"
+                                id="weight_out" />
                         </div>
                     </div>
                 </div>
@@ -660,19 +681,20 @@ const polygons = [
                     <button type="button" class="btn" data-dismiss="modal" data-bs-dismiss="modal"><i
                             class="flaticon-cancel-12"></i>Отмена</button>
                     <div class="btn-group custom-dropdown" role="group">
-                        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                class="feather feather-printer me-3">
+                        <button type="button" class="btn btn-outline-secondary dropdown-toggle"
+                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="feather feather-printer me-3">
                                 <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2">
+                                </path>
                                 <rect x="6" y="14" width="12" height="8"></rect>
                             </svg>
                             Печать
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                class="feather feather-chevron-down">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="feather feather-chevron-down">
                                 <polyline points="6 9 12 15 18 9"></polyline>
                             </svg>
                         </button>
@@ -708,14 +730,15 @@ const polygons = [
                         <div class="col-md-5">
                             <label class="col-form-label">Метод</label>
                             <select class="form-select form-select" v-model="analyticMethod">
-                                <option selected value="max">К большему</option>
+                                <option selected value="minEffect">Мин. эффект</option>
+                                <option value="max">К большему</option>
                                 <option value="def">Точно</option>
                             </select>
                         </div>
                         <div class="col-md-5">
                             <label class="col-form-label" for="totalWeight">Вес, кг</label>
                             <input v-model="totalWeight" type="number" step=20 class="form-control"
-                                :readonly="analyticMethod !== 'def'" id="totalWeight" />
+                                :readonly="analyticMethod === 'max'" id="totalWeight" />
                         </div>
                         <div class="col-md-2 d-flex align-content-end flex-wrap">
                             <button type="button" class="btn btn-outline-primary btn-lg w-100" @click="applyMethod">
@@ -774,12 +797,22 @@ const polygons = [
                                     {{ visitsStat.weight.after.total.toLocaleString('ru') }}
                                 </td>
                             </tr>
+                            <tr>
+                                <th>ИЗМЕНЕНО</th>
+                                <td colspan="1">
+                                </td>
+                                <td colspan="3">
+                                    {{ updatedCount }} из {{ visitsStat.count }} изменено - ( {{ (updatedCount * 100 /
+                                        visitsStat.count).toLocaleString('ru') }}% )
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="modal-footer d-flex justify-content-between px-4">
                     <button type="button" class="btn btn-danger" @click.prevent="resetData">Сбросить</button>
-                    <button type="button" class="btn ms-auto" data-dismiss="modal" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn ms-auto" data-dismiss="modal"
+                        data-bs-dismiss="modal">Закрыть</button>
                     <button type="button" class="btn btn-primary ms-4" @click.prevent="saveData">Сохранить</button>
                 </div>
             </div>

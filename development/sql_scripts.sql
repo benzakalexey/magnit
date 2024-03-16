@@ -34,3 +34,50 @@ INSERT INTO app.service_contracts (number,
 VALUES ('123-РДО', '2023-01-01 00:00:00.000', '2023-12-31 23:59:59.000', 436, 1, 1, 'Gurgen', 'By me', 9,
         'General ECOS', 'Himself proof', 1234.56, 1234567.89, 12345.67);
 
+select v.invoice_num,
+       v.checked_out,
+       c.number      as contract,
+       c.valid_to    as contract_exp,
+       p.name        as carrier,
+       p2.name       as receiver,
+       p3.name       as sender,
+       permit.number as permit,
+       o.name
+from app.visits v
+         join app.contracts c on c.id = v.contract_id
+         join app.permissions perm on perm.id = v.permission_id
+         join app.partners o on o.id = perm.owner_id
+         join app.permits permit on permit.id = perm.permit_id
+         join app.partners p on p.id = c.carrier_id
+         join app.partners p2 on p2.id = c.receiver_id
+         join app.partners p3 on p3.id = c.sender_id
+
+where v.id = 132443
+
+select c.number,
+       p4.name as destination,
+       c.valid_from,
+       c.valid_to,
+       p.name  as carrier,
+       p2.name as receiver,
+       p3.name as sender
+from app.contracts c
+         join app.partners p on p.id = c.carrier_id
+         join app.partners p2 on p2.id = c.receiver_id
+         join app.partners p3 on p3.id = c.sender_id
+         join app.polygons p4 on p4.id = c.destination_id
+         join app.polygons p5 on p5.id = c.departure_point_id
+where p.name = 'Общество с ограниченной ответственностью «Экоспецпром»'
+
+
+select *
+from app.contracts c
+where c.number = '16-2024ЭА от 05.02.2024'
+
+select v.invoice_num, pd.address, pd.valid_from, pd.valid_to
+from app.visits v
+         join app.contracts c on c.id = v.contract_id
+         join app.polygon_details pd on c.destination_id = pd.polygon_id
+where v.id = 156451
+order by pd.valid_to desc;
+
