@@ -99,5 +99,4 @@ Temporary Items
 .apdisk
 .idea/
 /tmp/
-*node_modules
 *.env
