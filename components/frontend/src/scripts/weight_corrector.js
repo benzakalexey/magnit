@@ -2,7 +2,7 @@ const NETTO_DELTA = 30;
 const WEIGHT_STEP = 20;
 const CHUNK_SIZE = 20;
 const TOTAL_DIFF = 20000;
-const MAX_NETTO = 15000
+const MAX_NETTO = 14960
 
 function set_netto(visits, netto, tonar = true) {
     if (netto % 20 !== 0) {
@@ -113,7 +113,7 @@ function changeWithMaxEffect(visits, target) {
         } else {
             var maxNetto = maxEffectVisit.max_weight - maxEffectVisit.tara
             if (maxNetto > MAX_NETTO) {
-                maxNetto = MAX_NETTO
+                maxNetto = getRNetto(MAX_NETTO - NETTO_DELTA, MAX_NETTO - NETTO_DELTA)
             }
             effectsByTrucks[maxNetto - maxEffectVisit.netto] = maxEffectVisit
         }
