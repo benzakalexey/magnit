@@ -225,6 +225,14 @@ const bulkPrintAkt = () => {
     winPrint.focus();
     winPrint.onafterprint = winPrint.close;
 }
+const journalMSK = () => {
+    store.dispatch('VisitsModule/setAkts', table.value.filteredData);
+    let winPrint = window.open(
+        '/doc/journal_msk?print=true', 'fullscreen=yes,toolbar=0,scrollbars=0,status=0'
+    );
+    winPrint.focus();
+    winPrint.onafterprint = winPrint.close;
+}
 
 let detailModal = null;
 const visitDetailsModal = ref(null)

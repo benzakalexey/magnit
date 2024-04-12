@@ -88,6 +88,7 @@ class PolygonAddInfo(DTO):
     name: str
     operator_id: int
     address: str
+    scale_accuracy: int
     valid_from: datetime
     valid_to: Optional[datetime] = None
 
@@ -95,6 +96,7 @@ class PolygonAddInfo(DTO):
 class PolygonUpdInfo(DTO):
     polygon_id: int
     operator_id: int
+    scale_accuracy: int
     address: str
     valid_from: datetime
     valid_to: Optional[datetime] = None

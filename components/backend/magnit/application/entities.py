@@ -42,7 +42,10 @@ class Polygon:
     details: List[PolygonDetails] = field(default_factory=list)
     id: Optional[int] = None
 
-    def get_details(self, on_date: datetime) -> Optional[PolygonDetails]:
+    def get_details(
+            self,
+            on_date: datetime = datetime.utcnow(),
+    ) -> Optional[PolygonDetails]:
         for d in self.details:
             if on_date >= d.valid_from:
                 if d.valid_to is None or d.valid_to >= on_date:
@@ -185,6 +188,7 @@ class PolygonDetails:
     """Данные о полигоне"""
     polygon: Polygon
     address: str
+    scale_accuracy: int
     valid_from: datetime = field(default_factory=datetime.utcnow)
     valid_to: Optional[datetime] = None
     added_by: Optional[User] = None

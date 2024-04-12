@@ -188,9 +188,7 @@ class Visit:
         for row, v in enumerate(visits_info):
             visit = self.visits_repo.get_by_invoice_num(v.invoice_num)
             if visit is None:
-                visit_info = dto.VisitInInfo(
-
-                )
+                visit_info = dto.VisitInInfo()
                 visit = self._create_permission_visit()
 
             surname, name = v.driver.split()

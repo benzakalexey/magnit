@@ -6,7 +6,7 @@ from classic.components import component
 from magnit.adapters.http_api.auth import authenticate
 from magnit.adapters.http_api.constants import SUCCESS_TRUE
 from magnit.adapters.http_api.join_points import join_point
-from magnit.application import entities, services
+from magnit.application import entities, services, constants
 from magnit.application.constants import MAX_RATIO
 
 
@@ -218,8 +218,14 @@ class Visits:
             user_id=request.uid,
             **request.params,
         )
-        response.media = [
-            {
+        response_media = []
+        for v in visits:
+            polygon_details = v.polygon.get_details()
+            scale_accuracy = constants.DEFAULT_SCALE_ACCURACY
+            if polygon_details:
+                scale_accuracy = polygon_details.scale_accuracy
+
+            data = {
                 'id':
                 v.id,
                 'permit':
@@ -230,6 +236,8 @@ class Visits:
                 v.polygon.name,
                 'polygon_id':
                 v.polygon.id,
+                'scale_accuracy':
+                scale_accuracy,
                 'is_deleted':
                 v.is_deleted,
                 'delete_reason':
@@ -265,15 +273,17 @@ class Visits:
                 'frozen':
                 v.frozen,
                 'driver_name':
-                f'{v.driver.surname} {v.driver.name}' if v.driver else None,
+                (f'{v.driver.surname} {v.driver.name}' if v.driver else None),
                 # 'driver_phone': v.driver.phone
                 # if v.driver else None,
                 'destination':
-                v.contract.destination.name if v.contract else None,
+                (v.contract.destination.name if v.contract else None),
                 'status':
-                v.status
-            } for v in visits
-        ]
+                v.status,
+            }
+            response_media.append(data)
+
+        response.media = response_media
 
     @join_point
     @authenticate

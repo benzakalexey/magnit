@@ -90,3 +90,5 @@ months_translator = {
     11: "НОЯ",
     12: "ДЕК",
 }
+
+DEFAULT_SCALE_ACCURACY = 20
