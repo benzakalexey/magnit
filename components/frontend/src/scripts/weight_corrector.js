@@ -1,12 +1,11 @@
-const NETTO_DELTA = 30;
-const WEIGHT_STEP = 20;
+const NETTO_DELTA = 500;
 const CHUNK_SIZE = 20;
 const TOTAL_DIFF = 20000;
-const MAX_NETTO = 14960
+const MAX_NETTO = 14480
 
 function set_netto(visits, netto, tonar = true) {
-    if (netto % 20 !== 0) {
-        netto = getRNetto(netto - 10, netto + 10)
+    if (netto % 10 !== 0) {
+        netto = getRNetto(netto - 5, netto + 5, 10)
     }
     let targetWeight = netto / visits.length;
     let currentTotal = visits.reduce((acc, c) => acc + c.netto, 0);
@@ -53,10 +52,18 @@ function bulk_update(visits, targetWeight, tonar = true) {
     for (let visit of visits) {
         let maxNetto = visit.max_weight - visit.tara;
 
-        let netto = getRNetto(visit.netto + useStep - NETTO_DELTA, visit.netto + useStep + NETTO_DELTA)
+        let netto = getRNetto(
+            visit.netto + useStep - NETTO_DELTA,
+            visit.netto + useStep + NETTO_DELTA,
+            visit.scale_accuracy,
+        )
 
         if (netto > maxNetto) {
-            netto = getRNetto(maxNetto - NETTO_DELTA, maxNetto + NETTO_DELTA)
+            netto = getRNetto(
+                maxNetto - NETTO_DELTA,
+                maxNetto + NETTO_DELTA,
+                visit.scale_accuracy,
+            )
         };
         visit = updateVisit(visit, netto, tonar);
     }
@@ -113,7 +120,7 @@ function changeWithMaxEffect(visits, target) {
         } else {
             var maxNetto = maxEffectVisit.max_weight - maxEffectVisit.tara
             if (maxNetto > MAX_NETTO) {
-                maxNetto = getRNetto(MAX_NETTO - NETTO_DELTA, MAX_NETTO - NETTO_DELTA)
+                maxNetto = getRNetto(MAX_NETTO - NETTO_DELTA, MAX_NETTO + NETTO_DELTA, maxEffectVisit.scale_accuracy)
             }
             effectsByTrucks[maxNetto - maxEffectVisit.netto] = maxEffectVisit
         }
@@ -129,7 +136,12 @@ function changeWithMaxEffect(visits, target) {
         var visit = effectsByTrucks[maxEffect]
         // console.log(`visit.netto = ${visit.netto}`)
         var t = parseInt(visit.netto) + parseInt(target)
-        var netto = getRNetto(t - 10, t + 10)
+        console.log(`visit.scale_accuracy / 2 = ${visit.scale_accuracy}`)
+        var netto = getRNetto(
+            t - parseInt(visit.scale_accuracy / 2),
+            t + parseInt(visit.scale_accuracy / 2),
+            visit.scale_accuracy
+        )
         visitsByID[visit.id] = updateVisit(visit, netto, false)
 
         // console.log(`netto = ${netto}`)
@@ -140,7 +152,12 @@ function changeWithMaxEffect(visits, target) {
         var visit = effectsByTrucks[maxEffect]
         // console.log(`visit.netto = ${visit.netto}`)
         var t = parseInt(visit.netto) + parseInt(maxEffect)
-        var netto = getRNetto(t - 10, t + 10)
+        console.log(`visit.scale_accuracy / 2 = ${parseInt(visit.scale_accuracy / 2)}`)
+        var netto = getRNetto(
+            t - parseInt(visit.scale_accuracy / 2),
+            t + parseInt(visit.scale_accuracy / 2),
+            visit.scale_accuracy
+        )
         visitsByID[visit.id] = updateVisit(visit, netto, false)
 
         // console.log(`netto = ${netto}`)
@@ -174,16 +191,20 @@ function incNetto(visits, target = null, lessVisits = false) {
         var nettos = []
         visitsByTrucks[reg_number].forEach((x) => nettos.push(x.netto))
         var max = Math.max(...nettos)
-        var target = nettos.reduce((a, b) => a + getRNetto(max - NETTO_DELTA, max), 0)
+        var target = nettos.reduce((a, b) => a + getRNetto(max - NETTO_DELTA, max, 10), 0)
 
         for (let visit of visitsByTrucks[reg_number]) {
             if (visit.frozen) continue
 
             var maxNetto = visit.max_weight - visit.tara;
-            var netto = getRNetto(max - NETTO_DELTA, max + NETTO_DELTA)
+            var netto = getRNetto(max - NETTO_DELTA, max + NETTO_DELTA, visit.scale_accuracy)
             if (visit.netto >= maxNetto) {
                 if (visit.netto % 20 !== 0) {
-                    netto = getRNetto(netto - 10, netto + 10)
+                    netto = getRNetto(
+                        netto - parseInt(visit.scale_accuracy / 2),
+                        netto + parseInt(visit.scale_accuracy / 2),
+                        visit.scale_accuracy
+                    );
                 } else continue
             }
             visit = updateVisit(visit, netto, false);
@@ -197,10 +218,13 @@ function incNetto(visits, target = null, lessVisits = false) {
 
 }
 
-function getRNetto(MIN, MAX) {
-    // console.log(`MIN = ${MIN}`)
-    // console.log(`MAX = ${MAX}`)
-    let r = Math.floor((MIN / WEIGHT_STEP + Math.random() * (MAX - MIN) / WEIGHT_STEP)) * WEIGHT_STEP;
+function getRNetto(MIN, MAX, ACCURACY = 20) {
+    console.log(`MIN = ${MIN}`)
+    console.log(`MAX = ${MAX}`)
+    console.log(`ACCURACY = ${ACCURACY}`)
+    let r = Math.floor((MIN / ACCURACY + Math.random() * (MAX - MIN) / ACCURACY)) * ACCURACY;
+
+    console.log(`RNetto = ${r}`)
     return r;
 };
 function updateVisit(visit, netto, tonar = true) {

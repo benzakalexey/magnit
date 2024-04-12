@@ -21,6 +21,7 @@ export const PolygonsModule = {
                         polygon_id: u.id,
                         name: u.name,
                         address: u.address,
+                        scale_accuracy: u.scale_accuracy,
                         valid_from: u.valid_from ? new Date(u.valid_from) : null,
                         valid_to: u.valid_to ? new Date(u.valid_to) : null,
                     }

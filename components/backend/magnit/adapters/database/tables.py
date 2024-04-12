@@ -118,6 +118,7 @@ polygon_details = Table(
     Column('id', Integer, primary_key=True),
     Column('polygon_id', ForeignKey(polygons.c.id), nullable=False),
     Column('address', String, nullable=False),
+    Column('scale_accuracy', Integer, nullable=False),
     Column('valid_from', DateTime, nullable=False),
     Column('valid_to', DateTime, nullable=True),
     Column('added_by_id', ForeignKey(users.c.id), nullable=True),

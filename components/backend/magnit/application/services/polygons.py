@@ -30,15 +30,18 @@ class Polygon:
 
     @join_point
     def get_all(self):
-        now = datetime.utcnow()
         polygons = self.polygons_repo.get_all()
         polygons_data = []
         for polygon in sorted(polygons, key=lambda p: p.name):
-            polygon_details = polygon.get_details(now)
+            polygon_details = polygon.get_details()
+            if polygon_details is None:
+                polygon_details = polygon.details[0]
+
             polygon_data = {
                 'id': polygon.id,
                 'name': polygon.name,
                 'address': polygon_details.address,
+                'scale_accuracy': polygon_details.scale_accuracy,
                 'valid_from': polygon_details.valid_from,
                 'valid_to': polygon_details.valid_to,
             }
@@ -72,6 +75,7 @@ class Polygon:
             added_by=operator,
             valid_from=polygon_info.valid_from,
             valid_to=polygon_info.valid_to,
+            scale_accuracy=polygon_info.scale_accuracy,
         )
         polygon.details.append(polygon_details)
         self.polygons_repo.add(polygon)
@@ -100,6 +104,7 @@ class Polygon:
             address=polygon_info.address,
             valid_from=polygon_info.valid_from,
             valid_to=polygon_info.valid_to,
+            scale_accuracy=polygon_info.scale_accuracy,
         )
         polygon.details.append(polygon_details)
         self.polygons_repo.save()

@@ -119,6 +119,7 @@ const detailsData = ref(
         address: null,
         valid_from: null,
         valid_to: null,
+        scale_accuracy: null
     }
 )
 const detailsDataModal = ref(null);
@@ -142,6 +143,7 @@ const newPolygonData = ref(
         address: '',
         valid_from: '',
         valid_to: '',
+        scale_accuracy: '',
     }
 )
 const newPolygonModalData = ref(null);
@@ -235,7 +237,8 @@ onMounted(
                 </li>
             </ul>
             <div class="navbar-nav d-flex justify-content-end align-items-center">
-                <button type="button" class="btn btn-primary me-4" v-on:click="download">Выгрузить&nbspв&nbspExcel</button>
+                <button type="button" class="btn btn-primary me-4"
+                    v-on:click="download">Выгрузить&nbspв&nbspExcel</button>
             </div>
         </teleport>
         <div class="row layout-top-spacing">
@@ -286,6 +289,13 @@ onMounted(
                         </div>
                     </div>
                     <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label class="col-form-label" for="scale_accuracy">Точность весов</label>
+                            <input v-model="detailsData.scale_accuracy" type="number" class="form-control"
+                                id="scale_accuracy" />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="valid_from" class="col-form-label">Действует c:</label>
                             <flat-pickr v-model="detailsData.valid_from" :config="pickr_conf"
@@ -322,7 +332,8 @@ onMounted(
                     <div class="row mb-3">
                         <div class="col-md-12">
                             <label class="col-form-label" for="new_polygon_name">Наименование</label>
-                            <input v-model="newPolygonData.name" type="text" class="form-control" id="new_polygon_name" />
+                            <input v-model="newPolygonData.name" type="text" class="form-control"
+                                id="new_polygon_name" />
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -330,6 +341,15 @@ onMounted(
                             <label class="col-form-label" for="new_polygon_address">Адрес</label>
                             <textarea v-model="newPolygonData.address" type="text" class="form-control"
                                 id="new_polygon_address" rows="8" />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label class="col-form-label" for="new_polygon_scale_accuracy">
+                                Точность весов
+                            </label>
+                            <textarea v-model="newPolygonData.scale_accuracy" type="text" class="form-control"
+                                id="new_polygon_scale_accuracy" rows="8" />
                         </div>
                     </div>
                     <div class="row mb-3">
