@@ -11,6 +11,7 @@ class UserRole(Enum):
     TONARS_ANALYSIS = 'Аналитик тонаров'
     GARBAGE_TRUCK_ANALYSIS = 'Аналитик мусоровозов'
     TONARS_EDITOR = 'Редактор тонаров'
+    INVOICE_PRINTER = 'Печать ТН'
 
 
 class PartnerType(Enum):

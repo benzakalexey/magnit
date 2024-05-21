@@ -33,6 +33,7 @@ const roleRouter = () => {
         'Аналитик тонаров': import('../views/magnit/tonars.vue'),
         'Аналитик мусоровозов': import('../views/magnit/garbage_trucks.vue'),
         'Редактор тонаров': import('../views/magnit/tonars.vue'),
+        'Печать ТН': import('../views/magnit/fill_invoice.vue'),
     }
 
     return start_page_match[store.state.AuthModule.credentials.user_role]
@@ -57,6 +58,12 @@ const routes = [
         path: '/visits',
         name: 'visits',
         component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/visits.vue'),
+        beforeEnter: authGuard
+    },
+    {
+        path: '/fill_invoice',
+        name: 'fill_invoice',
+        component: () => import(/* webpackChunkName: "polygon" */ '../views/magnit/fill_invoice.vue'),
         beforeEnter: authGuard
     },
     {
@@ -124,6 +131,13 @@ const routes = [
         path: '/akt',
         name: 'akt',
         component: () => import(/* webpackChunkName: "components-tabs" */ '../views/magnit/doc/akt.vue'),
+        meta: { layout: 'auth' },
+        beforeEnter: setAuthLayout,
+    },
+    {
+        path: '/hand_filled_invoice',
+        name: 'hand_filled_invoice',
+        component: () => import(/* webpackChunkName: "components-tabs" */ '../views/magnit/doc/hand_filled_invoice.vue'),
         meta: { layout: 'auth' },
         beforeEnter: setAuthLayout,
     },
