@@ -136,5 +136,9 @@ where c.carrier_id != p.owner_id
 order by v.checked_out desc;
 
 
+ALTER TYPE public.userrole ADD VALUE 'INVOICE_PRINTER';
+
+
+
 
 
