@@ -180,13 +180,19 @@ const printAkt = () => {
                                     
                                     <div class="mb-3">
                                         <label class="col-form-label" for="truck_number">Регистрационный номер ТС</label>
-                                        <textarea v-model="invoice.truck_number" type="text" id="truck_number"
+                                        <input v-model="invoice.truck_number" type="text" id="truck_number"
+                                            class="form-control form-control-lg" />
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="col-form-label" for="trailer_number">Регистрационный номер прицепа</label>
+                                        <input v-model="invoice.trailer_number" type="text" id="trailer_number"
                                             class="form-control form-control-lg" />
                                     </div>
                                     
                                     <div class="mb-3">
                                         <label class="col-form-label" for="contract">Договор</label>
-                                        <textarea v-model="invoice.contract" type="text" id="contract"
+                                        <input v-model="invoice.contract" type="text" id="contract"
                                             class="form-control form-control-lg" />
                                     </div>
                                     
