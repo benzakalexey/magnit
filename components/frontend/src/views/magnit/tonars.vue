@@ -259,7 +259,7 @@ const initDetailsModal = () => {
 };
 const openDetails = (i) => {
     DriversAPI.get(i.contragent_id).then((ref) => (drivers.value = ref.data));
-    PolygonsAPI.get_directions(i.polygon_id).then((ref) => (directions.value = ref.data));
+    PolygonsAPI.get_directions(i.polygon_id, i.contragent_id).then((ref) => (directions.value = ref.data));
     visitDetails.value = i;
     detailModal.show();
 };

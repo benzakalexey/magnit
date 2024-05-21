@@ -303,7 +303,7 @@ const initDetailsModal = () => {
 const finishModal = ref(false)
 const openDetails = (i) => {
     DriversAPI.get(i.contragent_id).then((ref) => (drivers.value = ref.data));
-    PolygonsAPI.get_directions(i.polygon_id).then((ref) => (directions.value = ref.data));
+    PolygonsAPI.get_directions(i.polygon_id, i.contragent_id).then((ref) => (directions.value = ref.data));
     visitDetails.value = i;
     finishModal.value = false;
     detailModal.show();

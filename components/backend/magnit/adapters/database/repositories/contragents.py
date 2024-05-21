@@ -19,9 +19,17 @@ class ContractRepo(BaseRepo, interfaces.ContractRepo):
     def get_by_departure_point_id(
         self,
         departure_point_id: int,
+        contragent_id: int,
     ) -> List[entities.Polygon]:
-        query = (select(
-            self.dto).where(self.dto.departure_point_id == departure_point_id))
+        query = (
+            select(self.dto)
+            .where(
+                self.dto.departure_point_id == departure_point_id
+            )
+            .where(
+                self.dto.carrier_id == contragent_id
+            )
+        )
         return self.session.execute(query).scalars().all()
 
     def get_by_destination_and_departure(
