@@ -149,6 +149,7 @@ class ContractRepo(ABC):
     def get_by_departure_point_id(
         self,
         departure_point_id: int,
+        contragent_id: int,
     ) -> List[entities.Contract]:
         ...
 

@@ -53,8 +53,12 @@ class Polygon:
     def get_receivers_by_source_id(
         self,
         polygon_id: int,
+        contragent_id: int,
     ):
-        contracts = self.contract_repo.get_by_departure_point_id(polygon_id)
+        contracts = self.contract_repo.get_by_departure_point_id(
+            polygon_id,
+            contragent_id,
+        )
         now = datetime.utcnow()
         return [{
             'id': c.id,

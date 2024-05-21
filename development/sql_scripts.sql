@@ -81,3 +81,60 @@ from app.visits v
 where v.id = 156451
 order by pd.valid_to desc;
 
+
+with cte as (select visit.id              as id,
+                    visit.checked_out,
+                    valid_contract.valid_from,
+                    valid_contract.valid_to,
+                    valid_contract.id     as contract_id,
+                    valid_contract.number as contract_number,
+                    carrier.short_name    as carrier
+             from visits visit
+                      join permissions perm on perm.id = visit.permission_id
+                      join contracts current_contract on current_contract.id = visit.contract_id
+                      left join contracts valid_contract
+                                on valid_contract.carrier_id = perm.owner_id and
+                                   valid_contract.destination_id = current_contract.destination_id
+                                    and visit.checked_out between valid_contract.valid_from and valid_contract.valid_to
+                      join partners carrier on carrier.id = valid_contract.carrier_id
+             where current_contract.carrier_id != perm.owner_id
+               and visit.is_deleted = 'false'
+             order by visit.checked_out desc)
+
+select v.invoice_num                                             "Номер накладной",
+       v.checked_out at time zone 'utc' at time zone 'Asia/Omsk' "Дата выезда",
+       pol.name                                                  "Направление",
+       p2.short_name as                                          "Пропуск выдан на",
+       p3.short_name as                                          "Перевозчик из договора",
+       c.number                                                  "Номер договора",
+       cte.contract_number                                       "Валидный номер договора"
+from visits v
+         join contracts c on c.id = v.contract_id
+         join polygons pol on pol.id = c.destination_id
+         join permissions p on p.id = v.permission_id
+         join partners p2 on p2.id = p.owner_id
+         join partners p3 on p3.id = c.carrier_id
+         join cte on cte.id = v.id
+where c.carrier_id != p.owner_id
+  and v.is_deleted = 'false'
+order by v.checked_out desc;
+
+select v.invoice_num                                             "Номер накладной",
+       v.checked_out at time zone 'utc' at time zone 'Asia/Omsk' "Дата выезда",
+       pol.name                                                  "Направление",
+       p2.short_name as                                          "Пропуск выдан на",
+       p3.short_name as                                          "Перевозчик из договора",
+       c.number                                                  "Номер договора"
+from visits v
+         join contracts c on c.id = v.contract_id
+         join polygons pol on pol.id = c.destination_id
+         join permissions p on p.id = v.permission_id
+         join partners p2 on p2.id = p.owner_id
+         join partners p3 on p3.id = c.carrier_id
+where c.carrier_id != p.owner_id
+  and v.is_deleted = 'false'
+order by v.checked_out desc;
+
+
+
+

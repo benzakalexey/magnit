@@ -5,9 +5,9 @@ export const PolygonsAPI = {
      * 
      * @returns {Promise<AxiosResponse<any>>}
      */
-    get_directions(polygon_id) {
+    get_directions(polygon_id, contragent_id) {
         const url = 'polygons/directions';
-        return DefaultAPIInstance.get(url + '?polygon_id=' + polygon_id);
+        return DefaultAPIInstance.get(url + '?polygon_id=' + polygon_id + '&contragent_id=' + contragent_id);
     },
     /**
      * 

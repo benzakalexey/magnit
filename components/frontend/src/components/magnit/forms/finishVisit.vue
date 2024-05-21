@@ -59,7 +59,7 @@ const v$ = useVuelidate(rules, {
 })
 
 const bind_data = async () => {
-    PolygonsAPI.get_directions(item.value.polygon_id).then((ref) => (directions.value = ref.data));
+    PolygonsAPI.get_directions(item.value.polygon_id, item.value.contragent_id).then((ref) => (directions.value = ref.data));
     DriversAPI.get(item.value.contragent_id).then((ref) => (drivers.value = ref.data));
 };
 
