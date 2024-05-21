@@ -136,7 +136,7 @@ function changeWithMaxEffect(visits, target) {
         var visit = effectsByTrucks[maxEffect]
         // console.log(`visit.netto = ${visit.netto}`)
         var t = parseInt(visit.netto) + parseInt(target)
-        console.log(`visit.scale_accuracy / 2 = ${visit.scale_accuracy}`)
+        // console.log(`visit.scale_accuracy / 2 = ${visit.scale_accuracy}`)
         var netto = getRNetto(
             t - parseInt(visit.scale_accuracy / 2),
             t + parseInt(visit.scale_accuracy / 2),
@@ -219,12 +219,12 @@ function incNetto(visits, target = null, lessVisits = false) {
 }
 
 function getRNetto(MIN, MAX, ACCURACY = 20) {
-    console.log(`MIN = ${MIN}`)
-    console.log(`MAX = ${MAX}`)
-    console.log(`ACCURACY = ${ACCURACY}`)
+    // console.log(`MIN = ${MIN}`)
+    // console.log(`MAX = ${MAX}`)
+    // console.log(`ACCURACY = ${ACCURACY}`)
     let r = Math.floor((MIN / ACCURACY + Math.random() * (MAX - MIN) / ACCURACY)) * ACCURACY;
 
-    console.log(`RNetto = ${r}`)
+    // console.log(`RNetto = ${r}`)
     return r;
 };
 function updateVisit(visit, netto, tonar = true) {
