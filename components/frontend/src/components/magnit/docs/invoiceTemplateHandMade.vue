@@ -350,9 +350,7 @@ const pretty_num = (n) => {
                     </td>
                 </tr>
                 <tr style="height: 20px">
-                    <td class="bordered text-center px-2" colspan="111">
-                        -
-                    </td>
+                    <td class="header bordered" colspan="111">-</td>
                 </tr>
                 <tr style="height: 12px">
                     <td class="underrow bordered" colspan="111">
@@ -691,10 +689,8 @@ const pretty_num = (n) => {
                     </td>
                 </tr>
                 <tr style="height: 20px">
-                    <td class="bordered px-2 text-center" colspan="67">
-                        -
-                    </td>
-                    <td class="bordered px-2 text-center" colspan="44">-</td>
+                    <td class="header bordered" colspan="67">-</td>
+                    <td class="header bordered" colspan="44">-</td>
                 </tr>
                 <tr style="height: 12px">
                     <td class="underrow bordered" colspan="67">
