@@ -3,7 +3,7 @@ import { useMeta } from '@/composables/use-meta';
 import { useStore } from 'vuex';
 import { onMounted, ref } from 'vue';
 
-import aktTemplate from '@/components/magnit/docs/aktTemplate'
+import aktTemplate from '@/components/magnit/docs/aktLotTemplate'
 
 useMeta({ title: 'Акт взвешивания' });
 
@@ -33,7 +33,7 @@ onMounted(
                     <div v-for="akt in akts">
                         <aktTemplate :akt="akt" />
 
-                        <div class="pagebreak" />
+                        <div class="pagebreak"></div>
 
                     </div>
                 </div>
