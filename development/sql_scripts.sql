@@ -101,23 +101,37 @@ with cte as (select visit.id              as id,
                and visit.is_deleted = 'false'
              order by visit.checked_out desc)
 
-select v.invoice_num                                             "Номер накладной",
-       v.checked_out at time zone 'utc' at time zone 'Asia/Omsk' "Дата выезда",
-       pol.name                                                  "Направление",
-       p2.short_name as                                          "Пропуск выдан на",
-       p3.short_name as                                          "Перевозчик из договора",
-       c.number                                                  "Номер договора",
-       cte.contract_number                                       "Валидный номер договора"
-from visits v
-         join contracts c on c.id = v.contract_id
-         join polygons pol on pol.id = c.destination_id
-         join permissions p on p.id = v.permission_id
-         join partners p2 on p2.id = p.owner_id
-         join partners p3 on p3.id = c.carrier_id
-         join cte on cte.id = v.id
-where c.carrier_id != p.owner_id
-  and v.is_deleted = 'false'
-order by v.checked_out desc;
+-- select v.invoice_num                                             "Номер накладной",
+--        v.checked_out at time zone 'utc' at time zone 'Asia/Omsk' "Дата выезда",
+--        pol.name                                                  "Направление",
+--        p2.short_name as                                          "Пропуск выдан на",
+--        p3.short_name as                                          "Перевозчик из договора",
+--        c.number                                                  "Номер договора",
+--        cte.contract_number                                       "Валидный номер договора"
+-- from visits v
+--          join contracts c on c.id = v.contract_id
+--          join polygons pol on pol.id = c.destination_id
+--          join permissions p on p.id = v.permission_id
+--          join partners p2 on p2.id = p.owner_id
+--          join partners p3 on p3.id = c.carrier_id
+--          left join cte on cte.id = v.id
+-- where c.carrier_id != p.owner_id
+--   and v.is_deleted = 'false'
+--   and cte.id is NULL
+-- order by v.checked_out desc;
+-- select *
+update visits
+set contract_id = subq.contract_id
+from (select cte.id, c.carrier_id, p.owner_id, cte.contract_id, v.is_deleted
+      from visits v
+               join contracts c
+                    on c.id = v.contract_id
+               join polygons pol on pol.id = c.destination_id
+               join permissions p on p.id = v.permission_id
+               join cte on cte.id = v.id) as subq
+where subq.carrier_id != subq.owner_id
+  and subq.is_deleted = 'false'
+  and visits.id = subq.id;
 
 select v.invoice_num                                             "Номер накладной",
        v.checked_out at time zone 'utc' at time zone 'Asia/Omsk' "Дата выезда",

@@ -81,7 +81,7 @@ const print_invoice = () => {
 };
 const print_akt = () => {
     close();
-    emit('print_akt', item.value.id)
+    emit('print_akt', item.value.id, item.value.tonar)
 };
 const print_pack = () => {
     close();
@@ -165,8 +165,8 @@ watchEffect(() => (isOpen.value = props.isOpen));
                 Выпустить
             </button>
 
-            <div v-else :disabled="!(item.status == 1 && item.tonar)" class="btn-group custom-dropdown" role="group">
-                <button type="button" class="btn btn-primary dropdown-toggle" :disabled="!(item.status == 1 && item.tonar)"
+            <div v-else :disabled="!(item.status == 1)" class="btn-group custom-dropdown" role="group">
+                <button type="button" class="btn btn-primary dropdown-toggle" :disabled="!(item.status == 1)"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -183,7 +183,7 @@ watchEffect(() => (isOpen.value = props.isOpen));
                     </svg>
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="btndefault">
-                    <li>
+                    <li v-show="item.tonar">
                         <a @click="print_pack()" href="javascript:void(0);" class="dropdown-item"><i
                                 class="flaticon-home-fill-1 me-1"></i>
                             Пакет документов
@@ -195,7 +195,7 @@ watchEffect(() => (isOpen.value = props.isOpen));
                             Акт взвешивания
                         </a>
                     </li>
-                    <li>
+                    <li v-show="item.tonar">
                         <a @click="print_invoice()" href="javascript:void(0);" class="dropdown-item"><i
                                 class="flaticon-bell-fill-2 me-1"></i>
                             Транспортная накладная

@@ -141,6 +141,7 @@ class PermitLogInfo(DTO):
 
 class VisitInInfo(DTO):
     permission_id: Optional[conint(gt=0)] = None
+    lot: Optional[conint(gt=0)] = None
     polygon_id: Optional[conint(gt=0)] = None
     service_contract_id: Optional[conint(gt=0)] = None
     truck_number: Optional[str] = None

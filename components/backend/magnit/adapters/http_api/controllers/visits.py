@@ -65,6 +65,8 @@ class Visits:
             v.tara,
             'netto':
             v.netto,
+            'lot':
+            v.lot.number if v.lot else v.lot,
             'brutto':
             v.brutto,
             'max_weight':
@@ -256,6 +258,8 @@ class Visits:
                 v.tara,
                 'netto':
                 v.netto,
+                'lot':
+                v.lot.number if v.lot else v.lot,
                 'brutto':
                 v.brutto,
                 'max_weight':

@@ -11,6 +11,7 @@ const modalTitle = 'Новый заезд';
 
 const permit_num = ref('')
 const weight = ref('')
+const lot = ref(null)
 const truck_number = ref('')
 const permit_error = ref(false)
 const weight_error = ref(false)
@@ -21,6 +22,9 @@ const rules = computed(() => ({
         required,
         numeric,
         minLength: minLength(2)
+    },
+    lot: {
+        required
     },
     weight: {
         required,
@@ -36,7 +40,7 @@ const rules = computed(() => ({
     },
 }))
 
-const v$ = useVuelidate(rules, { permit_num, weight, truck_number })
+const v$ = useVuelidate(rules, { permit_num, lot,  weight, truck_number })
 
 
 const isOpen = ref(null);
@@ -45,6 +49,7 @@ const createVisit = () => {
         permission_id: store.state.PermitsModule.check_permit.permission_id,
         service_contract_id: store.state.PermitsModule.check_permit.service_contract_id,
         weight: weight.value,
+        lot: lot.value.id,
         truck_number: store.state.PermitsModule.check_permit.reg_number || truck_number.value,
     })
         .then(() => {
@@ -118,6 +123,15 @@ const closeAndClean = () => {
                         v-on:input="checkWeight($event)" :class="[weight_error ? 'is-invalid' : '']" />
                     <div class="invalid-feedback">Недопустимый вес</div>
                 </div>
+            </div>
+            <div class="mb-3"
+                v-show="store.state.PermitsModule.check_permit.permit_num && !store.state.PermitsModule.check_permit.is_tonar">
+                <label class="col-form-label" for="lot">Лот</label>
+                <select class="form-select form-select-lg" id="lot" v-model="lot" placeholder="Выберите лот">
+                    <option :value="null" disabled selected>Выберите Лот</option>
+                    <option :value="{id: null, number: null}">Без Лота</option>
+                    <option v-for="l in store.state.PermitsModule.check_permit.lots" :value="l">{{ l.number }}</option>
+                </select>
             </div>
             <div class="mb-3 pt-3"
                 v-show="store.state.PermitsModule.check_permit.permit_num && store.state.PermitsModule.check_permit.reg_number === null">

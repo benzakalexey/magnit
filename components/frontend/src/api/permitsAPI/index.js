@@ -74,6 +74,7 @@ export const PermitsAPI = {
         tara,
         max_weight,
         body_volume,
+        lots
     ) {
         const url = 'permits/add_permission'
         const data = {
@@ -86,6 +87,7 @@ export const PermitsAPI = {
             tara,
             max_weight,
             body_volume,
+            lots
         };
         return DefaultAPIInstance.post(url, data);
     }

@@ -58,6 +58,13 @@ export const PermitsModule = {
             state.permits = []
         },
         setCheckPermitData(state, data) {
+            var lots = [];
+            for (var lot of data.lots) {
+                lots.push({
+                    id: lot.id,
+                    number: lot.number,
+                })
+            }
             state.check_permit = {
                 permit_num: data.permit_num,
                 permit_status: data.permit_status,
@@ -73,6 +80,7 @@ export const PermitsModule = {
                 is_tonar: data.is_tonar,
                 tara: data.tara,
                 max_weight: data.max_weight,
+                lots: lots
             }
         },
         clearCheckPermitData(state) {
@@ -94,6 +102,9 @@ export const PermitsModule = {
         setPermitHistory(state, data) {
             var histoty = []
             for (var i of data) {
+                var lots = [];
+                for (var lot of i.lots) lots.push(lot.number)
+                
                 histoty.push(
                     {
                         contragent_name: i.contragent_name,
@@ -104,6 +115,7 @@ export const PermitsModule = {
                         permit_status: i.permit_status,
                         is_valid: i.is_valid,
                         is_tonar: i.is_tonar,
+                        lots: lots.join(', ')
                     }
                 )
             };
@@ -153,6 +165,7 @@ export const PermitsModule = {
             tara,
             max_weight,
             body_volume,
+            lots
         }) {
             return await PermitsAPI.add_permission(
                 permit,
@@ -164,6 +177,7 @@ export const PermitsModule = {
                 tara,
                 max_weight,
                 body_volume,
+                lots
             );
             // commit('deleteItem', id, reason);
         }

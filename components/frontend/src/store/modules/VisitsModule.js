@@ -48,6 +48,7 @@ export const VisitsModule = {
                         truck_type: v.truck_type,
                         tara: v.tara,
                         netto: v.netto,
+                        lot: v.lot,
                         brutto: v.brutto,
                         max_weight: v.max_weight,
                         reg_number: pretty_num(v.reg_number),
@@ -132,6 +133,7 @@ export const VisitsModule = {
                         truck_type: v.truck_type,
                         tara: v.tara,
                         netto: v.netto,
+                        lot: v.lot,
                         brutto: v.brutto,
                         max_weight: v.max_weight,
                         reg_number: pretty_num(v.reg_number),
@@ -203,8 +205,8 @@ export const VisitsModule = {
             return await VisitsAPI.finish(visit_id, weight_out, driver_id, contract_id);
             // commit('deleteItem', id, reason);
         },
-        async add({ commit }, { permission_id, weight, truck_number, service_contract_id }) {
-            return await VisitsAPI.add(permission_id, weight, truck_number, service_contract_id);
+        async add({ commit }, { permission_id, weight, truck_number, lot, service_contract_id }) {
+            return await VisitsAPI.add(permission_id, weight, truck_number, lot, service_contract_id);
             // commit('deleteItem', id, reason);
         },
         async update_tonar_visit({ commit }, { weight_in,

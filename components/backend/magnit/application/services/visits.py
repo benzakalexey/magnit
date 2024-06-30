@@ -27,6 +27,7 @@ class Visit:
     truck_repo: interfaces.TruckRepo
     users_repo: interfaces.UserRepo
     visits_repo: interfaces.VisitRepo
+    lot_repo: interfaces.LotRepo
     tonars_xls_parser: interfaces.ExcelParser
 
     def __attrs_post_init__(self):
@@ -65,6 +66,13 @@ class Visit:
         if staff is None:
             raise errors.UserIDNotExistError(user_id=visit_info.user_id)
 
+
+        lot = None
+        if visit_info.lot:
+            lot = self.lot_repo.get_by_id(visit_info.lot)
+            if lot is None:
+                raise errors.LotIDNotExistError(user_id=visit_info.user_id)
+
         if staff.polygon is None:
             raise errors.PolygonIDNotExistError()
 
@@ -73,6 +81,7 @@ class Visit:
             permission=permission,
             operator_in=staff.user,
             polygon=staff.polygon,
+            lot=lot,
         )
         self.visits_repo.add(visit)
 
@@ -442,4 +451,5 @@ class Visit:
             'tara': visit.tara,
             'truck_mark': truck_mark,
             'truck_number': truck_number,
+            'lot': visit.lot.number if visit.lot else None,
         }

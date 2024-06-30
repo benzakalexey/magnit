@@ -52,6 +52,7 @@ export const InvoiceModule = {
                 service_type: data.service_type,
                 netto: data.netto,
                 tara: data.tara,
+                lot: data.lot,
                 brutto: data.brutto
             }
         },

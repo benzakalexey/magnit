@@ -22,6 +22,10 @@ mapper.map_imperatively(
     tables.partner_details,
 )
 mapper.map_imperatively(
+    entities.Lot,
+    tables.lots,
+)
+mapper.map_imperatively(
     entities.Partner,
     tables.partners,
     properties={
@@ -135,6 +139,11 @@ mapper.map_imperatively(
             uselist=False,
             lazy='joined',
         ),
+        'lots': relationship(
+            entities.Lot,
+            lazy='select',
+            secondary=tables.permission_lots_association,
+        ),
         'added_by': relationship(
             entities.User,
             uselist=False,
@@ -178,6 +187,12 @@ mapper.map_imperatively(
         'polygon':
         relationship(
             entities.Polygon,
+            uselist=False,
+            lazy='joined',
+        ),
+        'lot':
+        relationship(
+            entities.Lot,
             uselist=False,
             lazy='joined',
         ),

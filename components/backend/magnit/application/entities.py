@@ -229,11 +229,18 @@ class Trailer:
 
 
 @dataclass
+class Lot:
+    number: int
+    id: Optional[int] = None
+
+
+@dataclass
 class Permission:
     """Допуск на полигон"""
     owner: Partner
     expired_at: datetime
     permit: Permit
+    lots: List[Lot] = field(default_factory=list)
     trailer: Optional[Trailer] = None
     is_active: bool = True  # Валидность допуска
     is_tonar: bool = False  # Тип допуска
@@ -296,6 +303,7 @@ class Visit:
     operator_in: User
     permission: Permission
     polygon: Polygon
+    lot: Optional[Lot] = None
     invoice_num: str = None
     checked_in: datetime = field(default_factory=datetime.utcnow)
     checked_out: Optional[datetime] = None

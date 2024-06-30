@@ -67,10 +67,12 @@ class Trucks:
             expired_at = None
             days_before_exp = None
             tonar = None
+            lots = []
             trailer = None
             if t.permit is not None:
                 permit = t.permit.number
                 permission_owner = t.permit.permission.owner.short_name
+                lots = t.permit.permission.lots
                 started_at = t.permit.permission.added_at
                 expired_at = t.permit.permission.expired_at
                 tonar = t.permit.permission.is_tonar
@@ -97,6 +99,7 @@ class Trucks:
                 'expired_at': expired_at,
                 'days_before_exp': days_before_exp,
                 'body_volume': t.body_volume,
+                'lots': lots,
             })
         response.media = sorted(
             resp,

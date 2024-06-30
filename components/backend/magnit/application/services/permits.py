@@ -11,6 +11,11 @@ from magnit.application.dto import PermitInfo, PermitLogInfo
 from magnit.application.services.join_point import join_point
 
 
+class LotInfo(DTO):
+    id: Optional[int]
+    number: int
+
+
 class PermissionInfo(DTO):
     contragent_name: str
     days_before_exp: int
@@ -26,6 +31,7 @@ class PermissionInfo(DTO):
     tara: int = 0
     truck_model: Optional[str] = None
     truck_type: Optional[constants.TruckType] = None
+    lots: List[LotInfo] = []
 
 
 class PermissionHistoryData(DTO):
@@ -37,6 +43,7 @@ class PermissionHistoryData(DTO):
     is_valid: bool
     permission_id: int
     permit_status: constants.PermitStatus
+    lots: List[LotInfo] = []
 
 
 class PermissionUpdateInfo(DTO):
@@ -50,6 +57,7 @@ class PermissionUpdateInfo(DTO):
     trailer: Optional[int]
     truck_type: constants.TruckType
     user_id: int
+    lots: List[LotInfo]
 
 
 @component
@@ -63,6 +71,7 @@ class Permit:
     trailer_repo: interfaces.TrailerRepo
     trucks_repo: interfaces.TruckRepo
     users_repo: interfaces.UserRepo
+    lot_repo: interfaces.LotRepo
 
     def __attrs_post_init__(self):
         self.logger = logging.getLogger(self.__class__.__name__)
@@ -94,6 +103,9 @@ class Permit:
                 tara=truck.tara,
                 truck_model=truck.model.name,
                 truck_type=truck.type,
+                lots=list(
+                    LotInfo(id=i.id, number=i.number) for i in permit.lots
+                ),
             )
 
         contract = self.service_contract_repo.get_last_by_permit_number(number)
@@ -137,6 +149,9 @@ class Permit:
                     permit_status=permit_status,
                     is_valid=is_valid,
                     is_tonar=p.is_tonar,
+                    lots=list(
+                        LotInfo(id=i.id, number=i.number) for i in p.lots
+                    ),
                 ))
 
         return history
@@ -166,6 +181,14 @@ class Permit:
             raise errors.PartnerIDNotExistError(
                 partner_id=permission_info.carrier)
 
+        lots = []
+        for lot_info in permission_info.lots:
+            lot = self.lot_repo.get_by_id(lot_info.id)
+            if lot is None:
+                raise errors.LotIDNotExistError(lot_id=lot_info.id)
+
+            lots.append(lot)
+
         permit.truck.tara = permission_info.tara
         permit.truck.max_weight = permission_info.max_weight
         permit.truck.type = permission_info.truck_type
@@ -182,6 +205,8 @@ class Permit:
             != permission_info.permit_exp.month,
             permit.permission.expired_at.year
             != permission_info.permit_exp.year,
+            list(i.number for i in permit.permission.lots)
+            != list(i.number for i in permission_info.lots),
         )
         self.logger.info(permission_info.permit_exp)
         self.logger.info(permit.permission.expired_at)
@@ -194,7 +219,9 @@ class Permit:
                 trailer=trailer,
                 permit=permit,
                 is_tonar=permission_info.is_tonar,
-                added_by=operator)
+                added_by=operator,
+                lots=lots,
+            )
             permit.permissions.append(permission)
             self.permits_repo.save()
 
