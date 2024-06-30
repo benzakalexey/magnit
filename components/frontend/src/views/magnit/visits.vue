@@ -607,10 +607,23 @@ onMounted(
                 <div class="modal-body">
                     <div class="row mb-3">
                         <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="col-form-label" for="permit_num">Пропуск</label>
+                                    <input v-model="visitDetails.permit" type=text readonly="true" class="form-control"
+                                        id="permit_num" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="col-form-label" for="lot">Лот</label>
+                                    <input v-model="visitDetails.lot" type=text readonly="true" class="form-control" id="lot" />
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="col-md-6">
                             <label class="col-form-label" for="permit">Пропуск</label>
                             <input v-model="visitDetails.permit" type="text" readonly="true" class="form-control"
                                 id="permit" />
-                        </div>
+                        </div> -->
                         <div class="col-md-6">
                             <label class="col-form-label" for="reg_num">Рег. номер</label>
                             <input v-model="visitDetails.reg_number" type="text" readonly="true" class="form-control"

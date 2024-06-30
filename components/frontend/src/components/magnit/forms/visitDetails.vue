@@ -96,8 +96,17 @@ watchEffect(() => (isOpen.value = props.isOpen));
             <form>
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label class="col-form-label" for="permit_num">Пропуск</label>
-                        <input v-model="item.permit" type=text readonly="true" class="form-control" id="permit_num" />
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="col-form-label" for="permit_num">Пропуск</label>
+                                <input v-model="item.permit" type=text readonly="true" class="form-control"
+                                    id="permit_num" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="col-form-label" for="lot">Лот</label>
+                                <input v-model="item.lot" type=text readonly="true" class="form-control" id="lot" />
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <label class="col-form-label" for="reg_num">Рег. номер</label>
@@ -114,16 +123,16 @@ watchEffect(() => (isOpen.value = props.isOpen));
                         <label class="col-form-label" for="vehicle_mark">Марка ТС</label>
                         <input v-model="item.truck_model" type="text" readonly="true" class="form-control"
                             id="vehicle_mark" />
+                    </div>
                 </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label class="col-form-label" for="contragent_name">Контрагент</label>
-                    <input v-model="item.carrier" type="text" readonly="true" class="form-control" id="carrier" />
-                </div>
-                <div class="col-md-6">
-                    <label class="col-form-label" for="invoice_num">Номер накладной</label>
-                    <input v-model="item.invoice_num" type="text" readonly="true" class="form-control"
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="col-form-label" for="contragent_name">Контрагент</label>
+                        <input v-model="item.carrier" type="text" readonly="true" class="form-control" id="carrier" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="col-form-label" for="invoice_num">Номер накладной</label>
+                        <input v-model="item.invoice_num" type="text" readonly="true" class="form-control"
                             id="invoice_num" />
                     </div>
                 </div>
