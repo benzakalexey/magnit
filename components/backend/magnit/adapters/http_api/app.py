@@ -4,7 +4,7 @@ from classic.http_api import App
 from falcon import CORSMiddleware, media
 
 from magnit.adapters.http_api import controllers, serializer
-from magnit.application import services
+from magnit.application import services, interfaces
 
 
 def create_app(
@@ -18,6 +18,7 @@ def create_app(
     truck: services.Truck,
     # truck_model: services.TruckModel,
     visit: services.Visit,
+    lot_repo: interfaces.LotRepo,
 ) -> App:
     app = App(prefix='/api',
               cors_enable=True,
@@ -35,6 +36,7 @@ def create_app(
     # app.register(controllers.truckModels(service=truck_model))
     app.register(controllers.Trucks(service=truck))
     app.register(controllers.Visits(service=visit))
+    app.register(controllers.Lots(repository=lot_repo))
 
     def handler_serialize(obj):
         return json.dumps(serializer.serialize(obj), ensure_ascii=False)

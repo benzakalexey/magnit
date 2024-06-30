@@ -79,16 +79,6 @@ const pretty_num = (n) => {
                 <tr style="height: 20px">
                     <td colspan="4"></td>
                     <td class="text-start" colspan="6">
-                        Перевозчик
-                    </td>
-                    <td class="header text-start" colspan="12">
-                        {{ akt.carrier }}
-                    </td>
-                    <td colspan="10"></td>
-                </tr>
-                <tr style="height: 20px">
-                    <td colspan="4"></td>
-                    <td class="text-start" colspan="6">
                         Марка машины
                     </td>
                     <td class="header text-start" colspan="12">
@@ -135,7 +125,7 @@ const pretty_num = (n) => {
                         {{ akt.permit_number }}
                     </td>
                     <td class="bordered text-center fs-6" colspan="3">
-                        {{ Math.floor(Math.random() * 90) }}
+                        {{ akt.lot }}
                     </td>
                     <td class="bordered text-center fs-6" colspan="10">
                         {{ akt.service_type }}
@@ -158,7 +148,7 @@ const pretty_num = (n) => {
                         Представитель<br>ООО «Магнит»
                     </td>
                     <td class="text-start px-2" colspan="12">
-                        Представитель<br>{{ akt.carrier }}
+                        Представитель перевозчика
                     </td>
                     <td colspan="4"></td>
                 </tr>
@@ -190,16 +180,6 @@ const pretty_num = (n) => {
                 <tr style="height: 20px">
                     <td colspan="4"></td>
                     <td class="text-start" colspan="6">
-                        Перевозчик
-                    </td>
-                    <td class="header text-start" colspan="12">
-                        {{ akt.carrier }}
-                    </td>
-                    <td colspan="10"></td>
-                </tr>
-                <tr style="height: 20px">
-                    <td colspan="4"></td>
-                    <td class="text-start" colspan="6">
                         Марка машины
                     </td>
                     <td class="header text-start" colspan="12">
@@ -246,7 +226,7 @@ const pretty_num = (n) => {
                         {{ akt.permit_number }}
                     </td>
                     <td class="bordered text-center fs-6" colspan="3">
-                        {{ Math.floor(Math.random() * 90) }}
+                        {{ akt.lot }}
                     </td>
                     <td class="bordered text-center fs-6" colspan="10">
                         {{ akt.service_type }}
@@ -269,7 +249,7 @@ const pretty_num = (n) => {
                         Представитель<br>ООО «Магнит»
                     </td>
                     <td class="text-start px-2" colspan="12">
-                        Представитель<br>{{ akt.carrier }}
+                        Представитель перевозчика
                     </td>
                     <td colspan="4"></td>
                 </tr>

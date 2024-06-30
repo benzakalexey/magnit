@@ -405,6 +405,17 @@ class ServiceContractRepo(ABC):
         ...
 
 
+class LotRepo(ABC):
+
+    @abstractmethod
+    def get_by_id(self, id_: int) -> Optional[entities.Lot]:
+        ...
+
+    @abstractmethod
+    def get_all(self) -> List[entities.Lot]:
+        ...
+
+
 class ServiceContractVisitRepo(ABC):
 
     @abstractmethod

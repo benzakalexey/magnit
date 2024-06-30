@@ -39,6 +39,7 @@ const columns = ref([
 if (store.state.AuthModule.credentials.user_role === 'Супервайзер') {
     columns.value = [
         'permit',
+        'lot',
         'carrier',
         'reg_number',
         // 'truck_model',
@@ -52,11 +53,12 @@ if (store.state.AuthModule.credentials.user_role === 'Супервайзер') {
     ]
 }
 
-const isOpen = ref(null);
+const isOpen = ref(false);
 const item = ref(
     {
         id: '',
         permit: '',
+        lot: '',
         contragent_id: '',
         garbage_truck: '',
         carrier: '',
@@ -80,6 +82,7 @@ const item = ref(
 const table = ref(null);
 const carrierFilter = ref([]);
 const polygonFilter = ref([]);
+const lotFilter = ref([]);
 const table_option = ref({
     perPage: 10000000,
     perPageValues: [10000000,],
@@ -88,6 +91,7 @@ const table_option = ref({
         garbage_truck: '',
         invoice_num: 'Номер акта',
         permit: 'Пропуск',
+        lot: 'Лот',
         reg_number: 'Номер',
         carrier: 'Контрагент',
         polygon: 'Полигон',
@@ -131,6 +135,7 @@ const table_option = ref({
     filterByColumn: true,
     filterable: [
         'permit',
+        'lot',
         'carrier',
         'reg_number',
         'polygon',
@@ -138,6 +143,7 @@ const table_option = ref({
     ],
     listColumns: {
         carrier: carrierFilter,
+        lot: lotFilter,
         polygon: polygonFilter,
     },
 });
@@ -170,7 +176,7 @@ const deleteItem = (id, reason) => {
 };
 const printAkt = (visit_id) => {
     let winPrint = window.open(
-        '/akt?print=true&visit_id=' + visit_id,
+        '/akt_with_lot?print=true&visit_id=' + visit_id,
         'fullscreen=yes,toolbar=0,scrollbars=0,status=0'
     );
     winPrint.focus();
@@ -180,6 +186,7 @@ const printAkt = (visit_id) => {
 const excel_columns = () => {
     return {
         'Пропуск': 'permit',
+        'Лот': 'lot',
         'Контрагент': 'carrier',
         'Рег.номер': 'reg_number',
         'Марка ТС': 'truck_model',
@@ -196,6 +203,7 @@ const excel_items = () => {
     for (var row of table.value.filteredData) {
         items.push({
             'Пропуск': row.permit,
+            'Лот': row.lot,
             'Контрагент': row.carrier,
             'Рег.номер': row.reg_number,
             'Марка ТС': row.truck_model,
@@ -375,6 +383,7 @@ const resetData = () => {
             if (store.state.VisitsModule.garbage_truck_visits == 0) return;
             carrierFilter.value = [...new Set(store.state.VisitsModule.garbage_truck_visits.map(item => item.carrier))].map(item => ({ text: item }));
             polygonFilter.value = [...new Set(store.state.VisitsModule.garbage_truck_visits.map(item => item.polygon))].map(item => ({ text: item }));
+            lotFilter.value = [...new Set(store.state.VisitsModule.garbage_truck_visits.map(item => item.lot))].map(item => ({ text: item }));
         });
     changed_visits.value = null;
     updatedCount.value = 0;
@@ -826,4 +835,8 @@ const polygons = [
             </div>
         </div>
     </div>
+
+    <visitDetails :item="item" :isOpen="isOpen" @closed="closeDetails" @deleted="deleteItem" @get_out="getOut"
+        @print_invoice="printInvoice" @print_akt="printAkt" @print_pack="printTonarPack">
+    </visitDetails>
 </template>

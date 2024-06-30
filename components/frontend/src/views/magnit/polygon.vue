@@ -11,6 +11,7 @@ useMeta({ title: 'Полигон' });
 const columns = ref([
     // 'invoice_num',
     'permit',
+    'lot',
     'reg_number',
     'carrier',
     'truck_model',
@@ -54,6 +55,7 @@ const table_option = ref({
         tonar: '',
         invoice_num: 'Номер накладной',
         permit: 'Пропуск',
+        lot: 'Лот',
         reg_number: 'Номер',
         carrier: 'Контрагент',
         truck_model: 'Марка ТС',
@@ -66,6 +68,7 @@ const table_option = ref({
     columnsClasses: { actions: 'actions text-center' },
     sortable: [
         'permit',
+        'lot',
         'reg_number',
         'carrier',
         'truck_model',
@@ -130,9 +133,13 @@ const printInvoice = (visit_id) => {
     winPrint.focus();
     winPrint.onafterprint = winPrint.close;
 };
-const printAkt = (visit_id) => {
-    let winPrint = window.open(
+const printAkt = (visit_id, is_tonar) => {
+
+    let winPrint = is_tonar ? window.open(
         '/akt?print=true&visit_id=' + visit_id,
+        'fullscreen=yes,toolbar=0,scrollbars=0,status=0'
+    ) :window.open(
+        '/akt_with_lot?print=true&visit_id=' + visit_id,
         'fullscreen=yes,toolbar=0,scrollbars=0,status=0'
     );
     winPrint.focus();
@@ -151,6 +158,8 @@ const getOut = (data) => {
         }
         if (data.tonar) {
             printTonarPack(data.visit_id);
+        } else {
+            printAkt(data.visit_id, data.tonar);
         }
     })
         .catch((error) => new window.Swal('Ошибка!', error.data, 'error'))

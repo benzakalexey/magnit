@@ -41,6 +41,7 @@ class DB:
     trucks_repo = repositories.TruckRepo(context=context)
     users_repo = repositories.UserRepo(context=context)
     visits_repo = repositories.VisitRepo(context=context)
+    lot_repo = repositories.LotRepo(context=context)
 
 
 class Application:
@@ -81,6 +82,7 @@ class Application:
         trailer_repo=DB.trailer_repo,
         trucks_repo=DB.trucks_repo,
         users_repo=DB.users_repo,
+        lot_repo=DB.lot_repo,
     )
     visit = services.Visit(
         contract_repo=DB.contract_repo,
@@ -95,6 +97,7 @@ class Application:
         truck_repo=DB.trucks_repo,
         users_repo=DB.users_repo,
         visits_repo=DB.visits_repo,
+        lot_repo=DB.lot_repo,
     )
 
 
@@ -118,4 +121,5 @@ app = http_api.create_app(
     truck=Application.truck,
     user=Application.user,
     visit=Application.visit,
+    lot_repo=DB.lot_repo,
 )

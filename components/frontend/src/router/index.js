@@ -135,6 +135,13 @@ const routes = [
         beforeEnter: setAuthLayout,
     },
     {
+        path: '/akt_with_lot',
+        name: 'akt_with_lot',
+        component: () => import(/* webpackChunkName: "components-tabs" */ '../views/magnit/doc/akt_with_lot.vue'),
+        meta: { layout: 'auth' },
+        beforeEnter: setAuthLayout,
+    },
+    {
         path: '/hand_filled_invoice',
         name: 'hand_filled_invoice',
         component: () => import(/* webpackChunkName: "components-tabs" */ '../views/magnit/doc/hand_filled_invoice.vue'),

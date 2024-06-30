@@ -9,6 +9,14 @@ export const TrucksAPI = {
         const url = 'trucks/get_all';
         return DefaultAPIInstance.get(url);
     },
+    /**
+     * 
+     * @returns {Promise<AxiosResponse<any>>}
+     */
+    get_lots() {
+        const url = 'lots/get';
+        return DefaultAPIInstance.get(url);
+    },
 
     /**
      * 

@@ -27,6 +27,11 @@ class ServiceContractRepo(BaseRepo, interfaces.ServiceContractRepo):
 
 
 @component
+class LotRepo(BaseRepo, interfaces.LotRepo):
+    dto = entities.Lot
+
+
+@component
 class ServiceContractVisitRepo(
     BaseRepo, interfaces.ServiceContractVisitRepo,
 ):

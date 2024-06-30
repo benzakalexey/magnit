@@ -14,6 +14,7 @@ export const TrucksModule = {
             models: [],
             types: [],
             trailers: [],
+            lots: [],
         }
     },
 
@@ -25,6 +26,11 @@ export const TrucksModule = {
         setTrucksData(state, data) {
             let trucks = []
             for (var t of data) {
+                var lots = []
+                for (var lot of t.lots) {
+                    lots.push(lot.number)
+                }
+                lots = lots.join(", ")
                 trucks.push({
                     id: t.id,
                     truck_model: t.truck_model,
@@ -41,6 +47,7 @@ export const TrucksModule = {
                     days_before_exp: t.days_before_exp,
                     body_volume: t.body_volume,
                     status: t.status,
+                    lots: lots,
                 });
             };
             state.trucks = trucks;
@@ -54,6 +61,16 @@ export const TrucksModule = {
                 });
             };
             state.models = models;
+        },
+        setLotsData(state, data) {
+            let lots = []
+            for (var l of data) {
+                lots.push({
+                    id: l.id,
+                    number: l.number,
+                });
+            };
+            state.lots = lots;
         },
         setTypesData(state, data) {
             state.types = data;
@@ -77,6 +94,14 @@ export const TrucksModule = {
             try {
                 const res = await TrucksAPI.get_all();
                 commit('setTrucksData', res.data);
+            } catch (err) {
+                throw err;
+            }
+        },
+        async get_lots({ commit }) {
+            try {
+                const res = await TrucksAPI.get_lots();
+                commit('setLotsData', res.data);
             } catch (err) {
                 throw err;
             }

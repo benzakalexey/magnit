@@ -8,6 +8,9 @@ import { helpers, required, numeric, minValue, minLength, maxLength } from '@vue
 import { Modal } from 'bootstrap';
 import { EventBus } from 'v-tables-3';
 
+import Multiselect from '@suadelabs/vue3-multiselect';
+import '@suadelabs/vue3-multiselect/dist/vue3-multiselect.css';
+
 //flatpickr
 import flatpickr from 'flatpickr';
 import flatPickr from 'vue-flatpickr-component';
@@ -23,6 +26,7 @@ useMeta({ title: 'Автомобили' });
 
 const columns = ref([
     'permit',
+    'lots',
     'permission_owner',
     'started_at',
     'expired_at',
@@ -54,6 +58,7 @@ const table_option = ref({
         permit: 'Пропуск',
         permission_owner: 'Контрагент',
         started_at: 'Выдан',
+        lots: 'Лоты',
         expired_at: 'Истекает',
         days_before_exp: 'Осталось, дн.',
         actions: '',
@@ -106,6 +111,7 @@ const model = ref(null);
 const reg_number = ref(null);
 const type = ref(null);
 const tara = ref(null);
+const lots = ref([]);
 const max_weight = ref(null);
 const production_year = ref(null);
 const body_volume = ref(null);
@@ -267,6 +273,9 @@ const openDetails = (i) => {
     store.dispatch(
         'PermitsModule/get_history', { num: truckDetails.value.permit }
     ).then(() => detailModal.show())
+    
+
+    store.dispatch('TrucksModule/get_lots');
 };
 const onHidden = () => {
     trailer.value = null;
@@ -286,6 +295,7 @@ const updatePermit = () => {
         tara: truckDetails.value.tara,
         max_weight: truckDetails.value.max_weight,
         body_volume: truckDetails.value.body_volume,
+        lots: lots.value,
     };
     store.dispatch('PermitsModule/add_permission', data)
         .then((res) => {
@@ -345,8 +355,8 @@ const expSoonFilter = () => {
             </ul>
             <div class="navbar-nav justify-content-end align-items-center">
                 <button v-show="store.state.TrucksModule.trucks.reduce((acc, e) => acc +
-                    (e.days_before_exp < 7 && e.days_before_exp > 0 ? 1 : 0), 0)" type="button"
-                    class="btn me-4" :class="clickedExpSoon ? 'btn-secondary' : 'btn-outline-secondary'" @click="expSoonFilter()">
+                    (e.days_before_exp < 7 && e.days_before_exp > 0 ? 1 : 0), 0)" type="button" class="btn me-4"
+                    :class="clickedExpSoon ? 'btn-secondary' : 'btn-outline-secondary'" @click="expSoonFilter()">
                     <span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -374,13 +384,13 @@ const expSoonFilter = () => {
                 </button>
             </div>
         </teleport>
-        
+
         <div class="row layout-top-spacing">
             <div class="col-xl-12 col-lg-12 col-sm-12 layout-spacing">
                 <div class="panel br-6 p-0">
                     <div class="custom-table">
-                        <v-client-table v-if="showTable" :data="store.state.TrucksModule.trucks" :columns="columns" :options="table_option"
-                            ref="table">
+                        <v-client-table v-if="showTable" :data="store.state.TrucksModule.trucks" :columns="columns"
+                            :options="table_option" ref="table">
                             <template #started_at="props">
                                 <div :data_sort="props.row.started_at">
                                     {{ props.row.started_at ? props.row.started_at.toLocaleDateString('ru') : '-' }}
@@ -590,6 +600,18 @@ const expSoonFilter = () => {
                                             </select>
                                         </div>
                                     </div>
+
+                                    <div class="mb-3">
+                                        <multiselect v-model="lots" :options="store.state.TrucksModule.lots"
+                                            :multiple="true" :close-on-select="false" :clear-on-select="false"
+                                            :hide-selected="true" :preserve-search="true" placeholder="Лоты"
+                                            select-label="Нажмите Ввод для выбора" selected-label="Выбрано"
+                                            label="number" track-by="number" :preselect-first="true">
+                                            <template slot="tag" slot-scope="props"><span class="custom__tag"><span>{{
+                                                props.option.number }}</span><span class="custom__remove"
+                                                        @click="props.remove(props.option)">❌</span></span></template>
+                                        </multiselect>
+                                    </div>
                                     <div class="m-4">
                                         <div class="checkbox-default custom-checkbox">
                                             <input type="checkbox" class="custom-control-input" id="chk_default"
@@ -607,6 +629,9 @@ const expSoonFilter = () => {
                                                 <th role="columnheader" scope="col" aria-colindex="1">
                                                     <div>Контрагент</div>
                                                 </th>
+                                                <th role="columnheader" scope="col" aria-colindex="4">
+                                                    <div>Лоты</div>
+                                                </th>
                                                 <th role="columnheader" scope="col" aria-colindex="2">
                                                     <div>Тонар</div>
                                                 </th>
@@ -621,6 +646,7 @@ const expSoonFilter = () => {
                                         <tbody role="rowgroup">
                                             <tr v-for="item in store.state.PermitsModule.permit_histoty" role="row">
                                                 <td aria-colindex="1" role="cell">{{ item.contragent_name }}</td>
+                                                <td aria-colindex="4" role="cell">{{ item.lots }}</td>
                                                 <td aria-colindex="2" role="cell">
                                                     <span v-show="item.is_tonar"
                                                         class="badge inv-status outline-badge-warning">Tонар</span>

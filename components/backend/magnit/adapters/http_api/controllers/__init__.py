@@ -6,3 +6,4 @@ from .polygons import Polygons
 from .trucks import Trucks
 from .users import Users
 from .visits import Visits
+from .lots import Lots

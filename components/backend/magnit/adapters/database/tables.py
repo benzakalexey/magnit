@@ -218,7 +218,18 @@ permissions = Table(
     Column('added_by_id', ForeignKey(users.c.id), nullable=True),
     Column('added_at', DateTime, nullable=False),
 )
-
+lots = Table(
+    'lots',
+    metadata,
+    Column('id', Integer, primary_key=True),
+    Column(
+        'number',
+        Integer,
+        nullable=False,
+        comment='Номер лота',
+    ),
+    comment='Лот',
+)
 visits = Table(
     'visits',
     metadata,
@@ -234,6 +245,7 @@ visits = Table(
     Column('operator_out_id', ForeignKey(users.c.id), nullable=True),
     Column('permission_id', ForeignKey(permissions.c.id), nullable=False),
     Column('polygon_id', ForeignKey(polygons.c.id), nullable=False),
+    Column('lot_id', ForeignKey(lots.c.id), nullable=True),
     Column('weight_in', Integer, nullable=False),
     Column('weight_out', Integer, nullable=True),
 )
@@ -500,4 +512,20 @@ executor_storage_areas = Table(
         comment='ИД договора',
     ),
     comment='Площадки накопления Исполнителя по договору на оказание услуг.',
+)
+permission_lots_association = Table(
+    'permission_lots_association',
+    metadata,
+    Column(
+        'permission_id',
+        ForeignKey(permissions.c.id),
+        nullable=False,
+        comment='ИД Допуска',
+    ),
+    Column(
+        'lot_id',
+        ForeignKey(lots.c.id),
+        nullable=False,
+        comment='ИД Лота',
+    ),
 )

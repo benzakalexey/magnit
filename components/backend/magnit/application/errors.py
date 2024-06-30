@@ -131,6 +131,11 @@ class VisitIDNotExistError(AppError):
     code = 'magnit.visits.visit_id_not_exist_error'
 
 
+class LotIDNotExistError(AppError):
+    msg_template = 'Лот с id = {lot_id} не найден'
+    code = 'magnit.lots.lot_id_not_exist_error'
+
+
 class VisitDeleteReasonIsNoneError(AppError):
     msg_template = 'Причина удаления не может быть пустой.'
     code = 'magnit.visits.visit_delete_reason_is_none_error'
