@@ -24,6 +24,7 @@ useMeta({ title: 'Мусоровозы' });
 
 const columns = ref([
     'permit',
+    'lot',
     'carrier',
     'reg_number',
     // 'truck_model',
