@@ -2,7 +2,7 @@
 import '@/assets/sass/visits/visits.scss';
 import { ref, computed } from 'vue'
 import { useVuelidate } from '@vuelidate/core'
-import { minLength, required, numeric, minValue, maxValue, helpers } from '@vuelidate/validators';
+import { minLength, required, numeric, minValue, maxValue, helpers, requiredIf } from '@vuelidate/validators';
 import { useStore } from 'vuex';
 import rightSideModal from '@/components/magnit/modals/rightSideModal';
 
@@ -24,9 +24,7 @@ const rules = computed(() => ({
         minLength: minLength(2)
     },
     lot: {
-        required,
-        $lazy: true,
-        $autoDirty: true
+        required: requiredIf((i) => store.state.PermitsModule.check_permit.is_tonar !== true),
     },
     weight: {
         required,

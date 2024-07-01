@@ -162,6 +162,7 @@ const pretty_num = (n) => {
                 
 
                 <div class="pagebreak"></div>
+                <div class="pagebreak"></div>
 
                 <tr style="height: 20px">
                     <td class="header" colspan="32">
@@ -263,4 +264,6 @@ const pretty_num = (n) => {
             </tbody>
         </table>
     </div>
+    
+    <div class="pagebreak"></div>
 </template>
