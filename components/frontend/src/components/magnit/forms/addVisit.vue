@@ -24,7 +24,9 @@ const rules = computed(() => ({
         minLength: minLength(2)
     },
     lot: {
-        required
+        required,
+        $lazy: true,
+        $autoDirty: true
     },
     weight: {
         required,
