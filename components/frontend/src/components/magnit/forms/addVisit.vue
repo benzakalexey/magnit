@@ -49,7 +49,7 @@ const createVisit = () => {
         permission_id: store.state.PermitsModule.check_permit.permission_id,
         service_contract_id: store.state.PermitsModule.check_permit.service_contract_id,
         weight: weight.value,
-        lot: lot.value.id,
+        lot: lot.value?.id,
         truck_number: store.state.PermitsModule.check_permit.reg_number || truck_number.value,
     })
         .then(() => {
