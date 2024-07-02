@@ -99,6 +99,7 @@ const closeAndClean = () => {
     permit_num.value = '';
     weight.value = '';
     isOpen.value = !isOpen.value;
+    lot.value = null;
 };
 
 </script>
