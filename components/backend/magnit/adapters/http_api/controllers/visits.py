@@ -38,55 +38,55 @@ class Visits:
         )
         response.media = [{
             'id':
-            v.id,
+                v.id,
             'permit':
-            v.permission.permit.number,
+                v.permission.permit.number,
             'contragent_id':
-            v.permission.owner.id,
+                v.permission.owner.id,
             'polygon':
-            v.polygon.name,
+                v.polygon.name,
             'polygon_id':
-            v.polygon.id,
+                v.polygon.id,
             'is_deleted':
-            v.is_deleted,
+                v.is_deleted,
             'delete_reason':
-            v.delete_reason,
+                v.delete_reason,
             'carrier':
-            v.permission.owner.short_name,
+                v.permission.owner.short_name,
             'invoice_num':
-            v.invoice_num,
+                v.invoice_num,
             'tonar':
-            v.permission.is_tonar,
+                v.permission.is_tonar,
             'truck_model':
-            (v.permission.permit.truck.model.name.split(' ')[0]),
+                (v.permission.permit.truck.model.name.split(' ')[0]),
             'truck_type':
-            v.permission.permit.truck.type.value,
+                v.permission.permit.truck.type.value,
             'tara':
-            v.tara,
+                v.tara,
             'netto':
-            v.netto,
+                v.netto,
             'lot':
-            v.lot.number if v.lot else v.lot,
+                v.lot.number if v.lot else v.lot,
             'brutto':
-            v.brutto,
+                v.brutto,
             'max_weight':
-            v.permission.permit.truck.max_weight * MAX_RATIO,
+                v.permission.permit.truck.max_weight * MAX_RATIO,
             'reg_number':
-            v.permission.permit.truck.reg_number,
+                v.permission.permit.truck.reg_number,
             'weight_in':
-            v.weight_in,
+                v.weight_in,
             'checked_in':
-            v.checked_in,
+                v.checked_in,
             'weight_out':
-            v.weight_out,
+                v.weight_out,
             'checked_out':
-            v.checked_out,
+                v.checked_out,
             'driver_name':
-            f'{v.driver.surname} {v.driver.name}' if v.driver else None,
+                f'{v.driver.surname} {v.driver.name}' if v.driver else None,
             'destination':
-            v.contract.destination.name if v.contract else None,
+                v.contract.destination.name if v.contract else None,
             'status':
-            v.status
+                v.status
         } for v in visits]
 
     @join_point
@@ -98,57 +98,57 @@ class Visits:
         )
         response.media = [{
             'id':
-            v.id,
+                v.id,
             'permit':
-            v.permission.permit.number,
+                v.permission.permit.number,
             'contragent_id':
-            v.permission.owner.id,
+                v.permission.owner.id,
             'polygon':
-            v.polygon.name,
+                v.polygon.name,
             'polygon_id':
-            v.polygon.id,
+                v.polygon.id,
             'is_deleted':
-            v.is_deleted,
+                v.is_deleted,
             'delete_reason':
-            v.delete_reason,
+                v.delete_reason,
             'carrier':
-            v.permission.owner.short_name,
+                v.permission.owner.short_name,
             'invoice_num':
-            v.invoice_num,
+                v.invoice_num,
             'tonar':
-            v.permission.is_tonar,
+                v.permission.is_tonar,
             'truck_model':
-            (v.permission.permit.truck.model.name.split(' ')[0]),
+                (v.permission.permit.truck.model.name.split(' ')[0]),
             'truck_type':
-            v.permission.permit.truck.type.value,
+                v.permission.permit.truck.type.value,
             'tara':
-            v.tara,
+                v.tara,
             'netto':
-            v.netto,
+                v.netto,
             'brutto':
-            v.brutto,
+                v.brutto,
             'max_weight':
-            v.permission.permit.truck.max_weight * MAX_RATIO,
+                v.permission.permit.truck.max_weight * MAX_RATIO,
             'reg_number':
-            v.permission.permit.truck.reg_number,
+                v.permission.permit.truck.reg_number,
             'weight_in':
-            v.weight_in,
+                v.weight_in,
             'checked_in':
-            v.checked_in,
+                v.checked_in,
             'weight_out':
-            v.weight_out,
+                v.weight_out,
             'checked_out':
-            v.checked_out,
+                v.checked_out,
             'driver_name':
-            f'{v.driver.surname} {v.driver.name}' if v.driver else None,
+                f'{v.driver.surname} {v.driver.name}' if v.driver else None,
             'driver_id':
-            v.driver.id if v.driver else None,
+                v.driver.id if v.driver else None,
             'contract_id':
-            v.contract.id if v.contract else None,
+                v.contract.id if v.contract else None,
             'destination':
-            v.contract.destination.name if v.contract else None,
+                v.contract.destination.name if v.contract else None,
             'status':
-            v.status,
+                v.status,
         } for v in visits]
 
     @join_point
@@ -160,57 +160,58 @@ class Visits:
         )
         response.media = [{
             'id':
-            v.id,
+                v.id,
             'permit':
-            v.permission.permit.number,
+                v.permission.permit.number,
             'contragent_id':
-            v.permission.owner.id,
+                v.permission.owner.id,
             'polygon':
-            v.polygon.name,
+                v.polygon.name,
             'polygon_id':
-            v.polygon.id,
+                v.polygon.id,
             'is_deleted':
-            v.is_deleted,
+                v.is_deleted,
             'delete_reason':
-            v.delete_reason,
+                v.delete_reason,
             'carrier':
-            v.permission.owner.short_name,
+                v.permission.owner.short_name,
             'invoice_num':
-            v.invoice_num,
+                v.invoice_num,
             'tonar':
-            v.permission.is_tonar,
+                v.permission.is_tonar,
             'truck_model':
-            (v.permission.permit.truck.model.name.split(' ')[0]),
+                (v.permission.permit.truck.model.name.split(' ')[0]),
             'truck_type':
-            v.permission.permit.truck.type.value,
+                v.permission.permit.truck.type.value,
             'tara':
-            v.tara,
+                v.tara,
             'netto':
-            v.netto,
+                v.netto,
+            'lot': v.lot.number if v.lot else v.lot,
             'brutto':
-            v.brutto,
+                v.brutto,
             'max_weight':
-            v.permission.permit.truck.max_weight * MAX_RATIO,
+                v.permission.permit.truck.max_weight * MAX_RATIO,
             'reg_number':
-            v.permission.permit.truck.reg_number,
+                v.permission.permit.truck.reg_number,
             'weight_in':
-            v.weight_in,
+                v.weight_in,
             'checked_in':
-            v.checked_in,
+                v.checked_in,
             'weight_out':
-            v.weight_out,
+                v.weight_out,
             'checked_out':
-            v.checked_out,
+                v.checked_out,
             'driver_name':
-            f'{v.driver.surname} {v.driver.name}' if v.driver else None,
+                f'{v.driver.surname} {v.driver.name}' if v.driver else None,
             'driver_id':
-            v.driver.id if v.driver else None,
+                v.driver.id if v.driver else None,
             'contract_id':
-            v.contract.id if v.contract else None,
+                v.contract.id if v.contract else None,
             'destination':
-            v.contract.destination.name if v.contract else None,
+                v.contract.destination.name if v.contract else None,
             'status':
-            v.status,
+                v.status,
         } for v in visits]
 
     @join_point
@@ -229,61 +230,62 @@ class Visits:
 
             data = {
                 'id':
-                v.id,
+                    v.id,
                 'permit':
-                v.permission.permit.number,
+                    v.permission.permit.number,
                 'contragent_id':
-                v.permission.owner.id,
+                    v.permission.owner.id,
                 'polygon':
-                v.polygon.name,
+                    v.polygon.name,
                 'polygon_id':
-                v.polygon.id,
+                    v.polygon.id,
                 'scale_accuracy':
-                scale_accuracy,
+                    scale_accuracy,
                 'is_deleted':
-                v.is_deleted,
+                    v.is_deleted,
                 'delete_reason':
-                v.delete_reason,
+                    v.delete_reason,
                 'carrier':
-                v.permission.owner.short_name,
+                    v.permission.owner.short_name,
                 'invoice_num':
-                v.invoice_num,
+                    v.invoice_num,
                 'tonar':
-                v.permission.is_tonar,
+                    v.permission.is_tonar,
                 'truck_model':
-                (v.permission.permit.truck.model.name.split(' ')[0]),
+                    (v.permission.permit.truck.model.name.split(' ')[0]),
                 'truck_type':
-                v.permission.permit.truck.type.value,
+                    v.permission.permit.truck.type.value,
                 'tara':
-                v.tara,
+                    v.tara,
                 'netto':
-                v.netto,
+                    v.netto,
                 'lot':
-                v.lot.number if v.lot else v.lot,
+                    v.lot.number if v.lot else v.lot,
                 'brutto':
-                v.brutto,
+                    v.brutto,
                 'max_weight':
-                v.permission.permit.truck.max_weight * MAX_RATIO,
+                    v.permission.permit.truck.max_weight * MAX_RATIO,
                 'reg_number':
-                v.permission.permit.truck.reg_number,
+                    v.permission.permit.truck.reg_number,
                 'weight_in':
-                v.weight_in,
+                    v.weight_in,
                 'checked_in':
-                v.checked_in,
+                    v.checked_in,
                 'weight_out':
-                v.weight_out,
+                    v.weight_out,
                 'checked_out':
-                v.checked_out,
+                    v.checked_out,
                 'frozen':
-                v.frozen,
+                    v.frozen,
                 'driver_name':
-                (f'{v.driver.surname} {v.driver.name}' if v.driver else None),
+                    (
+                        f'{v.driver.surname} {v.driver.name}' if v.driver else None),
                 # 'driver_phone': v.driver.phone
                 # if v.driver else None,
                 'destination':
-                (v.contract.destination.name if v.contract else None),
+                    (v.contract.destination.name if v.contract else None),
                 'status':
-                v.status,
+                    v.status,
             }
             response_media.append(data)
 

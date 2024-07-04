@@ -71,7 +71,7 @@ const pretty_num = (n) => {
                 <tr style="height: 20px">
                     <td colspan="2"></td>
                     <td class="header" colspan="28">
-                        Акт взвешивания № {{ akt.number }} от {{ akt.date.toLocaleString('ru') }} г.
+                        Акт взвешивания № {{ akt.number }} от {{ akt.date.toLocaleString('ru') }}.
                     </td>
                     <td colspan="2"></td>
                 </tr>
@@ -180,7 +180,7 @@ const pretty_num = (n) => {
                 <tr style="height: 20px">
                     <td colspan="2"></td>
                     <td class="header" colspan="28">
-                        Акт взвешивания № {{ akt.number }} от {{ akt.date.toLocaleString('ru') }} г.
+                        Акт взвешивания № {{ akt.number }} от {{ akt.date.toLocaleString('ru') }}.
                     </td>
                     <td colspan="2"></td>
                 </tr>
@@ -289,7 +289,7 @@ const pretty_num = (n) => {
                 <tr style="height: 20px">
                     <td colspan="2"></td>
                     <td class="header" colspan="28">
-                        Акт взвешивания № {{ akt.number }} от {{ akt.date.toLocaleString('ru') }} г.
+                        Акт взвешивания № {{ akt.number }} от {{ akt.date.toLocaleString('ru') }}.
                     </td>
                     <td colspan="2"></td>
                 </tr>

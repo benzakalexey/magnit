@@ -32,6 +32,7 @@ useMeta({ title: 'Визиты' });
 
 const columns = ref([
     'permit',
+    'lot',
     'carrier',
     'polygon',
     'reg_number',
@@ -70,6 +71,7 @@ const item = ref(
 );
 const polygons = ref([]);
 const carriers = ref([]);
+const lotFilter = ref([]);
 const driver_names = ref([]);
 const destinations = ref([]);
 const table_option = ref({
@@ -80,6 +82,7 @@ const table_option = ref({
         tonar: '',
         invoice_num: 'Номер ТН',
         permit: 'Пропуск',
+        lot: 'Лот',
         reg_number: 'Рег. номер',
         carrier: 'Контрагент',
         polygon: 'Полигон',
@@ -125,16 +128,14 @@ const table_option = ref({
         'polygon',
         'netto',
         'invoice_num',
-        // 'destination',
-        // 'driver_name',
+        'lot',
         'tonar',
         'status',
     ],
     listColumns: {
         polygon: polygons,
         carrier: carriers,
-        // driver_name: driver_names,
-        // destination: destinations,
+        lot: lotFilter,
         status: [
             { id: 0, text: 'На полигоне' },
             { id: 1, text: 'Выехал' },
@@ -204,9 +205,13 @@ const printInvoice = (visit_id = visitDetails.value.id) => {
     winPrint.focus();
     winPrint.onafterprint = winPrint.close;
 };
-const printAkt = (visit_id = visitDetails.value.id) => {
-    let winPrint = window.open(
+const printAkt = (visit_id = visitDetails.value.id, tonar = visitDetails.value.tonar) => {
+
+    let winPrint = tonar ? window.open(
         '/akt?print=true&visit_id=' + visit_id,
+        'fullscreen=yes,toolbar=0,scrollbars=0,status=0'
+    ) : window.open(
+        '/akt_with_lot?print=true&visit_id=' + visit_id,
         'fullscreen=yes,toolbar=0,scrollbars=0,status=0'
     );
     winPrint.focus();
@@ -253,6 +258,7 @@ const excel_items = () => {
     for (var row of rows) {
         items.push({
             'Пропуск': row.permit,
+            'Лот': row.lot,
             'Контрагент': row.carrier,
             'Рег.номер': row.reg_number,
             'Марка ТС': row.truck_model,
@@ -427,6 +433,7 @@ const resetData = () => {
             carriers.value = [...new Set(store.state.VisitsModule.visits.map(item => item.carrier))].map(item => ({ text: item }));
             driver_names.value = [...new Set(store.state.VisitsModule.visits.map(item => item.driver_name))].map(item => ({ text: item }));
             destinations.value = [...new Set(store.state.VisitsModule.visits.map(item => item.destination))].map(item => ({ text: item }));
+            lotFilter.value = [...new Set(store.state.VisitsModule.visits.map(item => item.lot))].map(item => ({ text: item }));
         });
 };
 
@@ -615,15 +622,11 @@ onMounted(
                                 </div>
                                 <div class="col-md-6">
                                     <label class="col-form-label" for="lot">Лот</label>
-                                    <input v-model="visitDetails.lot" type=text readonly="true" class="form-control" id="lot" />
+                                    <input v-model="visitDetails.lot" type=text readonly="true" class="form-control"
+                                        id="lot" />
                                 </div>
                             </div>
                         </div>
-                        <!-- <div class="col-md-6">
-                            <label class="col-form-label" for="permit">Пропуск</label>
-                            <input v-model="visitDetails.permit" type="text" readonly="true" class="form-control"
-                                id="permit" />
-                        </div> -->
                         <div class="col-md-6">
                             <label class="col-form-label" for="reg_num">Рег. номер</label>
                             <input v-model="visitDetails.reg_number" type="text" readonly="true" class="form-control"
@@ -713,7 +716,7 @@ onMounted(
                             </svg>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="btndefault">
-                            <li>
+                            <li v-show="visitDetails.tonar">
                                 <a @click="printTonarPack()" href="javascript:void(0);" class="dropdown-item"><i
                                         class="flaticon-home-fill-1 me-1"></i>
                                     Пакет документов
@@ -725,7 +728,7 @@ onMounted(
                                     Акт взвешивания
                                 </a>
                             </li>
-                            <li>
+                            <li v-show="visitDetails.tonar">
                                 <a @click="printInvoice()" href="javascript:void(0);" class="dropdown-item"><i
                                         class="flaticon-bell-fill-2 me-1"></i>
                                     Транспортная накладная
