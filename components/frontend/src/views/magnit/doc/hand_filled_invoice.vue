@@ -31,6 +31,7 @@ const invoice = ref(
         truck_weight: '',
         contract: '',
         polygon: '',
+        weight_txt: '',
     }
 )
 

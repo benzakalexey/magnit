@@ -27,6 +27,7 @@ const invoice = ref(
         truck_weight: '',
         contract: '0101/23-ЭГ от 01.01.2023 г.',
         polygon: 'Мусоросортировочный комплекс, расположенный по адресу: местоположение установлено относительно ориентира, расположенного в границах участка. Ориентир относительно ориентира расположенного за пределами участка, в 500 метрах юго-западнее здания с почтовым адресом: Российская Федерация, Омская область, г. Омск, Ленинский АО, yл. Черлакский тракт, дом 10. Кадастровый номер земельного участка – 55:36:200106:224.',
+        weight_txt: '-',
     }
 )
 
@@ -50,7 +51,8 @@ const printAkt = () => {
         '&trailer_weight=' + invoice.value.trailer_weight +
         '&truck_weight=' + invoice.value.truck_weight +
         '&contract=' + invoice.value.contract +
-        '&polygon=' + invoice.value.polygon;
+        '&polygon=' + invoice.value.polygon +
+        '&weight_txt=' + invoice.value.weight_txt;
 
     let winPrint = window.open(
         '/hand_filled_invoice?print=true' + query_params,
@@ -200,6 +202,12 @@ const printAkt = () => {
                                         <label class="col-form-label" for="polygon">Полигон</label>
                                         <textarea v-model="invoice.polygon" type="text" id="polygon"
                                             class="form-control form-control-lg" rows="5"/>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="col-form-label" for="weight_txt">Масса груза</label>
+                                        <input v-model="invoice.weight_txt" type="text" id="weight_txt"
+                                            class="form-control form-control-lg"/>
                                     </div>
 
 

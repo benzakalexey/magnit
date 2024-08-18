@@ -23,7 +23,7 @@ export default new createStore({
         },
         is_auth: false,
         layout: 'app',
-        is_show_sidebar: true,
+        is_show_sidebar: false,
         is_show_search: false,
         is_dark_mode: false,
         dark_mode: 'light',
@@ -82,7 +82,7 @@ export default new createStore({
             localStorage.setItem('menu_style', value);
             state.menu_style = value;
             if (!value || value === 'vertical') {
-                state.is_show_sidebar = true;
+                state.is_show_sidebar = false;
             } else if (value === 'collapsible-vertical') {
                 state.is_show_sidebar = false;
             }

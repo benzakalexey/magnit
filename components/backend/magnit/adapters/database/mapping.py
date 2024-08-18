@@ -26,6 +26,19 @@ mapper.map_imperatively(
     tables.lots,
 )
 mapper.map_imperatively(
+    entities.WasteType,
+    tables.waste_type,
+    properties={
+        'contracts':
+        relationship(
+            entities.Contract,
+            lazy='select',
+            backref=backref('waste_type', lazy='joined'),
+            order_by='desc(entities.Contract.added_at)',
+        )
+    },
+)
+mapper.map_imperatively(
     entities.Partner,
     tables.partners,
     properties={

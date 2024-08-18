@@ -163,6 +163,9 @@ class Contract:
     carrier: Optional[Partner] = None
     'Перевозчик'
 
+    waste_type: Optional[WasteType] = None
+    'Тип отходов'
+
     departure_point: Optional[Polygon] = None
     'Полигон отправления'
 
@@ -478,6 +481,14 @@ class ServiceContract:
     customer_acts_basis: str
     """Основания для полномочий Заказчика"""
 
+    id: Optional[int] = None
+
+
+@dataclass
+class WasteType:
+    """Тип отходов"""
+
+    name: str
     id: Optional[int] = None
 
 
