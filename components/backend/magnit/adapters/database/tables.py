@@ -125,6 +125,17 @@ polygon_details = Table(
     Column('added_at', DateTime, nullable=False),
 )
 
+waste_type = Table(
+    'waste_type',
+    metadata,
+    Column('id', Integer, primary_key=True),
+    Column(
+        'name',
+        String(128),
+        nullable=False,
+        comment='Название типа отходов',
+    ),
+)
 contracts = Table(
     'contracts',
     metadata,
@@ -147,6 +158,11 @@ contracts = Table(
         'receiver_id',
         ForeignKey(partners.c.id),
         nullable=False,
+    ),
+    Column(
+        'waste_type_id',
+        ForeignKey(waste_type.c.id),
+        nullable=True,
     ),
     # polygon details
     Column(

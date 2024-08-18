@@ -400,6 +400,9 @@ class Visit:
             raise errors.CantCreateNotTonarInvoice()
 
         cargo_type = 'Остатки сортировки ТКО'
+        if visit.contract and visit.contract.waste_type:
+            cargo_type = visit.contract.waste_type.name
+
         carrier = visit.contract.carrier.get_full_name(visit.checked_out)
         direction = visit.contract.destination.get_details(visit.checked_out)
         planned_date = visit.checked_out - timedelta(minutes=randint(20, 30))
@@ -439,6 +442,10 @@ class Visit:
         truck_mark = visit.permission.permit.truck.model.name
         truck_number = visit.permission.truck_number
 
+        service_type = 'Транспортирование ТКО (IV-V)'
+        if visit.contract and visit.contract.waste_type:
+            service_type = visit.contract.waste_type.name
+
         return {
             'brutto': visit.brutto,
             'carrier': carrier,
@@ -447,7 +454,7 @@ class Visit:
             'number': visit.invoice_num,
             'permit_number': permit_number,
             'polygon': visit.polygon.name,
-            'service_type': 'Транспортирование ТКО (IV-V)',
+            'service_type': service_type,
             'tara': visit.tara,
             'truck_mark': truck_mark,
             'truck_number': truck_number,
