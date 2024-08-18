@@ -34,7 +34,6 @@ mapper.map_imperatively(
             entities.Contract,
             lazy='select',
             backref=backref('waste_type', lazy='joined'),
-            order_by='desc(entities.Contract.added_at)',
         )
     },
 )
