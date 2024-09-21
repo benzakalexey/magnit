@@ -24,3 +24,13 @@ services:
     command:
       bash -c ". /usr/local/bin/entrypoint_migrations.sh \
       && . /usr/local/bin/entrypoint_api.sh"
+  scheduler:
+    restart: always
+    container_name: scheduler_magnit
+    build:
+      context: ..
+      dockerfile: deployment/backend/Dockerfile
+    env_file:
+      - ../config.env
+    command:
+      bash -c ". /usr/local/bin/entrypoint_scheduler.sh"

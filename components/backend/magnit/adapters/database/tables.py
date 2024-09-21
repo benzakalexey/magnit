@@ -110,6 +110,8 @@ polygons = Table(
     metadata,
     Column('id', Integer, primary_key=True),
     Column('name', String(length=250), nullable=False),
+    Column('object_id', String(length=250), nullable=True),
+    Column('access_key', String(length=250), nullable=True),
 )
 
 polygon_details = Table(
@@ -543,5 +545,39 @@ permission_lots_association = Table(
         ForeignKey(lots.c.id),
         nullable=False,
         comment='ИД Лота',
+    ),
+)
+fgis_sync_log = Table(
+    'fgis_sync_log',
+    metadata,
+    Column(
+        'uuid',
+        String,
+        primary_key=True,
+        comment='Идентификатор выгрузки ТС',
+    ),
+    Column(
+        'visit_id',
+        ForeignKey(visits.c.id),
+        nullable=False,
+        comment='ИД Заезда',
+    ),
+    Column(
+        'success',
+        Boolean,
+        nullable=True,
+        comment='Дата и время ответа от ФГИС УТКО',
+    ),
+    Column(
+        'response_date',
+        DateTime,
+        nullable=True,
+        comment='Дата и время ответа от ФГИС УТКО',
+    ),
+    Column(
+        'response_code',
+        Integer,
+        nullable=True,
+        comment='Код ответа от ФГИС УТКО',
     ),
 )

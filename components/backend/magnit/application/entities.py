@@ -5,6 +5,8 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import List, Optional
 
+import uuid as uuid
+
 from magnit.application import constants
 
 
@@ -40,11 +42,13 @@ class Polygon:
     """Полигон"""
     name: str
     details: List[PolygonDetails] = field(default_factory=list)
+    object_id: Optional[str] = None
+    access_key: Optional[str] = None
     id: Optional[int] = None
 
     def get_details(
-            self,
-            on_date: datetime = datetime.utcnow(),
+        self,
+        on_date: datetime = datetime.utcnow(),
     ) -> Optional[PolygonDetails]:
         for d in self.details:
             if on_date >= d.valid_from:
@@ -311,6 +315,7 @@ class Visit:
     checked_in: datetime = field(default_factory=datetime.utcnow)
     checked_out: Optional[datetime] = None
     operator_out: Optional[User] = None
+    fgis_msg: Optional[FgisMessage] = None
     weight_out: Optional[int] = None
     driver: Optional[Driver] = None
     contract: Optional[Contract] = None
@@ -538,3 +543,13 @@ class ServiceContractVisit:
         num = self.id
         service_type = self.contract.contract_service.type.value
         self.invoice_num = f'{p}-{m}.{y}-{num}-{service_type}'
+
+
+@dataclass
+class FgisMessage:
+    """Сообщение в ФГИС"""
+    visit: Visit
+    success: Optional[bool] = None
+    response_date: Optional[datetime] = None
+    response_code: Optional[int] = None
+    uuid: str = field(default_factory=lambda: str(uuid.uuid1()))

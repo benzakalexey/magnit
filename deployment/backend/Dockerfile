@@ -16,9 +16,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY ./components/backend/ /app
 WORKDIR /app
 
-RUN echo $(ls -l)
 RUN pip install --upgrade --no-cache-dir pip \
-    && pip install --no-cache-dir . \
+    && pip install -r requirements.txt \
+
+RUN pip install --no-cache-dir . \
     && python setup.py bdist_wheel
 
 RUN groupadd -r $USERNAME && \

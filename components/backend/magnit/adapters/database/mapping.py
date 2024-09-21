@@ -238,6 +238,20 @@ mapper.map_imperatively(
 )
 
 mapper.map_imperatively(
+    entities.FgisMessage,
+    tables.fgis_sync_log,
+    properties={
+        'visit':
+        relationship(
+            entities.Visit,
+            uselist=False,
+            lazy='joined',
+            backref=backref('fgis_msg', uselist=False),
+        ),
+    },
+)
+
+mapper.map_imperatively(
     entities.Contract,
     tables.contracts,
     properties={
