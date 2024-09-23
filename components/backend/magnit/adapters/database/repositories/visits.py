@@ -2,8 +2,9 @@ from datetime import datetime
 from typing import List, Optional
 
 from classic.components import component
-from sqlalchemy import asc, desc, select
+from sqlalchemy import asc, desc, select, and_, true, false
 
+from magnit.adapters.database import tables
 from magnit.adapters.database.repositories import BaseRepo
 from magnit.application import entities, interfaces
 
@@ -79,6 +80,32 @@ class VisitRepo(BaseRepo, interfaces.VisitRepo):
             .where(self.dto.checked_out >= after)
             .where(self.dto.checked_out <= before)
             .order_by(asc(self.dto.checked_out))
+        )
+        return self.session.execute(query).scalars().all()
+
+    def get_for_fgis(
+        self,
+        start: datetime,
+    ) -> List[entities.Visit]:
+        query = (
+            select(entities.Visit)
+            .join(
+                tables.permissions,
+                tables.permissions.c.id == tables.visits.c.permission_id,
+            )
+            .outerjoin(
+                tables.fgis_sync_log,
+                tables.visits.c.id == tables.fgis_sync_log.c.visit_id,
+            )
+            .where(
+                and_(
+                    tables.visits.c.checked_out >= start,
+                    tables.visits.c.is_deleted.is_(false()),
+                    tables.permissions.c.is_tonar.is_(false()),
+                    tables.fgis_sync_log.c.success.is_not(true())
+                )
+            )
+            .order_by(tables.visits.c.checked_out)
         )
         return self.session.execute(query).scalars().all()
 

@@ -383,6 +383,22 @@ class VisitRepo(ABC):
 
         """
 
+    @abstractmethod
+    def get_for_fgis(
+        self,
+        start: datetime,
+    ) -> List[entities.Visit]:
+        """Возвращает визиты мусоровозов для которых
+        нет записи в журнале синхронизации с ФГИС УТКО
+
+        Args:
+            start: после
+
+        Returns:
+            список Визитов
+
+        """
+
 
 class ExcelParser(ABC):
 
