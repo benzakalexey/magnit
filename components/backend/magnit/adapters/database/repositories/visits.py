@@ -113,4 +113,7 @@ class VisitRepo(BaseRepo, interfaces.VisitRepo):
         query = (select(self.dto).where(self.dto.invoice_num == invoice_num))
         return self.session.execute(query).scalars().one_or_none()
 
+    def commit(self):
+        self.session.commit()
+
 # yapf: enable

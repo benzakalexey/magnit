@@ -15,15 +15,15 @@ class Settings:
 
 class Logger:
     logger.configure(
-        Settings.logger.LOGGING_CONFIG,
         Settings.db.LOGGING_CONFIG,
+        Settings.logger.LOGGING_CONFIG,
     )
 
 
 class DB:
     engine = create_engine(Settings.db.DATABASE_URL,
                            connect_args={"options": "-c timezone=utc"})
-    context = TransactionContext(bind=engine, expire_on_commit=False)
+    context = TransactionContext(bind=engine)  # , expire_on_commit=False)
 
     # repos
     visits_repo = repositories.VisitRepo(context=context)
@@ -39,10 +39,6 @@ class Job:
         start=Settings.fgis_utko.START,
         visits_repo=DB.visits_repo,
     )
-
-
-class Aspects:
-    tasks.join_point(DB.context)
 
 
 scheduler = Scheduler()
