@@ -17,9 +17,7 @@ COPY ./components/backend/ /app
 WORKDIR /app
 
 RUN pip install --upgrade --no-cache-dir pip \
-    && pip install -r requirements.txt \
-
-RUN pip install --no-cache-dir . \
+    && pip install --no-cache-dir . \
     && python setup.py bdist_wheel
 
 RUN groupadd -r $USERNAME && \
