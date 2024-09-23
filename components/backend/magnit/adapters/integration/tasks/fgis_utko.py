@@ -9,7 +9,6 @@ from pydantic import BaseModel
 
 from magnit.adapters.integration import clients
 from magnit.application import interfaces, entities
-from .join_points import join_point
 
 
 class WeightControl(BaseModel):
@@ -35,7 +34,6 @@ class FgisUtkoReport:
     def __attrs_post_init__(self):
         self.logger = logging.getLogger(self.__class__.__name__)
 
-    @join_point
     def __call__(self, *args, **kwargs):
         visits = self.visits_repo.get_for_fgis(start=self.start)
         self.logger.info('Get %s messages ready to sync' % len(visits))
@@ -62,9 +60,11 @@ class FgisUtkoReport:
             data = self._prepare_polygon_data(polygon_data, visits)
             success, response_code = self.client.send_data(data)
             self._update_visits_msgs(success, response_code, visits)
+            self.visits_repo.commit()
             time.sleep(5)
 
-    @join_point
+
+
     def _update_visits_msgs(
         self,
         success: bool,
@@ -77,9 +77,7 @@ class FgisUtkoReport:
             msg.response_date = response_date
             msg.response_code = response_code
 
-        self.visits_repo.save()
 
-    @join_point
     def _prepare_polygon_data(
         self,
         polygon_data: PolygonData,

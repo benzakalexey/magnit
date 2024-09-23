@@ -318,6 +318,10 @@ class VisitRepo(ABC):
         ...
 
     @abstractmethod
+    def commit(self):
+        ...
+
+    @abstractmethod
     def get_last_50(
         self,
         polygon_id: int,
