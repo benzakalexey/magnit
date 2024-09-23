@@ -22,8 +22,7 @@ services:
     ports:
       - '8082:8082'
     command:
-      bash -c ". /usr/local/bin/entrypoint_migrations.sh \
-      && . /usr/local/bin/entrypoint_api.sh"
+      bash -c ". /usr/local/bin/entrypoint_api.sh"
   scheduler:
     restart: always
     container_name: scheduler_magnit
