@@ -75,22 +75,8 @@ export const VisitsAPI = {
      * @param {string} reason 
      * @returns {Promise<AxiosResponse<any>>}
      */
-    update(
-        weight_in,
-        weight_out,
-        visit_id,
-        driver_id,
-        contract_id,
-    ) {
+    update(data) {
         const url = 'visits/update'
-        const data = {
-            weight_in,
-            weight_out,
-            visit_id,
-            driver_id,
-            contract_id,
-        };
-        // console.log(data)
         return DefaultAPIInstance.post(url, data);
     },
     /**Добавить визит

@@ -17,6 +17,7 @@ const permit_error = ref(false)
 const weight_error = ref(false)
 const truck_number_error = ref(false)
 const truck_number_validator = helpers.regex(/^[АВЕКМНОРСТУХ]\d{3}(?<!000)[АВЕКМНОРСТУХ]{2}\d{2,3}$/ui)
+const multiplicity = (value) => value % 20 == 0
 const rules = computed(() => ({
     permit_num: {
         required,
@@ -30,7 +31,8 @@ const rules = computed(() => ({
         required,
         numeric,
         minValueRef: minValue(store.state.PermitsModule.check_permit.tara || 0),
-        maxValueRef: maxValue(store.state.PermitsModule.check_permit.max_weight * 1.2)
+        maxValueRef: maxValue(store.state.PermitsModule.check_permit.max_weight * 1.2),
+        multiplicity: multiplicity,
     },
     truck_number: {
         required: false,
@@ -40,7 +42,7 @@ const rules = computed(() => ({
     },
 }))
 
-const v$ = useVuelidate(rules, { permit_num, lot,  weight, truck_number })
+const v$ = useVuelidate(rules, { permit_num, lot, weight, truck_number })
 
 
 const isOpen = ref(null);
@@ -81,7 +83,7 @@ const checkPermit = (x) => {
 const checkWeight = () => {
     let minWeight = store.state.PermitsModule.check_permit.tara || 0
     let maxWeight = store.state.PermitsModule.check_permit.max_weight
-    weight_error.value = !(minWeight <= weight.value && weight.value <= maxWeight)
+    weight_error.value = !(minWeight <= weight.value && weight.value <= maxWeight && weight.value % 20 == 0)
 }
 const checkTrackNumber = () => {
     let minWeight = store.state.PermitsModule.check_permit.tara || 0
@@ -130,7 +132,7 @@ const closeAndClean = () => {
                 <label class="col-form-label" for="lot">Лот</label>
                 <select class="form-select form-select-lg" id="lot" v-model="lot" placeholder="Выберите лот">
                     <option :value="null" disabled selected>Выберите Лот</option>
-                    <option :value="{id: null, number: null}">Без Лота</option>
+                    <option :value="{ id: null, number: null }">Без Лота</option>
                     <option v-for="l in store.state.PermitsModule.check_permit.lots" :value="l">{{ l.number }}</option>
                 </select>
             </div>
@@ -139,8 +141,8 @@ const closeAndClean = () => {
 
                 <label for="truck_number" class="col-form-label">Номер ТС</label>
                 <div>
-                    <input v-model="truck_number" id="truck_number" type="text" class="form-control" placeholder="Номер ТС"
-                        :class="[v$.truck_number.$invalid ? 'is-invalid' : '']" />
+                    <input v-model="truck_number" id="truck_number" type="text" class="form-control"
+                        placeholder="Номер ТС" :class="[v$.truck_number.$invalid ? 'is-invalid' : '']" />
                     <div class="invalid-feedback" v-if="v$.truck_number.$error">
                         Введите номер в формате а555аа55(5)
                     </div>

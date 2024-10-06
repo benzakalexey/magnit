@@ -220,12 +220,13 @@ const printAkt = (visit_id = visitDetails.value.id, tonar = visitDetails.value.t
 let after = null;
 let before = null;
 const updateVisit = () => {
-    store.dispatch('VisitsModule/update_tonar_visit', {
+    store.dispatch('VisitsModule/update_visit', {
         weight_in: visitDetails.value.weight_in,
         weight_out: visitDetails.value.weight_out,
         visit_id: visitDetails.value.id,
         driver_id: visitDetails.value.driver_id,
         contract_id: visitDetails.value.contract_id,
+        lot_id: visitDetails.value.lot_id,
     }).then((res) => {
         if (res.data.success) {
             new window.Swal('Успешно!', 'Данные сохранены.', 'success');
@@ -258,7 +259,7 @@ const excel_items = () => {
     for (var row of rows) {
         items.push({
             'Пропуск': row.permit,
-            'Лот': row.lot,
+            'Лот': row.lot.number,
             'Контрагент': row.carrier,
             'Рег.номер': row.reg_number,
             'Марка ТС': row.truck_model,
@@ -311,7 +312,9 @@ const openDetails = (i) => {
     DriversAPI.get(i.contragent_id).then((ref) => (drivers.value = ref.data));
     PolygonsAPI.get_directions(i.polygon_id, i.contragent_id).then((ref) => (directions.value = ref.data));
     visitDetails.value = i;
+    console.log(i)
     finishModal.value = false;
+    store.dispatch('TrucksModule/get_lots');
     detailModal.show();
 };
 const onHidden = () => {
@@ -433,7 +436,7 @@ const resetData = () => {
             carriers.value = [...new Set(store.state.VisitsModule.visits.map(item => item.carrier))].map(item => ({ text: item }));
             driver_names.value = [...new Set(store.state.VisitsModule.visits.map(item => item.driver_name))].map(item => ({ text: item }));
             destinations.value = [...new Set(store.state.VisitsModule.visits.map(item => item.destination))].map(item => ({ text: item }));
-            lotFilter.value = [...new Set(store.state.VisitsModule.visits.map(item => item.lot))].map(item => ({ text: item }));
+            lotFilter.value = [...new Set(store.state.VisitsModule.visits.map(item => item.lot ? item.lot.number : item.lot))].map(item => ({ text: item }));
         });
 };
 
@@ -571,15 +574,16 @@ onMounted(
                 <flat-pickr v-model="interval" :config="{ dateFormat: 'd.m.Y', mode: 'range' }"
                     class="form-control flatpickr active me-4 width-100 text-center" style="width: 18em; height: 2.5em;"
                     @on-change="change"></flat-pickr>
-                <button type="button" class="btn btn-primary me-4" v-on:click="download">Выгрузить&nbspв&nbspExcel</button>
+                <button type="button" class="btn btn-primary me-4"
+                    v-on:click="download">Выгрузить&nbspв&nbspExcel</button>
             </div>
         </teleport>
         <div class="row layout-top-spacing">
             <div class="col-xl-12 col-lg-12 col-sm-12 layout-spacing">
                 <div class="panel br-6 p-0">
                     <div class="custom-table">
-                        <v-client-table :data="store.state.VisitsModule.visits" :columns="columns" :options="table_option"
-                            ref="table">
+                        <v-client-table :data="store.state.VisitsModule.visits" :columns="columns"
+                            :options="table_option" ref="table">
                             <template #checked_in="props">
                                 <div :data_sort="props.row.checked_in">{{ props.row.checked_in.toLocaleString('ru') }}
                                 </div>
@@ -589,6 +593,9 @@ onMounted(
                             </template>
                             <template #tonar="props">
                                 <div :data_sort="props.row.tonar" v-html="tonar[props.row.tonar]"></div>
+                            </template>
+                            <template #lot="props">
+                                <div>{{ props.row.lot ? props.row.lot.number : '' }}</div>
                             </template>
                             <template #actions="props">
                                 <div class="actions text-center">
@@ -622,8 +629,12 @@ onMounted(
                                 </div>
                                 <div class="col-md-6">
                                     <label class="col-form-label" for="lot">Лот</label>
-                                    <input v-model="visitDetails.lot" type=text readonly="true" class="form-control"
-                                        id="lot" />
+                                    <select class="form-select form-select" v-model="visitDetails.lot_id" id="lot">
+                                        <option selected disabled>Выберите значение</option>
+                                        <option v-for="t in store.state.TrucksModule.lots" :value="t.id">{{ t.number }}
+                                        </option>
+                                    </select>
+                                    <!-- <select v-model="visitDetails.lot" type=text class="form-control" id="lot" /> -->
                                 </div>
                             </div>
                         </div>
@@ -653,7 +664,8 @@ onMounted(
                         </div>
                         <div class="col-md-6">
                             <label class="col-form-label" for="checked_out">Дата выезда</label>
-                            <input :value="visitDetails.checked_out ? visitDetails.checked_out.toLocaleString('ru') : ''"
+                            <input
+                                :value="visitDetails.checked_out ? visitDetails.checked_out.toLocaleString('ru') : ''"
                                 type="text" readonly="true" class="form-control" id="checked_out" />
                         </div>
                     </div>
@@ -664,7 +676,8 @@ onMounted(
                         </div>
                         <div class="col-md-6">
                             <label class="col-form-label" for="weight_out">Вес выезда</label>
-                            <input v-model="visitDetails.weight_out" type="number" class="form-control" id="weight_out" />
+                            <input v-model="visitDetails.weight_out" type="number" class="form-control"
+                                id="weight_out" />
                         </div>
                     </div>
                     <div v-show="visitDetails.tonar" class="row mb-3">
@@ -702,16 +715,17 @@ onMounted(
                         <button :disabled="visitDetails.is_deleted || !visitDetails.checked_out" type="button"
                             class="btn btn-outline-info dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true"
                             aria-expanded="false">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                class="feather feather-printer me-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="feather feather-printer me-3">
                                 <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2">
+                                </path>
                                 <rect x="6" y="14" width="12" height="8"></rect>
                             </svg>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                class="feather feather-chevron-down">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="feather feather-chevron-down">
                                 <polyline points="6 9 12 15 18 9"></polyline>
                             </svg>
                         </button>
@@ -747,7 +761,8 @@ onMounted(
                             <polyline points="7 3 7 8 15 8"></polyline>
                         </svg>
                     </button>
-                    <button v-if="visitDetails.status == 0" type="button" class="btn btn-primary" @click="finishModalShow">
+                    <button v-if="visitDetails.status == 0" type="button" class="btn btn-primary"
+                        @click="finishModalShow">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             class="feather feather-arrow-up-right">
@@ -805,5 +820,5 @@ onMounted(
         </div>
     </div>
 
-    <finishVisit :item="visitDetails" :isOpen="finishModal" @closed="closeFinish" @get_out="getOut"></finishVisit>
+    <finishVisit :item="visitDetails" :isOpen="finishModal" @get_out="getOut"></finishVisit>
 </template>

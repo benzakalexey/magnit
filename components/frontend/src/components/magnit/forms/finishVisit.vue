@@ -49,7 +49,7 @@ const rules = computed(() => ({
 const checkWeight = () => {
     const minWeight = item.value.tonar ? item.value.weight_in : item.value.tara - 1000;
     const maxWeight = item.value.tonar ? 60000 : item.value.weight_in;
-    weight_error.value = !(minWeight <= weight.value && weight.value <= maxWeight);
+    weight_error.value = !(minWeight <= weight.value && weight.value <= maxWeight && weight.value % 20 == 0);
 };
 
 const v$ = useVuelidate(rules, {
@@ -129,7 +129,8 @@ const getOut = () => {
                             </select>
                         </div>
                         <div class="d-flex justify-content-between pt-4 pb-2">
-                            <button type="button" class="btn btn-danger me-auto" @click.prevent="close">Отменить</button>
+                            <button type="button" class="btn btn-danger me-auto"
+                                @click.prevent="close">Отменить</button>
                             <button :disabled="v$.$invalid" @click.prevent="getOut" class="btn btn-primary ms-auto">
                                 Выпустить
                             </button>

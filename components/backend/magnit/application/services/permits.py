@@ -212,6 +212,8 @@ class Permit:
         self.logger.info(permit.permission.expired_at)
         self.logger.info(criterias)
         if any(criterias):
+            permit.permission.expired_at = datetime.utcnow()
+            permit.permission.is_active = False
             operator = self.users_repo.get_by_id(permission_info.user_id)
             permission = entities.Permission(
                 owner=partner,

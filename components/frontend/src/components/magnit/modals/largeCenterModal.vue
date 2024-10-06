@@ -50,7 +50,7 @@ watch(() => props.isOpen, (n, _) => {
                 </div>
                 <div class="modal-footer px-4">
                     <slot name="removeButton" />
-                    <button type="button" class="btn" @click="close">Закрыть</button>
+                    <!-- <button type="button" class="btn" @click="close">Закрыть</button> -->
                     <slot name="submitButton" />
                 </div>
             </div>
