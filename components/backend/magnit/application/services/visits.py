@@ -156,6 +156,14 @@ class Visit:
 
             visit.contract = contract
 
+        if visit_info.lot_id:
+            lot = self.lot_repo.get_by_id(visit_info.lot_id)
+            if lot is None:
+                raise errors.LotIDNotExistError(
+                    lot_id=visit_info.lot_id)
+
+            visit.lot = lot
+
         visit.weight_in = visit_info.weight_in
         visit.weight_out = visit_info.weight_out
         self.visits_repo.save()

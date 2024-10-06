@@ -153,7 +153,7 @@ const printAkt = (visit_id = visitDetails.value.id) => {
     winPrint.onafterprint = winPrint.close;
 };
 const updateVisit = () => {
-    store.dispatch('VisitsModule/update_tonar_visit', {
+    store.dispatch('VisitsModule/update_visit', {
         weight_in: visitDetails.value.weight_in,
         weight_out: visitDetails.value.weight_out,
         visit_id: visitDetails.value.id,

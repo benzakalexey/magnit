@@ -26,11 +26,11 @@ export const TrucksModule = {
         setTrucksData(state, data) {
             let trucks = []
             for (var t of data) {
-                var lots = []
-                for (var lot of t.lots) {
-                    lots.push(lot.number)
-                }
-                lots = lots.join(", ")
+                // var lots = []
+                // for (var lot of t.lots) {
+                //     lots.push(lot.number)
+                // }
+                // lots = lots.join(", ")
                 trucks.push({
                     id: t.id,
                     truck_model: t.truck_model,
@@ -47,7 +47,7 @@ export const TrucksModule = {
                     days_before_exp: t.days_before_exp,
                     body_volume: t.body_volume,
                     status: t.status,
-                    lots: lots,
+                    lots: t.lots,
                 });
             };
             state.trucks = trucks;

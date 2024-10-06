@@ -268,12 +268,12 @@ const openDetails = (i) => {
     trailer.value = trailerIdByNum(i.trailer)
     is_tonar.value = i.tonar
     permit_exp.value = i.expired_at
-
+    lots.value = i.lots
 
     store.dispatch(
         'PermitsModule/get_history', { num: truckDetails.value.permit }
     ).then(() => detailModal.show())
-    
+
 
     store.dispatch('TrucksModule/get_lots');
 };
@@ -282,6 +282,7 @@ const onHidden = () => {
     carrier.value = null;
     permit_exp.value = null;
     is_tonar.value = false;
+    lots.value = [];
 };
 
 const updatePermit = () => {
@@ -347,7 +348,8 @@ const expSoonFilter = () => {
                     <div class="page-header">
                         <nav class="breadcrumb-one" aria-label="breadcrumb">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item active" aria-current="page"><span>{{ $t('trucks') }}</span></li>
+                                <li class="breadcrumb-item active" aria-current="page"><span>{{ $t('trucks') }}</span>
+                                </li>
                             </ol>
                         </nav>
                     </div>
@@ -401,6 +403,11 @@ const expSoonFilter = () => {
                                     {{ props.row.expired_at ? props.row.expired_at.toLocaleDateString('ru') : '-' }}
                                 </div>
                             </template>
+                            <template #lots="props">
+                                <div>
+                                    {{ props.row.lots.map(obj => obj.number).sort((a, b) => a - b).join(', ') }}
+                                </div>
+                            </template>
                             <template #days_before_exp="props">
                                 <span v-show="props.row.days_before_exp <= 0"
                                     class="badge inv-status outline-badge-danger">Просрочен</span>
@@ -434,7 +441,8 @@ const expSoonFilter = () => {
                         <div>
                             <input v-model="reg_number" id="reg_number" type="text" class="form-control" placeholder=""
                                 :class="[v$.reg_number.$invalid ? 'is-invalid' : '']" />
-                            <div class="invalid-feedback" v-if="v$.reg_number.$error">Введите номер в формате а555аа55(5)
+                            <div class="invalid-feedback" v-if="v$.reg_number.$error">Введите номер в формате
+                                а555аа55(5)
                             </div>
                         </div>
                     </div>
@@ -457,8 +465,8 @@ const expSoonFilter = () => {
                     <div class="mb-3">
                         <label for="reg_number" class="col-form-label">Максимальная масса</label>
                         <div>
-                            <input v-model="max_weight" id="max_weight" type="number" class="form-control" placeholder=""
-                                :class="[v$.max_weight.$invalid ? 'is-invalid' : '']" />
+                            <input v-model="max_weight" id="max_weight" type="number" class="form-control"
+                                placeholder="" :class="[v$.max_weight.$invalid ? 'is-invalid' : '']" />
                             <div class="invalid-feedback" v-if="v$.max_weight.$error">Недопустимая масса</div>
                         </div>
                     </div>
@@ -482,8 +490,8 @@ const expSoonFilter = () => {
                     <div class="mb-3">
                         <label for="production_year" class="col-form-label">Объем кузова</label>
                         <div>
-                            <input v-model="body_volume" id="body_volume" type="number" class="form-control" placeholder=""
-                                :class="[v$.body_volume.$invalid ? 'is-invalid' : '']" />
+                            <input v-model="body_volume" id="body_volume" type="number" class="form-control"
+                                placeholder="" :class="[v$.body_volume.$invalid ? 'is-invalid' : '']" />
                             <div class="invalid-feedback" v-if="v$.body_volume.$error">Недопустимый значение</div>
                         </div>
                     </div>
@@ -505,7 +513,8 @@ const expSoonFilter = () => {
                         <label class="col-form-label" for="out_weight">Прицеп</label>
                         <select class="form-select form-select" v-model="trailer">
                             <option selected disabled>Выберите значение</option>
-                            <option v-for="t in store.state.TrucksModule.trailers" :value="t.id">{{ t.reg_number }}</option>
+                            <option v-for="t in store.state.TrucksModule.trailers" :value="t.id">{{ t.reg_number }}
+                            </option>
                         </select>
                     </div>
                     <div class="m-4">
@@ -560,7 +569,8 @@ const expSoonFilter = () => {
                                     </div>
                                     <div class="mb-3">
                                         <label class="col-form-label" for="tara">Вес пустого</label>
-                                        <input v-model="truckDetails.tara" type="number" class="form-control" id="tara" />
+                                        <input v-model="truckDetails.tara" type="number" class="form-control"
+                                            id="tara" />
                                     </div>
                                     <div class="mb-3">
                                         <label class="col-form-label" for="max_weight">Макс. масса</label>
@@ -607,9 +617,14 @@ const expSoonFilter = () => {
                                             :hide-selected="true" :preserve-search="true" placeholder="Лоты"
                                             select-label="Нажмите Ввод для выбора" selected-label="Выбрано"
                                             label="number" track-by="number" :preselect-first="true">
-                                            <template slot="tag" slot-scope="props"><span class="custom__tag"><span>{{
-                                                props.option.number }}</span><span class="custom__remove"
-                                                        @click="props.remove(props.option)">❌</span></span></template>
+                                            <template slot="tag" slot-scope="props">
+                                                <span class="custom__tag">
+                                                    <span>{{ props.option.number }}</span>
+                                                    <span class="custom__remove" @click="props.remove(props.option)">
+                                                        ❌
+                                                    </span>
+                                                </span>
+                                            </template>
                                         </multiselect>
                                     </div>
                                     <div class="m-4">
@@ -646,7 +661,7 @@ const expSoonFilter = () => {
                                         <tbody role="rowgroup">
                                             <tr v-for="item in store.state.PermitsModule.permit_histoty" role="row">
                                                 <td aria-colindex="1" role="cell">{{ item.contragent_name }}</td>
-                                                <td aria-colindex="4" role="cell">{{ item.lots }}</td>
+                                                <td aria-colindex="4" role="cell">{{ item.lots.map(obj => obj.number).sort((a, b) => a - b).join(', ') }}</td>
                                                 <td aria-colindex="2" role="cell">
                                                     <span v-show="item.is_tonar"
                                                         class="badge inv-status outline-badge-warning">Tонар</span>

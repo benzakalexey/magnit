@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue';
 import { useMeta } from '@/composables/use-meta';
 import { useStore } from 'vuex';
-import visitDetails from '@/components/magnit/forms/visitDetails';
+import visitDetails from '@/components/magnit/forms/visitDetailsEditable';
 import { incNetto, lessEffectInc } from '@/scripts/weight_corrector'
 import { Modal } from 'bootstrap';
 
@@ -158,6 +158,7 @@ const garbage_truck = {
     false: '',
 };
 const openDetails = (i) => {
+    console.log(i)
     item.value = i;
     isOpen.value = true;
 };
@@ -412,7 +413,7 @@ const bind_data = async () => {
     after = (new Date()).setHours(0, 0, 0, 0);
     before = (new Date()).setHours(23, 59, 59, 0);
     interval.value = [after, before]
-    resetData();
+    // resetData();
 };
 const download = () => {
     const data = utils.json_to_sheet(excel_items())
@@ -425,6 +426,8 @@ onMounted(
         bind_data();
         initupdateVisitsModal();
         initDetailsModal();
+
+        store.dispatch('TrucksModule/get_lots');
     }
 );
 const polygons = [
@@ -432,6 +435,23 @@ const polygons = [
     'Ленинский',
     'Калачинский',
 ]
+
+const updateVisit = (visit) => {
+    store.dispatch('VisitsModule/update_visit', {
+        weight_in: visit.weight_in,
+        weight_out: visit.weight_out,
+        visit_id: visit.id,
+        driver_id: visit.driver_id,
+        contract_id: visit.contract_id,
+        lot_id: visit.lot_id,
+    }).then((res) => {
+        if (res.data.success) {
+            new window.Swal('Успешно!', 'Данные сохранены.', 'success');
+            detailModal.hide();
+            store.dispatch('VisitsModule/update_garbage_trucks', { after, before });
+        }
+    }).catch((error) => new window.Swal('Ошибка!', error.message, 'error'))
+};
 </script>
 <style>
 .table .actions .print:hover {
@@ -472,7 +492,7 @@ const polygons = [
         </teleport>
 
         <div class="row layout-top-spacing">
-            <div v-show="store.state.VisitsModule.garbage_truck_visits.length > 0 && store.state.AuthModule.credentials.user_role === 'Супервайзер'"
+            <div v-show="store.state.VisitsModule.garbage_truck_visits.length > 0"
                 class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing pb-4">
                 <div class="widget widget-statistics">
                     <div class="widget-heading pb-0">
@@ -492,7 +512,7 @@ const polygons = [
                                     </svg>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="pendingTask">
-                                    <li>
+                                    <li v-show="['Супервайзер'].includes(store.state.AuthModule.credentials.user_role)">
                                         <a href="javascript:void(0);" class="dropdown-item" @click="updateNetto()">
                                             Изменить
                                         </a>
@@ -507,7 +527,7 @@ const polygons = [
                                             Печать актов
                                         </a>
                                     </li>
-                                    <li class="mt-3 text-danger">
+                                    <li class="mt-3 text-danger" v-show="changed_visits">
                                         <a href="javascript:void(0);" class="dropdown-item text-danger"
                                             @click="resetData()">
                                             Сбросить
@@ -542,7 +562,7 @@ const polygons = [
                                 </tr>
                             </thead>
                             <tbody role="rowgroup" class="w-stats">
-                                <tr v-for="polygon in polygons">
+                                <tr v-for="polygon in polygons" :key="polygon.id">
                                     <td>{{ polygon }}</td>
                                     <td>{{ table ? table.filteredData.reduce(
                                         (acc, visit) => acc + (visit.polygon == polygon ? 1 : 0), 0
@@ -604,6 +624,9 @@ const polygons = [
                             </template>
                             <template #status="props">
                                 <div v-html="statuses[props.row.status]"></div>
+                            </template>
+                            <template #lot="props">
+                                <div>{{ props.row.lot ? props.row.lot.number : null }}</div>
                             </template>
                             <template #print="props">
                                 <div class="actions text-center">
@@ -837,7 +860,7 @@ const polygons = [
         </div>
     </div>
 
-    <visitDetails :item="item" :isOpen="isOpen" @closed="closeDetails" @deleted="deleteItem" @get_out="getOut"
-        @print_invoice="printInvoice" @print_akt="printAkt" @print_pack="printTonarPack">
+    <visitDetails :item="item" :isOpen="isOpen" @closed="closeDetails" @deleted="deleteItem"
+        @print_akt="printAkt" @update_visit="updateVisit">
     </visitDetails>
 </template>

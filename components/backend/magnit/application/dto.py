@@ -160,6 +160,7 @@ class VisitOutInfo(DTO):
 class TonarUpdateInfo(DTO):
     contract_id: Optional[conint(gt=0)] = None
     driver_id: Optional[conint(gt=0)] = None
+    lot_id: Optional[conint(gt=0)] = None
     user_id: int
     visit_id: int
     weight_in: conint(gt=0)

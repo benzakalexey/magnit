@@ -102,8 +102,8 @@ export const PermitsModule = {
         setPermitHistory(state, data) {
             var histoty = []
             for (var i of data) {
-                var lots = [];
-                for (var lot of i.lots) lots.push(lot.number)
+                // var lots = [];
+                // for (var lot of i.lots) lots.push(lot.number)
                 
                 histoty.push(
                     {
@@ -115,7 +115,7 @@ export const PermitsModule = {
                         permit_status: i.permit_status,
                         is_valid: i.is_valid,
                         is_tonar: i.is_tonar,
-                        lots: lots.join(', ')
+                        lots: i.lots //lots.join(', ')
                     }
                 )
             };
