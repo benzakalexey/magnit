@@ -136,7 +136,7 @@ const table_option = ref({
     filterByColumn: true,
     filterable: [
         'permit',
-        'lot',
+        // 'lot',
         'carrier',
         'reg_number',
         'polygon',
