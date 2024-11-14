@@ -205,7 +205,7 @@ const excel_items = () => {
     for (var row of table.value.filteredData) {
         items.push({
             'Пропуск': row.permit,
-            'Лот': row.lot,
+            'Лот': row.lot ? row.lot.number : null,
             'Контрагент': row.carrier,
             'Рег.номер': row.reg_number,
             'Марка ТС': row.truck_model,
