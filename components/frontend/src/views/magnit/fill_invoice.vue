@@ -209,6 +209,12 @@ const printAkt = () => {
                                         <input v-model="invoice.weight_txt" type="text" id="weight_txt"
                                             class="form-control form-control-lg"/>
                                     </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="col-form-label" for="volume">Объем груза</label>
+                                        <input v-model="invoice.volume" type="text" id="volume"
+                                            class="form-control form-control-lg"/>
+                                    </div>
 
 
                                 </form>
