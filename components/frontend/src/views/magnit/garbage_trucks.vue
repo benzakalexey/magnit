@@ -27,32 +27,14 @@ const columns = ref([
     'lot',
     'carrier',
     'reg_number',
-    // 'truck_model',
     'polygon',
     'checked_out',
     'brutto',
     'tara',
     'netto',
     'invoice_num',
-    'print'
+    'actions'
 ]);
-
-if (store.state.AuthModule.credentials.user_role === 'Супервайзер') {
-    columns.value = [
-        'permit',
-        'lot',
-        'carrier',
-        'reg_number',
-        // 'truck_model',
-        'polygon',
-        'checked_out',
-        'brutto',
-        'tara',
-        'netto',
-        'invoice_num',
-        'actions'
-    ]
-}
 
 const isOpen = ref(false);
 const item = ref(
@@ -572,10 +554,10 @@ const updateVisit = (visit) => {
                                     ) : 0).toLocaleString('ru') }}</td>
                                     <td>
                                         {{ Math.min(
-                                        ...(table ? table.filteredData
-                                            .filter(o => o.polygon == polygon)
-                                            .map(o => o.netto) :
-                                            [])).toLocaleString('ru') }}</td>
+                                            ...(table ? table.filteredData
+                                                .filter(o => o.polygon == polygon)
+                                                .map(o => o.netto) :
+                                                [])).toLocaleString('ru') }}</td>
                                     <td>{{ Math.round(table ? table.filteredData
                                         .filter(o => o.polygon == polygon)
                                         .reduce(
@@ -860,7 +842,7 @@ const updateVisit = (visit) => {
         </div>
     </div>
 
-    <visitDetails :item="item" :isOpen="isOpen" @closed="closeDetails" @deleted="deleteItem"
-        @print_akt="printAkt" @update_visit="updateVisit">
+    <visitDetails :item="item" :isOpen="isOpen" @closed="closeDetails" @deleted="deleteItem" @print_akt="printAkt"
+        @update_visit="updateVisit">
     </visitDetails>
 </template>
