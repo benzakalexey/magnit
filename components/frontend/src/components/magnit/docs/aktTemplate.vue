@@ -169,7 +169,7 @@ const pretty_num = (n) => {
                     <td colspan="2"></td>
                 </tr>
 
-                <div class="pagebreak"></div>
+                <tr style="height: 24px"></tr>
 
                 <tr style="height: 20px">
                     <td class="header" colspan="32">
@@ -278,7 +278,7 @@ const pretty_num = (n) => {
                     <td colspan="2"></td>
                 </tr>
 
-                <div class="pagebreak"></div>
+                <tr style="height: 24px"></tr>
 
                 <tr style="height: 20px">
                     <td class="header" colspan="32">
