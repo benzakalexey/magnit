@@ -64,7 +64,7 @@ const pretty_num = (n) => {
                 </tr>
                 <tr style="height: 20px">
                     <td class="header" colspan="32">
-                        {{ akt.polygon }} полигон ООО «Магнит»
+                        {{ akt.polygon }} полигон
                     </td>
                 </tr>
                 <tr style="height: 20px"></tr>
@@ -149,7 +149,7 @@ const pretty_num = (n) => {
                 <tr style="height: 24px">
                     <td colspan="4"></td>
                     <td class="text-start px-2" colspan="12">
-                        Представитель<br>ООО «Магнит»
+                        Представитель<br>полигона
                     </td>
                     <td class="text-start px-2" colspan="12">
                         Представитель<br>{{ akt.carrier }}
@@ -173,7 +173,7 @@ const pretty_num = (n) => {
 
                 <tr style="height: 20px">
                     <td class="header" colspan="32">
-                        {{ akt.polygon }} полигон ООО «Магнит»
+                        {{ akt.polygon }} полигон
                     </td>
                 </tr>
                 <tr style="height: 20px"></tr>
@@ -258,7 +258,7 @@ const pretty_num = (n) => {
                 <tr style="height: 24px">
                     <td colspan="4"></td>
                     <td class="text-start px-2" colspan="12">
-                        Представитель<br>ООО «Магнит»
+                        Представитель<br>полигона
                     </td>
                     <td class="text-start px-2" colspan="12">
                         Представитель<br>{{ akt.carrier }}
@@ -282,7 +282,7 @@ const pretty_num = (n) => {
 
                 <tr style="height: 20px">
                     <td class="header" colspan="32">
-                        {{ akt.polygon }} полигон ООО «Магнит»
+                        {{ akt.polygon }} полигон
                     </td>
                 </tr>
                 <tr style="height: 20px"></tr>
@@ -367,7 +367,7 @@ const pretty_num = (n) => {
                 <tr style="height: 24px">
                     <td colspan="4"></td>
                     <td class="text-start px-2" colspan="12">
-                        Представитель<br>ООО «Магнит»
+                        Представитель<br>полигона
                     </td>
                     <td class="text-start px-2" colspan="12">
                         Представитель<br>{{ akt.carrier }}
