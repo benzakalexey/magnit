@@ -109,10 +109,10 @@ const pretty_num = (n) => {
                 <tr style="height: 24px"></tr>
                 <tr style="height: 24px">
                     <td colspan="2"></td>
-                    <td class="bordered header fw-bold" colspan="6">
+                    <td class="bordered header fw-bold" colspan="4">
                         Пропуск
                     </td>
-                    <td class="bordered header fw-bold" colspan="10">
+                    <td class="bordered header fw-bold" colspan="12">
                         Вид услуги
                     </td>
                     <td class="bordered header fw-bold" colspan="4">
@@ -128,19 +128,19 @@ const pretty_num = (n) => {
                 </tr>
                 <tr style="height: 24px">
                     <td colspan="2"></td>
-                    <td class="bordered text-center fs-6" colspan="6">
+                    <td class="bordered text-center" colspan="4">
                         {{ akt.permit_number }}
                     </td>
-                    <td class="bordered text-center fs-6" colspan="10">
+                    <td class="bordered text-center" colspan="12">
                         {{ akt.service_type }}
                     </td>
-                    <td class="bordered text-center fs-6" colspan="4">
+                    <td class="bordered text-center" colspan="4">
                         {{ akt.tara / 1000 }}
                     </td>
-                    <td class="bordered text-center fs-6" colspan="4">
+                    <td class="bordered text-center" colspan="4">
                         {{ akt.brutto / 1000 }}
                     </td>
-                    <td class="bordered text-center fs-6" colspan="4">
+                    <td class="bordered text-center" colspan="4">
                         {{ akt.netto / 1000 }}
                     </td>
                     <td colspan="2"></td>
@@ -163,7 +163,7 @@ const pretty_num = (n) => {
                     <td class="underline" colspan="12"></td>
                     <td colspan="4"></td>
                 </tr>
-                <tr style="height: 42px;">
+                <tr style="height: 32px;">
                     <td colspan="2"></td>
                     <td class="dashedline" colspan="28"></td>
                     <td colspan="2"></td>
@@ -218,10 +218,10 @@ const pretty_num = (n) => {
                 <tr style="height: 24px"></tr>
                 <tr style="height: 24px">
                     <td colspan="2"></td>
-                    <td class="bordered header fw-bold" colspan="6">
+                    <td class="bordered header fw-bold" colspan="4">
                         Пропуск
                     </td>
-                    <td class="bordered header fw-bold" colspan="10">
+                    <td class="bordered header fw-bold" colspan="12">
                         Вид услуги
                     </td>
                     <td class="bordered header fw-bold" colspan="4">
@@ -237,19 +237,19 @@ const pretty_num = (n) => {
                 </tr>
                 <tr style="height: 24px">
                     <td colspan="2"></td>
-                    <td class="bordered text-center fs-6" colspan="6">
+                    <td class="bordered text-center" colspan="4">
                         {{ akt.permit_number }}
                     </td>
-                    <td class="bordered text-center fs-6" colspan="10">
+                    <td class="bordered text-center" colspan="12">
                         {{ akt.service_type }}
                     </td>
-                    <td class="bordered text-center fs-6" colspan="4">
+                    <td class="bordered text-center" colspan="4">
                         {{ akt.tara / 1000 }}
                     </td>
-                    <td class="bordered text-center fs-6" colspan="4">
+                    <td class="bordered text-center" colspan="4">
                         {{ akt.brutto / 1000 }}
                     </td>
-                    <td class="bordered text-center fs-6" colspan="4">
+                    <td class="bordered text-center" colspan="4">
                         {{ akt.netto / 1000 }}
                     </td>
                     <td colspan="2"></td>
@@ -272,7 +272,7 @@ const pretty_num = (n) => {
                     <td class="underline" colspan="12"></td>
                     <td colspan="4"></td>
                 </tr>
-                <tr style="height: 42px;">
+                <tr style="height: 32px;">
                     <td colspan="2"></td>
                     <td class="dashedline" colspan="28"></td>
                     <td colspan="2"></td>
@@ -327,10 +327,10 @@ const pretty_num = (n) => {
                 <tr style="height: 24px"></tr>
                 <tr style="height: 24px">
                     <td colspan="2"></td>
-                    <td class="bordered header fw-bold" colspan="6">
+                    <td class="bordered header fw-bold" colspan="4">
                         Пропуск
                     </td>
-                    <td class="bordered header fw-bold" colspan="10">
+                    <td class="bordered header fw-bold" colspan="12">
                         Вид услуги
                     </td>
                     <td class="bordered header fw-bold" colspan="4">
@@ -346,19 +346,19 @@ const pretty_num = (n) => {
                 </tr>
                 <tr style="height: 24px">
                     <td colspan="2"></td>
-                    <td class="bordered text-center fs-6" colspan="6">
+                    <td class="bordered text-center" colspan="4">
                         {{ akt.permit_number }}
                     </td>
-                    <td class="bordered text-center fs-6" colspan="10">
+                    <td class="bordered text-center" colspan="12">
                         {{ akt.service_type }}
                     </td>
-                    <td class="bordered text-center fs-6" colspan="4">
+                    <td class="bordered text-center" colspan="4">
                         {{ akt.tara / 1000 }}
                     </td>
-                    <td class="bordered text-center fs-6" colspan="4">
+                    <td class="bordered text-center" colspan="4">
                         {{ akt.brutto / 1000 }}
                     </td>
-                    <td class="bordered text-center fs-6" colspan="4">
+                    <td class="bordered text-center" colspan="4">
                         {{ akt.netto / 1000 }}
                     </td>
                     <td colspan="2"></td>
