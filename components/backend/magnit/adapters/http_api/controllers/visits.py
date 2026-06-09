@@ -82,7 +82,7 @@ class Visits:
             'checked_out':
                 v.checked_out,
             'driver_name':
-                f'{v.driver.surname} {v.driver.name}' if v.driver else None,
+                f'{v.driver.surname} {v.driver.name}{" " + v.driver.patronymic if v.driver.patronymic else ""}' if v.driver else None,
             'destination':
                 v.contract.destination.name if v.contract else None,
             'status':
@@ -140,7 +140,7 @@ class Visits:
             'checked_out':
                 v.checked_out,
             'driver_name':
-                f'{v.driver.surname} {v.driver.name}' if v.driver else None,
+                f'{v.driver.surname} {v.driver.name}{" " + v.driver.patronymic if v.driver.patronymic else ""}' if v.driver else None,
             'driver_id':
                 v.driver.id if v.driver else None,
             'contract_id':
@@ -203,7 +203,7 @@ class Visits:
             'checked_out':
                 v.checked_out,
             'driver_name':
-                f'{v.driver.surname} {v.driver.name}' if v.driver else None,
+                f'{v.driver.surname} {v.driver.name}{" " + v.driver.patronymic if v.driver.patronymic else ""}' if v.driver else None,
             'driver_id':
                 v.driver.id if v.driver else None,
             'contract_id':
@@ -279,7 +279,7 @@ class Visits:
                     v.frozen,
                 'driver_name':
                     (
-                        f'{v.driver.surname} {v.driver.name}' if v.driver else None),
+                        f'{v.driver.surname} {v.driver.name}{" " + v.driver.patronymic if v.driver.patronymic else ""}' if v.driver else None),
                 # 'driver_phone': v.driver.phone
                 # if v.driver else None,
                 'destination':
