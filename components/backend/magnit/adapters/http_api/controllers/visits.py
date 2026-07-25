@@ -212,6 +212,8 @@ class Visits:
                 v.contract.destination.name if v.contract else None,
             'status':
                 v.status,
+            'is_separated':
+                v.is_separated,
         } for v in visits]
 
     @join_point
@@ -277,6 +279,8 @@ class Visits:
                     v.checked_out,
                 'frozen':
                     v.frozen,
+                'is_separated':
+                    v.is_separated,
                 'driver_name':
                     (
                         f'{v.driver.surname} {v.driver.name}{" " + v.driver.patronymic if v.driver.patronymic else ""}' if v.driver else None),

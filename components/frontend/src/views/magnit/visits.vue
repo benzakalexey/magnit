@@ -39,6 +39,7 @@ const columns = ref([
     'checked_in',
     'netto',
     'tonar',
+    'is_separated',
     'invoice_num',
     'status',
     'actions'
@@ -80,6 +81,7 @@ const table_option = ref({
     skin: 'table table-hover',
     headings: {
         tonar: '',
+        is_separated: '',
         invoice_num: 'Номер ТН',
         permit: 'Пропуск',
         lot: 'Лот',
@@ -130,6 +132,7 @@ const table_option = ref({
         'invoice_num',
         'lot',
         'tonar',
+        'is_separated',
         'status',
     ],
     listColumns: {
@@ -142,6 +145,10 @@ const table_option = ref({
             { id: 2, text: 'Удален' },
         ],
         tonar: [
+            { id: true, text: 'Да' },
+            { id: false, text: 'Нет' },
+        ],
+        is_separated: [
             { id: true, text: 'Да' },
             { id: false, text: 'Нет' },
         ],
@@ -186,6 +193,10 @@ const statuses = {
 };
 const tonar = {
     true: `<span class="badge inv-status outline-badge-warning">Tонар</span>`,
+    false: '',
+};
+const is_separated = {
+    true: `<span class="badge inv-status outline-badge-success">Раздельный</span>`,
     false: '',
 };
 
@@ -259,18 +270,19 @@ const excel_items = () => {
     for (var row of rows) {
         items.push({
             'Пропуск': row.permit,
-            'Лот': row.lot.number,
+            'Лот': row.lot?.number,
             'Контрагент': row.carrier,
             'Рег.номер': row.reg_number,
             'Марка ТС': row.truck_model,
             'Полигон': row.polygon,
-            'Время выезда': row.checked_out.toLocaleString('ru'),
+            'Время выезда': row.checked_out?.toLocaleString('ru'),
             'Брутто': row.brutto,
             'Тара': row.tara,
             'Нетто': row.netto,
             'Номер ТН': row.invoice_num,
             'Направление': row.destination,
             'Водитель': row.driver_name,
+            'Раздельный сбор': row.is_separated,
         })
     }
     return items;
@@ -593,6 +605,9 @@ onMounted(
                             </template>
                             <template #tonar="props">
                                 <div :data_sort="props.row.tonar" v-html="tonar[props.row.tonar]"></div>
+                            </template>
+                            <template #is_separated="props">
+                                <div :data_sort="props.row.is_separated" v-html="is_separated[props.row.is_separated]"></div>
                             </template>
                             <template #lot="props">
                                 <div>{{ props.row.lot ? props.row.lot.number : '' }}</div>

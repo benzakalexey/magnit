@@ -18,6 +18,7 @@ const columns = ref([
     'checked_in',
     'weight_in',
     'tonar',
+    'is_separated',
     'status',
     'actions',
 ]);
@@ -53,6 +54,7 @@ const table_option = ref({
     skin: 'table table-hover',
     headings: {
         tonar: '',
+        is_separated: '',
         invoice_num: 'Номер накладной',
         permit: 'Пропуск',
         lot: 'Лот',
@@ -97,6 +99,10 @@ const statuses = {
 };
 const tonar = {
     true: `<span class="badge inv-status outline-badge-warning">Tонар</span>`,
+    false: '',
+};
+const is_separated = {
+    true: `<span class="badge inv-status outline-badge-success">Раздельный</span>`,
     false: '',
 };
 const openDetails = (i) => {
@@ -209,6 +215,9 @@ onMounted(
                             </template>
                             <template #tonar="props">
                                 <div v-html="tonar[props.row.tonar]"></div>
+                            </template>
+                            <template #is_separated="props">
+                                <div v-html="is_separated[props.row.is_separated]"></div>
                             </template>
                             <template #actions="props">
                                 <div class="actions text-center">
