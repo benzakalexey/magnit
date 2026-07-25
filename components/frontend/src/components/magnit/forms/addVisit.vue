@@ -13,6 +13,7 @@ const permit_num = ref('')
 const weight = ref('')
 const lot = ref(null)
 const truck_number = ref('')
+const is_separated = ref(false)
 const permit_error = ref(false)
 const weight_error = ref(false)
 const truck_number_error = ref(false)
@@ -51,6 +52,7 @@ const createVisit = () => {
         permission_id: store.state.PermitsModule.check_permit.permission_id,
         service_contract_id: store.state.PermitsModule.check_permit.service_contract_id,
         weight: weight.value,
+        is_separated: is_separated.value,
         lot: lot.value?.id,
         truck_number: store.state.PermitsModule.check_permit.reg_number || truck_number.value,
     })
@@ -147,6 +149,17 @@ const closeAndClean = () => {
                         Введите номер в формате а555аа55(5)
                     </div>
                 </div>
+            </div>
+            <div class="mb-3 pt-3"
+                v-show="store.state.PermitsModule.check_permit.permit_num && !store.state.PermitsModule.check_permit.is_tonar">
+                <label class="col-form-label" for="is_separated">
+                    Раздельный сбор
+                </label>
+                <div></div>
+                <label class="switch s-icons s-outline s-outline-success">
+                    <input id="is_separated" type="checkbox" v-model="is_separated" />
+                    <span class="slider"></span>
+                </label>
             </div>
             <button
                 :disabled="v$.$invalid || Array(null, 0, undefined).includes(store.state.PermitsModule.check_permit.permit_status)"

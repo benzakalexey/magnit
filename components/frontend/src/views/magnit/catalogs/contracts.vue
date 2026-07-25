@@ -187,6 +187,10 @@ const tonar = {
     true: `<span class="badge inv-status outline-badge-warning">Tонар</span>`,
     false: '',
 };
+const is_separated = {
+    true: `<span class="badge inv-status outline-badge-success">Раздельный</span>`,
+    false: '',
+};
 
 const printTonarPack = (visit_id = visitDetails.value.id) => {
     let winPrint = window.open(

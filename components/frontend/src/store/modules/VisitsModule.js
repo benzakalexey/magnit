@@ -61,6 +61,7 @@ export const VisitsModule = {
                         destination: v.destination,
                         driver_id: v.driver_id,
                         contract_id: v.contract_id,
+                        is_separated: v.is_separated,
                         status: v.status
                     }
                 )
@@ -103,6 +104,7 @@ export const VisitsModule = {
                         driver_id: v.driver_id,
                         contract_id: v.contract_id,
                         destination: v.destination,
+                        is_separated: v.is_separated,
                         status: v.status
                     }
                 )
@@ -146,6 +148,7 @@ export const VisitsModule = {
                         driver_name: v.driver_name,
                         destination: v.destination,
                         frozen: v.frozen,
+                        is_separated: v.is_separated,
                         status: v.status
                     }
                 )
@@ -207,8 +210,8 @@ export const VisitsModule = {
             return await VisitsAPI.finish(visit_id, weight_out, driver_id, contract_id);
             // commit('deleteItem', id, reason);
         },
-        async add({ commit }, { permission_id, weight, truck_number, lot, service_contract_id }) {
-            return await VisitsAPI.add(permission_id, weight, truck_number, lot, service_contract_id);
+        async add({ commit }, { permission_id, weight, is_separated, truck_number, lot, service_contract_id }) {
+            return await VisitsAPI.add(permission_id, weight, is_separated, truck_number, lot, service_contract_id);
             // commit('deleteItem', id, reason);
         },
         async update_visit({ commit }, data) {

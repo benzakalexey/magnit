@@ -147,6 +147,7 @@ class VisitInInfo(DTO):
     truck_number: Optional[str] = None
     user_id: int
     weight: conint(gt=0)
+    is_separated: bool
 
 
 class VisitOutInfo(DTO):

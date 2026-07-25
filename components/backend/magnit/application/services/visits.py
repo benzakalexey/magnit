@@ -82,6 +82,7 @@ class Visit:
             operator_in=staff.user,
             polygon=staff.polygon,
             lot=lot,
+            is_separated=visit_info.is_separated,
         )
         self.visits_repo.add(visit)
 

@@ -41,6 +41,10 @@ const tonar = {
     true: `<span class="badge inv-status outline-badge-warning">Tонар</span>`,
     false: '',
 };
+const is_separated = {
+    true: `<span class="badge inv-status outline-badge-success">Раздельный</span>`,
+    false: '',
+};
 const table_option = ref({
     perPage: 15,
     perPageValues: [15, 50, 100],
@@ -417,6 +421,9 @@ const expSoonFilter = () => {
                             </template>
                             <template #tonar="props">
                                 <div v-html="tonar[props.row.tonar]"></div>
+                            </template>
+                            <template #is_separated="props">
+                                <div v-html="is_separated[props.row.is_separated]"></div>
                             </template>
                             <template #actions="props">
                                 <div class="actions text-center">

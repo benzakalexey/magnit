@@ -32,6 +32,7 @@ const columns = ref([
     'brutto',
     'tara',
     'netto',
+    'is_separated',
     'invoice_num',
     'actions'
 ]);
@@ -59,7 +60,8 @@ const item = ref(
         checked_out: '',
         driver_name: '',
         destination: '',
-        status: ''
+        status: '',
+        is_separated: ''
     }
 );
 const table = ref(null);
@@ -91,6 +93,7 @@ const table_option = ref({
         driver_name: 'Водитель',
         actions: '',
         print: '',
+        is_separated: '',
     },
     columnsClasses: { actions: 'actions text-center' },
     sortable: [
@@ -135,10 +138,6 @@ const statuses = {
     1: `<span class="badge inv-status badge-success">Выехал</span>`,
     2: `<span class="badge inv-status badge-dark">Удален</span>`,
 };
-const garbage_truck = {
-    true: `<span class="badge inv-status outline-badge-warning">Tонар</span>`,
-    false: '',
-};
 const openDetails = (i) => {
     console.log(i)
     item.value = i;
@@ -166,7 +165,10 @@ const printAkt = (visit_id) => {
     winPrint.focus();
     winPrint.onafterprint = winPrint.close;
 };
-
+const is_separated = {
+    true: `<span class="badge inv-status outline-badge-success">Раздельный</span>`,
+    false: '',
+};
 const excel_columns = () => {
     return {
         'Пропуск': 'permit',
@@ -197,6 +199,7 @@ const excel_items = () => {
             'Тара': row.tara,
             'Нетто': row.netto,
             'Номер акта': row.invoice_num,
+            'Раздельный сбор': row.is_separated,
         })
     }
     return items;
@@ -625,6 +628,9 @@ const updateVisit = (visit) => {
                                         </svg>
                                     </a>
                                 </div>
+                            </template>
+                            <template #is_separated="props">
+                                <div v-html="is_separated[props.row.is_separated]"></div>
                             </template>
                             <template #actions="props">
                                 <div class="actions text-center">

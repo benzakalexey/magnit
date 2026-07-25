@@ -259,6 +259,7 @@ visits = Table(
     Column('invoice_num', String(20), nullable=True),
     Column('driver_id', ForeignKey(drivers.c.id), nullable=True),
     Column('is_deleted', Boolean, nullable=True, default=False),
+    Column('is_separated', Boolean, nullable=True, default=False),
     Column('operator_in_id', ForeignKey(users.c.id), nullable=False),
     Column('operator_out_id', ForeignKey(users.c.id), nullable=True),
     Column('permission_id', ForeignKey(permissions.c.id), nullable=False),

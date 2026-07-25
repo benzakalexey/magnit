@@ -320,6 +320,7 @@ class Visit:
     driver: Optional[Driver] = None
     contract: Optional[Contract] = None
     is_deleted: Optional[bool] = False
+    is_separated: Optional[bool] = False
     delete_reason: Optional[str] = None
     frozen: bool = False
     id: Optional[int] = None
