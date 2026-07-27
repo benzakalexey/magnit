@@ -86,7 +86,9 @@ class Visits:
             'destination':
                 v.contract.destination.name if v.contract else None,
             'status':
-                v.status
+                v.status,
+            'is_separated':
+                v.is_separated,
         } for v in visits]
 
     @join_point
@@ -149,6 +151,8 @@ class Visits:
                 v.contract.destination.name if v.contract else None,
             'status':
                 v.status,
+            'is_separated':
+                v.is_separated,
         } for v in visits]
 
     @join_point

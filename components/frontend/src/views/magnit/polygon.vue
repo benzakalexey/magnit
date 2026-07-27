@@ -44,7 +44,8 @@ const item = ref(
         checked_out: '',
         driver_name: '',
         destination: '',
-        status: ''
+        status: '',
+        is_separated: ''
     }
 );
 const table_option = ref({
