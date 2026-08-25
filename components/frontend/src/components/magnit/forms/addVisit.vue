@@ -104,6 +104,7 @@ const closeAndClean = () => {
     weight.value = '';
     isOpen.value = !isOpen.value;
     lot.value = null;
+    is_separated.value = false;
 };
 
 </script>
