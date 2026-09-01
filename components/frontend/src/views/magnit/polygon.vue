@@ -125,12 +125,12 @@ const deleteItem = (id, reason) => {
     }).catch((error) => new window.Swal('Ошибка!', error.message, 'error'))
 };
 const printTonarPack = (visit_id) => {
-    let winPrint = window.open(
-        '/doc/tonar_pack?print=true&visit_id=' + visit_id,
-        'fullscreen=yes,toolbar=0,scrollbars=0,status=0'
-    );
-    winPrint.focus();
-    winPrint.onafterprint = winPrint.close;
+    // let winPrint = window.open(
+    //     '/doc/tonar_pack?print=true&visit_id=' + visit_id,
+    //     'fullscreen=yes,toolbar=0,scrollbars=0,status=0'
+    // );
+    // winPrint.focus();
+    // winPrint.onafterprint = winPrint.close;
 };
 const printInvoice = (visit_id) => {
     let winPrint = window.open(
@@ -163,11 +163,12 @@ const getOut = (data) => {
             new window.Swal('Успешно!', 'Автомобиль выехал.', 'success');
             store.dispatch('VisitsModule/update');
         }
-        if (data.tonar) {
-            printTonarPack(data.visit_id);
-        } else {
-            printAkt(data.visit_id, data.tonar);
-        }
+        // if (data.tonar) {
+        //     printTonarPack(data.visit_id);
+        // } else {
+        //     printAkt(data.visit_id, data.tonar);
+        // };
+        printAkt(data.visit_id, data.tonar);
     })
         .catch((error) => new window.Swal('Ошибка!', error.data, 'error'))
 };

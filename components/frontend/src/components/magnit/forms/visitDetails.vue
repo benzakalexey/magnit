@@ -192,24 +192,24 @@ watchEffect(() => (isOpen.value = props.isOpen));
                     </svg>
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="btndefault">
-                    <li v-show="item.tonar">
+                    <!-- <li v-show="item.tonar">
                         <a @click="print_pack()" href="javascript:void(0);" class="dropdown-item"><i
                                 class="flaticon-home-fill-1 me-1"></i>
                             Пакет документов
                         </a>
-                    </li>
+                    </li> -->
                     <li>
                         <a @click="print_akt()" href="javascript:void(0);" class="dropdown-item"><i
                                 class="flaticon-gear-fill me-1"></i>
                             Акт взвешивания
                         </a>
                     </li>
-                    <li v-show="item.tonar">
+                    <!-- <li v-show="item.tonar">
                         <a @click="print_invoice()" href="javascript:void(0);" class="dropdown-item"><i
                                 class="flaticon-bell-fill-2 me-1"></i>
                             Транспортная накладная
                         </a>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
 
